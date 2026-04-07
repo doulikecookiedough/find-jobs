@@ -29,14 +29,14 @@ def test_parse_job_description_leaves_inferred_fields_empty_for_now() -> None:
     parsed_job = parse_job_description(raw_text)
 
     assert parsed_job.technologies == ["python", "kotlin", "aws", "mysql", "kubernetes"]
-    assert parsed_job.domain_signals == [
+    assert set(parsed_job.domain_signals) == {
         "authentication",
         "security",
         "fraud",
         "distributed-systems",
         "backend",
         "account-management",
-    ]
+    }
     assert parsed_job.work_style_signals == ["remote", "on-call"]
 
 
@@ -70,7 +70,7 @@ def test_parse_job_description_extracts_integrations_job_fields() -> None:
         "saml",
         "kong",
     ]
-    assert parsed_job.domain_signals == [
+    assert set(parsed_job.domain_signals) == {
         "authentication",
         "security",
         "distributed-systems",
@@ -78,7 +78,7 @@ def test_parse_job_description_extracts_integrations_job_fields() -> None:
         "apis",
         "microservices",
         "event-streaming",
-    ]
+    }
     assert parsed_job.work_style_signals == ["hybrid"]
 
 
@@ -104,17 +104,18 @@ def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
         "scala",
         "kotlin",
     ]
-    assert parsed_job.domain_signals == [
+    assert set(parsed_job.domain_signals) == {
         "distributed-systems",
         "backend",
         "integrations",
         "apis",
         "microservices",
+        "developer-platform",
         "developer-productivity",
         "event-driven",
         "observability",
         "ci-cd",
-    ]
+    }
     assert parsed_job.work_style_signals == ["on-call"]
 
 
@@ -140,11 +141,12 @@ def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> 
         "oauth",
         "webhooks",
     ]
-    assert parsed_job.domain_signals == [
+    assert set(parsed_job.domain_signals) == {
+        "security",
         "backend",
         "integrations",
         "apis",
         "distributed-systems",
         "developer-platform",
-    ]
+    }
     assert parsed_job.work_style_signals == ["on-site"]

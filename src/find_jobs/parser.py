@@ -69,15 +69,16 @@ WORK_STYLE_PATTERNS = {
 }
 DOMAIN_SIGNAL_PATTERNS = {
     "authentication": re.compile(r"\bauthentication\b", re.IGNORECASE),
-    "security": re.compile(r"\bsecure\b|\bsecurity\b", re.IGNORECASE),
+    "security": re.compile(r"\bsecurity\b", re.IGNORECASE),
     "fraud": re.compile(r"\bfraud\b|\baccount takeover\b|\bATO\b", re.IGNORECASE),
     "distributed-systems": re.compile(r"\bdistributed systems\b", re.IGNORECASE),
-    "backend": re.compile(r"\bbackend systems?\b", re.IGNORECASE),
+    "backend": re.compile(r"\bbackend(?: systems?| services?)?\b", re.IGNORECASE),
     "account-management": re.compile(r"\baccount management\b", re.IGNORECASE),
     "integrations": re.compile(r"\bintegrations?\b|\bintegration platform\b", re.IGNORECASE),
     "apis": re.compile(r"\bapi\b|\bapis\b|\bapi gateways\b|\bapi development\b", re.IGNORECASE),
     "microservices": re.compile(r"\bmicroservices architecture\b|\bmicroservices\b", re.IGNORECASE),
     "event-streaming": re.compile(r"\bevent streaming\b|\bmessage queues\b|\bservice bus\b|\bkafka\b", re.IGNORECASE),
+    "developer-platform": re.compile(r"\bdeveloper platform\b|\bdeveloper ecosystems?\b", re.IGNORECASE),
     "developer-productivity": re.compile(r"\bdeveloper productivity\b|\bworkflow engine\b|\bdevelopment workflow\b", re.IGNORECASE),
     "event-driven": re.compile(r"\bevent-driven architectures?\b|\basynchronous messaging systems?\b", re.IGNORECASE),
     "observability": re.compile(r"\bobservability\b|\blogging\b|\btracing\b", re.IGNORECASE),
