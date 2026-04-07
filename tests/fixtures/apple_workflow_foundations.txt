@@ -1,0 +1,41 @@
+Software Engineer, Workflow Foundations
+Vancouver, British Columbia, Canada
+Software and Services
+Add to Favorites Software Engineer, Workflow Foundations
+
+Submitted
+Summary
+Posted:
+Feb 24, 2026
+Role Number:
+200648337-3350
+We're building the development workflow engine that powers Apple's engineering - every build, test, and deployment across the company will flow through our infrastructure. Our mission: help thousands of engineers move from idea to shipped code with fewer friction points. You'll tackle real, complex challenges: designing APIs that handle millions of builds, surfacing insights from failures before they cascade and weaving together disparate tools into one seamless experience. If you're passionate about developer productivity and distributed systems, we have challenging problems waiting for you.
+Description
+You'll own backend systems end-to-end - from architectural decisions to shipping quality code. You'll spend most of your time writing performant code and solving concrete engineering problems: optimizing APIs, designing reliable service integrations, debugging production systems, and implementing observability. You'll collaborate with teammates to make informed technical tradeoffs and have the depth to validate your decisions.
+Responsibilities
+Implement services that reliably integrate multiple build sources with developer workflows
+Design and build intelligent systems that handle diverse CI configurations at scale and analyze build failures
+Create features that annotate code changes with meaningful build and test results
+Optimize performance through profiling, caching and algorithmic improvements
+Write thorough tests and implement observability (metrics, logging, tracing)
+Provide on-call support and maintain system reliability
+Collaborate with other teams to solve lasting infrastructure problems
+Minimum Qualifications
+BS in Computer Science or equivalent professional experience
+3+ years of software engineering experience (backend services, APIs, or platform infrastructure)
+Proficiency in backend languages: Go, Python, Java, Scala, or Kotlin
+Proven ability to design systems that handle scale, reliability, and service integration
+Preferred Qualifications
+Deep expertise in API design, microservices architecture or distributed systems
+Experience with CI/CD pipelines, build systems or developer platform infrastructure
+Knowledge of macOS/iOS build processes or development environments
+Experience with event-driven architectures or asynchronous messaging systems
+Pay & Benefits
+At Apple, base pay is one part of our total compensation package and is determined within a range. This provides the opportunity to progress as you grow and develop within a role. The base pay range for this role is between $116,800 and $226,000, and your base pay will depend on your skills, qualifications, experience, and location.
+
+Apple employees also have the opportunity to become an Apple shareholder through participation in Apple Inc.’s discretionary employee stock programs. Employees are eligible for discretionary restricted stock unit award recommendations, and can purchase Apple Inc. stock at a discount if voluntarily participating in Apple Inc.’s Employee Stock Purchase Plan. Participation in Apple Inc.’s discretionary stock programs is governed by Apple Inc.’s stock plans and agreements and are not part of local employment contracts or compensation.
+
+You’ll also receive benefits including: Comprehensive medical and dental coverage, retirement benefits, a range of discounted products and free services, and for formal education related to advancing your career at Apple, reimbursement for certain educational expenses — including tuition. Additionally, this role might be eligible for discretionary bonuses or commission payments as well as relocation. Learn more about Apple Benefits.
+
+Note: Apple benefit and compensation programs are subject to eligibility requirements and other terms of the applicable plan or program.
+Apple is an equal opportunity employer that is committed to inclusion and diversity. Apple provides reasonable accommodations to applicants with disabilities. Apple is a drug-free workplace.
