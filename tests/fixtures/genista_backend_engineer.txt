@@ -1,0 +1,105 @@
+Genista Biosciences logo
+Genista Biosciences
+Share
+Show more options
+Software Engineer 
+Canada · 5 days ago · Over 100 applicants
+Promoted by hirer · No response insights available yet
+
+
+Remote
+
+Full-time
+Applied 2 minutes ago
+See applicationApplied 2 minutes ago for Software Engineer
+Software Engineer
+Genista Biosciences · Canada (Remote)
+Applied 2 minutes ago
+Show more options
+Take the next step in your job search
+
+
+Practice an interview
+
+About the job
+Software Developer (Backend – Django / Python / MySQL/ MongoDB)
+
+Role: Individual Contributor (IC)
+Location: Canada
+
+
+🚀 Role Objective
+
+We are looking for a backend-focused engineer who enjoys building clean, scalable systems. You will take full ownership of features — from understanding requirements to deploying production-ready code — using a modern Python and API-driven stack.
+If you care about architecture, performance, clean database design, and well-documented APIs, you’ll feel at home here.
+
+
+🔧 What You’ll Work With
+
+Python (Core + Advanced Concepts)
+Django / Django REST Framework
+MySQL (Query optimization, indexing, performance tuning)
+MongoDB and RESTful APIs & system integrations
+SQL schema design and complex queries
+Deployment workflows & production environments
+
+
+This is a backend-heavy role. You’ll be designing systems, not just writing endpoints.
+
+
+Responsibilities
+
+Design, develop, test, and deploy scalable backend features.
+Build secure, high-performance REST APIs.
+Write optimized SQL queries and design efficient MySQL schemas.
+Ensure code quality with proper documentation, testing, and clean architecture.
+Handle end-to-end ownership of features.
+Communicate progress, blockers, and technical trade-offs clearly.
+Collaborate with frontend and product teams to shape scalable solutions.
+
+
+Required Skills
+
+Worked on production systems with real traffic
+Handled database migrations and performance tuning
+Designed modular backend architecture
+Written unit/integration tests consistently
+
+
+ Qualification 
+
+Strong hands-on experience with Django + DRF
+Deep understanding of Python fundamentals
+Solid knowledge of MongoDB, PostgreSQL and SQL optimization
+Experience designing scalable REST APIs
+Strong debugging and performance tuning skills
+Structured, disciplined coding practices
+Ability to take ownership without constant supervision
+2-7 Years of work Experience with B.tech or M.tech 
+
+
+
+
+Pay range and compensation package
+
+Performance-based raise or bonus within 6 months.
+
+
+Equal Opportunity Statement
+
+We value engineers who: Own their work — no hand-holding required. Communicate clearly and professionally. Deliver high-quality code on time. Think before coding. Document properly. Take pride in clean architecture.
+
+
+Growth Path
+
+Opportunity to mentor junior developers.
+Path toward leading backend modules or small technical teams.
+Exposure to architectural decisions and system design.
+
+
+Why Join Us?
+
+Backend-focused environment (no shallow feature factory work).
+Real ownership and decision-making power.
+Remote-first flexibility.
+A culture that rewards delivery, discipline, and engineering excellence.
