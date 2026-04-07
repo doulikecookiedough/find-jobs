@@ -1,5 +1,6 @@
 from find_jobs.models import CandidateProfile, ParsedJob
 from find_jobs.scoring import (
+    score_job,
     score_competition_realism,
     score_domain_alignment,
     score_level_match,
@@ -129,3 +130,57 @@ def test_score_competition_realism_is_zero_for_avoid_role() -> None:
     job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid", role_type="frontend")
 
     assert score_competition_realism(job, profile) == 0.0
+
+
+def test_score_job_returns_apply_for_strong_fit() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text="job",
+        years_experience_required=3.0,
+        seniority="mid",
+        role_type="backend",
+        technologies=["python", "aws", "postgresql"],
+        domain_signals=["backend", "apis", "distributed-systems"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.fit_score == 100
+    assert score.recommendation == "apply"
+    assert score.priority == "high"
+
+
+def test_score_job_returns_skip_for_clear_mismatch() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text="job",
+        years_experience_required=7.0,
+        seniority="senior",
+        role_type="frontend",
+        technologies=["ruby", "mysql"],
+        domain_signals=["mobile", "frontend"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.fit_score < 40
+    assert score.recommendation == "skip"
+    assert score.priority == "low"
+
+
+def test_score_job_returns_consider_for_mixed_fit() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text="job",
+        years_experience_required=4.0,
+        seniority="mid",
+        role_type="platform",
+        technologies=["java", "aws", "mysql"],
+        domain_signals=["integrations", "wearables"],
+    )
+
+    score = score_job(job, profile)
+
+    assert 60 <= score.fit_score < 80
+    assert score.recommendation == "consider"
+    assert score.priority == "medium"

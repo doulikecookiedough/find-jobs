@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from find_jobs.models import CandidateProfile, ParsedJob
+from find_jobs.models import CandidateProfile, JobScore, ParsedJob, ScoreBreakdown
 
 
 def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
@@ -61,9 +61,9 @@ def score_domain_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
 
     if positive_matches == 0 and negative_matches == 0:
         return 0.5
-
-    raw_score = (positive_matches - negative_matches) / len(job_domains)
-    return max(0.0, min(1.0, 0.5 + raw_score))
+    if negative_matches:
+        return max(0.0, (positive_matches - negative_matches) / len(job_domains))
+    return positive_matches / len(job_domains)
 
 
 def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
@@ -101,3 +101,49 @@ def score_competition_realism(job: ParsedJob, profile: CandidateProfile) -> floa
     if years_gap <= 2.0:
         return 0.55
     return 0.25
+
+
+def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
+    """Calculate a weighted fit score and recommendation for a job."""
+    breakdown = ScoreBreakdown(
+        level_match=score_level_match(job, profile),
+        stack_alignment=score_stack_alignment(job, profile),
+        domain_alignment=score_domain_alignment(job, profile),
+        role_type_alignment=score_role_type_alignment(job, profile),
+        competition_realism=score_competition_realism(job, profile),
+    )
+
+    weighted_score = (
+        breakdown.level_match * 0.30
+        + breakdown.stack_alignment * 0.25
+        + breakdown.domain_alignment * 0.15
+        + breakdown.role_type_alignment * 0.15
+        + breakdown.competition_realism * 0.15
+    )
+
+    fit_score = round(weighted_score * 100)
+    recommendation = _recommendation_for_score(fit_score)
+    priority = _priority_for_score(fit_score)
+
+    return JobScore(
+        fit_score=fit_score,
+        recommendation=recommendation,
+        priority=priority,
+        score_breakdown=breakdown,
+    )
+
+
+def _recommendation_for_score(fit_score: int) -> str:
+    if fit_score >= 80:
+        return "apply"
+    if fit_score >= 60:
+        return "consider"
+    return "skip"
+
+
+def _priority_for_score(fit_score: int) -> str:
+    if fit_score >= 80:
+        return "high"
+    if fit_score >= 55:
+        return "medium"
+    return "low"
