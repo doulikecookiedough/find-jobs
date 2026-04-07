@@ -27,6 +27,14 @@ WORK_STYLE_PATTERNS = {
     "remote": re.compile(r"\bremote\b", re.IGNORECASE),
     "on-call": re.compile(r"\bon-call\b", re.IGNORECASE),
 }
+DOMAIN_SIGNAL_PATTERNS = {
+    "authentication": re.compile(r"\bauthentication\b", re.IGNORECASE),
+    "security": re.compile(r"\bsecure\b|\bsecurity\b", re.IGNORECASE),
+    "fraud": re.compile(r"\bfraud\b|\baccount takeover\b|\bATO\b", re.IGNORECASE),
+    "distributed-systems": re.compile(r"\bdistributed systems\b", re.IGNORECASE),
+    "backend": re.compile(r"\bbackend systems?\b", re.IGNORECASE),
+    "account-management": re.compile(r"\baccount management\b", re.IGNORECASE),
+}
 
 
 def parse_job_description(raw_text: str) -> ParsedJob:
@@ -61,6 +69,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         salary_currency=salary_currency,
         salary_period=salary_period,
         technologies=_extract_technologies(raw_text),
+        domain_signals=_extract_domain_signals(raw_text),
         work_style_signals=_extract_work_style_signals(raw_text),
     )
 
@@ -86,5 +95,13 @@ def _extract_work_style_signals(raw_text: str) -> list[str]:
     return [
         signal
         for signal, pattern in WORK_STYLE_PATTERNS.items()
+        if pattern.search(raw_text)
+    ]
+
+
+def _extract_domain_signals(raw_text: str) -> list[str]:
+    return [
+        signal
+        for signal, pattern in DOMAIN_SIGNAL_PATTERNS.items()
         if pattern.search(raw_text)
     ]
