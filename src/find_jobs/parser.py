@@ -15,6 +15,10 @@ EXPERIENCE_PATTERN = re.compile(
     r"(\d+(?:\.\d+)?)\+?\s+years? of experience",
     re.IGNORECASE,
 )
+EXPERIENCE_RANGE_PATTERN = re.compile(
+    r"(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s+years?\b(?:(?!\n).){0,120}?\bexperience\b",
+    re.IGNORECASE,
+)
 SALARY_PATTERN = re.compile(
     r"\b(CAN|CAD|USD|US)\s+base pay range per year:\s*\$([\d,]+)\s*-\s*\$([\d,]+)",
     re.IGNORECASE,
@@ -61,7 +65,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
     location = _extract_location(lines)
 
     company_match = COMPANY_PATTERN.search(opening_text)
-    years_match = EXPERIENCE_PATTERN.search(raw_text)
+    years_required = _extract_years_experience_required(raw_text)
     salary_match = SALARY_PATTERN.search(raw_text)
 
     salary_currency = None
@@ -80,8 +84,8 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         title=title,
         company=company_match.group(1) if company_match else None,
         location=location,
-        years_experience_required=float(years_match.group(1)) if years_match else None,
-        seniority=_extract_seniority(title, raw_text, years_match),
+        years_experience_required=years_required,
+        seniority=_extract_seniority(title, years_required),
         role_type=_extract_role_type(raw_text, title),
         salary_min=salary_min,
         salary_max=salary_max,
@@ -100,6 +104,18 @@ def _normalize_currency(raw_currency: str) -> str:
     if currency in {"US", "USD"}:
         return "USD"
     return currency
+
+
+def _extract_years_experience_required(raw_text: str) -> float | None:
+    range_match = EXPERIENCE_RANGE_PATTERN.search(raw_text)
+    if range_match:
+        return float(range_match.group(1))
+
+    years_match = EXPERIENCE_PATTERN.search(raw_text)
+    if years_match:
+        return float(years_match.group(1))
+
+    return None
 
 
 def _extract_location(lines: list[str]) -> str | None:
@@ -149,8 +165,7 @@ def _extract_role_type(raw_text: str, title: str | None) -> str | None:
 
 def _extract_seniority(
     title: str | None,
-    raw_text: str,
-    years_match: re.Match[str] | None,
+    years_required: float | None,
 ) -> str | None:
     title_text = title or ""
 
@@ -163,8 +178,7 @@ def _extract_seniority(
     if JUNIOR_LEVEL_PATTERN.search(title_text):
         return "junior"
 
-    if years_match:
-        years_required = float(years_match.group(1))
+    if years_required is not None:
         if years_required < 1.0:
             return "junior"
         if years_required <= 3.0:
