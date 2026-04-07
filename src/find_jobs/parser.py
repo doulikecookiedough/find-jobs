@@ -28,6 +28,10 @@ SALARY_RANGE_PATTERN = re.compile(
     r"\$([\d,]+)\s*(?:-|to)\s*\$([\d,]+)\s+per\s+(year|annum)",
     re.IGNORECASE,
 )
+SALARY_BETWEEN_PATTERN = re.compile(
+    r"\bbetween\s+\$([\d,]+)\s+and\s+\$([\d,]+)",
+    re.IGNORECASE,
+)
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
@@ -150,6 +154,15 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
             return (
                 int(salary_range_match.group(1).replace(",", "")),
                 int(salary_range_match.group(2).replace(",", "")),
+                "CAD",
+                "yearly",
+            )
+
+        salary_between_match = SALARY_BETWEEN_PATTERN.search(normalized_line)
+        if salary_between_match:
+            return (
+                int(salary_between_match.group(1).replace(",", "")),
+                int(salary_between_match.group(2).replace(",", "")),
                 "CAD",
                 "yearly",
             )
