@@ -1,0 +1,129 @@
+Software Engineer, Integrations
+Job category: Professional & Business Support
+Requisition number: SOFTW002847
+ 
+
+Posting details
+Posted: April 6, 2026
+Full-time
+Hybrid
+LocationsShowing 1 location
+Vancouver, BC
+Vancouver, BC V6Z0C8, CAN
+Job details
+Description
+Purpose
+
+The Software Engineer, Integrations reports to the Tech Lead, Integration Platform.
+
+Our company, a leader in providing compelling and unique rail journeys, is looking to innovate within the rail tourism industry by delivering cutting-edge solutions that transform our guest and partner experience. You'll architect solutions that enable seamless data flow between our guest-facing applications, partner systems, and internal platforms while fostering a high-performing engineering culture focused on reliability and innovation.
+
+ 
+
+Key Areas of Accountability 
+
+Integration Platform Development
+
+• Contribute to building and maintaining API gateways, authentication systems, and rate limiting mechanisms
+
+• Implement enterprise integration patterns
+
+• Develop automated testing and assist with deployment pipelines and monitoring solutions
+
+• Collaborate with Product, UX, and QA teams to deliver integrated solutions
+
+ 
+
+Technical Contribution & Architecture
+
+• Contribute to technical designs and implementation of core integration platform features
+
+• Participate in architecture discussions and learn about high-performance, scalable distributed systems
+
+• Help ensure system reliability and performance standards through code quality and testing
+
+• Contribute to defining and following technical standards for API design and security patterns
+
+ 
+
+Stakeholder Collaboration
+
+• Work with Product Management and other teams to understand business requirements
+
+• Provide technical input on integration specifications and partner requirements
+
+• Contribute to technical documentation and system specifications
+
+ 
+
+Learning & Development
+
+• Actively participate in code reviews and knowledge sharing with team members
+
+• Continue building expertise in API development, Azure cloud services, and microservices architecture
+
+• Adopt AI development tools (Claude, Claude Code) to enhance productivity while maintaining code quality
+
+ 
+
+Qualifications
+
+Education
+
+• Bachelor’s degree in computer science, engineering or equivalent combination of professional experience and certifications.
+
+ 
+
+Experience
+
+• 3-5 years of C# .NET Core and/or TypeScript development experience
+
+• Strong experience with API development for B2C and/or B2B workflows
+
+• Working knowledge of Azure cloud services, microservices architecture, and Docker containers
+
+• Familiarity with enterprise integration patterns and message queues
+
+• Database design and query optimization (e.g. PostgreSQL, SQL Server, CosmosDB, or equivalent)
+
+• Knowledge of event streaming platforms (Azure Service Bus, Kafka, or similar)
+
+• Understanding of authentication protocols (OAuth2, JWT, SAML)
+
+• Experience with API management platforms (Azure API Management, Kong, or similar)
+
+• Strong problem-solving and analytical thinking abilities
+
+• Good communication skills with ability to explain technical concepts to teammates
+
+• Experience with agile methodologies and product development lifecycle
+
+ 
+
+Work Environment
+
+• Must be legally entitled to work in Canada
+
+• Corporate Office – Vancouver based; hybrid role with a minimum 3 days/week in the office.
+
+Compensation
+
+The base salary offered for this role is $105,000 to $115,000 per annum and can vary based on job-related expertise, qualifications, experience and internal equity.
+Eligible for Armstrong Collective’s discretionary bonus program
+Eligible Benefits 
+
+Armstrong Collective supports our team members’ health and wellness by providing a comprehensive medical plan with 100% employer paid premiums, some of which includes: 
+
+Medical, Dental, Vision, Life Insurance 
+Short term disability, long term disability benefits
+Travel emergency assistance 
+Vacation time and sick time
+Up to 5% RRSP and/or TSFA match 
+Two complimentary annual train tickets after first year of employment
+ 
+
+Armstrong Collective, Rocky Mountaineer and Canyon Spirit are an equal opportunity employer, driven by our values of creating meaningful moments, being one team, and achieving extraordinary outcomes. Our strong company culture supports our vision of a diverse, open, safe, and respectful workplace. We celebrate diversity and are committed to creating an inclusive environment for all team members. If you require any accommodation during the application process or throughout your employment, please let us know. We will work with you to ensure your needs are met and to create a supportive environment. 
+
+Please ensure to opt-in for text messages when you apply in order to receive interview updates.  
+
+#ArmstrongCollective
