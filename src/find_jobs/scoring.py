@@ -64,3 +64,15 @@ def score_domain_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
 
     raw_score = (positive_matches - negative_matches) / len(job_domains)
     return max(0.0, min(1.0, 0.5 + raw_score))
+
+
+def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
+    """Score how well a job's role type aligns with the candidate profile."""
+    if not job.role_type:
+        return 0.5
+
+    if job.role_type in profile.avoid_roles:
+        return 0.0
+    if job.role_type in profile.preferred_roles:
+        return 1.0
+    return 0.5

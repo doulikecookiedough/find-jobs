@@ -1,13 +1,20 @@
 from find_jobs.models import CandidateProfile, ParsedJob
-from find_jobs.scoring import score_domain_alignment, score_level_match, score_stack_alignment
+from find_jobs.scoring import (
+    score_domain_alignment,
+    score_level_match,
+    score_role_type_alignment,
+    score_stack_alignment,
+)
 
 
 def make_candidate_profile() -> CandidateProfile:
     return CandidateProfile(
         years_experience=3.0,
+        preferred_roles=["backend", "platform"],
         preferred_domains=["distributed-systems", "apis", "integrations", "backend"],
         preferred_technologies=["python", "aws", "postgresql", "kubernetes", "java"],
         avoid_domains=["mobile", "frontend", "networking"],
+        avoid_roles=["mobile", "frontend"],
     )
 
 
@@ -79,3 +86,24 @@ def test_score_domain_alignment_drops_for_avoid_domains() -> None:
     job = ParsedJob(raw_text="job", domain_signals=["mobile", "frontend"])
 
     assert score_domain_alignment(job, profile) == 0.0
+
+
+def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", role_type="backend")
+
+    assert score_role_type_alignment(job, profile) == 1.0
+
+
+def test_score_role_type_alignment_is_neutral_for_unknown_role() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", role_type="data")
+
+    assert score_role_type_alignment(job, profile) == 0.5
+
+
+def test_score_role_type_alignment_is_zero_for_avoid_role() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", role_type="frontend")
+
+    assert score_role_type_alignment(job, profile) == 0.0
