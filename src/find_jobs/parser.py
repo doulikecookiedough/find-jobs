@@ -19,6 +19,9 @@ SALARY_PATTERN = re.compile(
     r"\b(CAN|CAD|USD|US)\s+base pay range per year:\s*\$([\d,]+)\s*-\s*\$([\d,]+)",
     re.IGNORECASE,
 )
+LOCATION_PATTERN = re.compile(
+    r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
+)
 TECHNOLOGY_PATTERNS = {
     "python": re.compile(r"\bpython\b", re.IGNORECASE),
     "kotlin": re.compile(r"\bkotlin\b", re.IGNORECASE),
@@ -54,8 +57,8 @@ def parse_job_description(raw_text: str) -> ParsedJob:
     """Parse a raw job description into directly extracted fields."""
     lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
     title = lines[0] if lines else None
-    location = lines[1] if len(lines) > 1 else None
     opening_text = "\n".join(lines[:6])
+    location = _extract_location(lines)
 
     company_match = COMPANY_PATTERN.search(opening_text)
     years_match = EXPERIENCE_PATTERN.search(raw_text)
@@ -97,6 +100,17 @@ def _normalize_currency(raw_currency: str) -> str:
     if currency in {"US", "USD"}:
         return "USD"
     return currency
+
+
+def _extract_location(lines: list[str]) -> str | None:
+    for line in lines[:12]:
+        if line.startswith("Job category:") or line.startswith("Requisition number:"):
+            continue
+        if LOCATION_PATTERN.match(line):
+            if ", CAN" in line:
+                return line.split(", CAN", maxsplit=1)[0]
+            return line
+    return lines[1] if len(lines) > 1 else None
 
 
 def _extract_technologies(raw_text: str) -> list[str]:
