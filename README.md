@@ -16,7 +16,7 @@ The long-term idea is:
 - produce a score, reasons, and risks
 - eventually support batch evaluation and CSV export
 
-For now, the project is still in the setup and scaffolding phase.
+Today, the project is in the parser-first phase. The parser is being hardened against real-world fixtures before scoring logic is introduced.
 
 ## Current approach
 
@@ -29,6 +29,37 @@ This project is being developed with a simple progression:
 5. add scoring and recommendations
 
 The initial implementation will be rule-based and deterministic. LLM-assisted evaluation may be added later, but it is not the starting point.
+
+## Current state
+
+The parser currently extracts:
+
+- title
+- company
+- location
+- years of experience
+- salary range and currency when present
+- seniority
+- role type
+- technologies
+- domain signals
+- work style signals
+
+The parser is tested against multiple real-world fixture styles, including:
+
+- direct pasted job descriptions
+- enterprise platform/integrations postings
+- Apple-style branded listings
+- LinkedIn-wrapped postings with duplicated UI metadata
+
+Current parser fixtures:
+
+- `tests/fixtures/affirm_backend_engineer.txt`
+- `tests/fixtures/integrations_engineer.txt`
+- `tests/fixtures/apple_workflow_foundations.txt`
+- `tests/fixtures/zepp_connected_partnerships.txt`
+- `tests/fixtures/genista_backend_engineer.txt`
+- `tests/fixtures/stripe_backend_engineer.txt`
 
 ## Project goals
 
@@ -70,7 +101,7 @@ uv run pytest
 uv run find-jobs
 ```
 
-At the moment, the CLI is only a scaffold. The main thing to review right now is the project structure and the test layout.
+At the moment, the CLI is still a scaffold. The main implemented area is the parser plus its test fixtures.
 
 ## Reviewer notes
 
@@ -78,7 +109,8 @@ If you want to try the project locally:
 
 - run `uv sync` to create the local environment
 - run `uv run pytest` to execute the test suite
-- inspect `src/find_jobs/` and `tests/` together, since the project is being built module by module
+- inspect `src/find_jobs/parser.py` and `tests/test_parser.py` together
+- review `tests/fixtures/` to see the types of postings currently used to shape the parser
 
 This repository is intentionally experimental. Expect small, reviewable changes rather than a large initial implementation.
 
@@ -94,4 +126,4 @@ The first phase will focus on:
 
 ## Status
 
-Repository initialized. Python/uv scaffold added. Placeholder modules and pytest suites are in place. Core parsing and scoring logic has not started yet.
+Repository initialized. Python/uv scaffold added. Rule-based parser is implemented and fixture-driven tests are passing. Scoring and profile comparison are the next major steps.
