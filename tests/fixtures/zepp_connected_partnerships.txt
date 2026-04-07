@@ -1,0 +1,96 @@
+Full-Stack Engineer, Connected Partnerships
+Vancouver, BC · Reposted 1 day ago · Over 100 applicants
+Promoted by hirer · No response insights available yet
+
+
+On-site
+
+Full-time
+
+Easy Apply
+
+Save
+Save Full-Stack Engineer, Connected Partnerships at Zepp Health
+Full-Stack Engineer, Connected Partnerships
+Zepp Health · Vancouver, BC (On-site)
+
+Easy Apply
+
+Save
+Save Full-Stack Engineer, Connected Partnerships at Zepp Health
+Show more options
+How your profile and resume fit this job
+Get AI-powered advice on this job and more exclusive features with Premium. Try Premium for CA$0
+
+
+
+Show match details
+
+Tailor my resume
+
+Help me stand out
+
+People you can reach out to
+The University of British Columbia logo
+The University of British Columbia logo
+School alumni from The University of British Columbia
+
+Show all
+About the job
+Every morning, millions of people lace up their shoes, step outside, and press "start."
+They trust that the data on their wrist is accurate—that their effort is recorded and their progress matters.
+At Zepp Health, we build the technology behind that trust. Our devices and platforms power a global ecosystem of athletes, runners, and fitness enthusiasts.
+But great products don’t exist in isolation. They connect to apps, services, and developer ecosystems around the world.
+Those connections are built through software—and that's where you come in.
+
+
+About This Role
+
+As a Full-Stack Engineer, Connected Partnerships, you will help build and operate the platform that allows external partners to integrate with Zepp Health.
+You will work across backend services, APIs, and internal tools, enabling fitness platforms and developers to connect to Zepp’s data and capabilities.
+Your work sits between Zepp's internal data platform and external developer ecosystems, ensuring integrations are reliable, secure, and easy to build.
+Besides, as a technical point of contact, you will also support our NA Sales and Marketing team to build customer engagement tools, and relay requirements from our customer to engineering team.
+
+
+What You’ll Do
+
+You will:
+Design and implement backend services and APIs for partner integrations
+Build internal tools and lightweight web applications to support developer onboarding and integration monitoring
+Improve API reliability, performance, and developer experience
+Troubleshoot integration issues and collaborate with product and platform teams to resolve them
+Help evolve Zepp’s developer platform and API ecosystem
+Build lightweight web applications to support sales and marketing team for customer engagement.
+
+
+Technical Background
+
+You should be comfortable working across multiple layers of the stack, including:
+Backend: Java, Spring Boot, REST APIs
+Cloud environments and scalable service architectures
+API security and integration technologies such as OAuth and webhooks
+Building or maintaining full-stack internal tools
+You understand how services interact in production and can debug issues across distributed systems.
+
+
+What You Bring
+
+3+ years of software engineering experience, ideally in backend or full-stack roles
+Experience building API-driven systems or SaaS platforms
+Solid backend development skills (Java/Spring Boot preferred)
+Ability to collaborate across engineering, product, and external partners
+Strong problem-solving and communication skills
+Experience in wearables, fitness, or health technology is a plus.
+
+
+Why This Role
+
+The integrations you build will power real products used by people who run, train, hike, and compete every day.
+If you want to work on technology that connects platforms, enables developers, and supports a global fitness ecosystem, this role offers the chance to make that impact.
+
+
+
+
+Zepp Health is an Equal Opportunity employer and welcomes everyone to our team. If you need reasonable accommodation at any point in the application or interview process, please let us know.
+
+Sharing pronouns is completely optional and will not affect your application. If you wish, you may indicate the pronouns you use (e.g., she/her, he/him, they/them).
