@@ -211,7 +211,7 @@ def test_parse_job_description_extracts_stripe_backend_fields() -> None:
         "authentication",
         "security",
         "backend",
-        "distributed-systems",
+        "apis",
         "developer-platform",
         "iam",
     }
