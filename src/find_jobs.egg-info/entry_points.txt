@@ -1,2 +1,0 @@
-[console_scripts]
-find-jobs = find_jobs.cli:main
