@@ -51,6 +51,7 @@ TECHNOLOGY_PATTERNS = {
     "kong": re.compile(r"\bkong\b", re.IGNORECASE),
 }
 WORK_STYLE_PATTERNS = {
+    "hybrid": re.compile(r"\bhybrid\b", re.IGNORECASE),
     "remote": re.compile(r"\bremote\b", re.IGNORECASE),
     "on-call": re.compile(r"\bon-call\b", re.IGNORECASE),
 }
