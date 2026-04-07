@@ -42,6 +42,9 @@ ROLE_TYPE_PATTERNS = (
     ("frontend", re.compile(r"\bfront[ -]?end\b", re.IGNORECASE)),
     ("mobile", re.compile(r"\bmobile\b|\bios\b|\bandroid\b", re.IGNORECASE)),
 )
+MID_LEVEL_PATTERN = re.compile(r"\b(engineer ii|software engineer ii|mid(?:-level)?|intermediate)\b", re.IGNORECASE)
+SENIOR_LEVEL_PATTERN = re.compile(r"\b(senior|staff|principal|lead)\b", re.IGNORECASE)
+JUNIOR_LEVEL_PATTERN = re.compile(r"\b(junior|entry[ -]?level|new grad|intern)\b", re.IGNORECASE)
 
 
 def parse_job_description(raw_text: str) -> ParsedJob:
@@ -71,6 +74,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         company=company_match.group(1) if company_match else None,
         location=location,
         years_experience_required=float(years_match.group(1)) if years_match else None,
+        seniority=_extract_seniority(title, raw_text, years_match),
         role_type=_extract_role_type(raw_text, title),
         salary_min=salary_min,
         salary_max=salary_max,
@@ -121,5 +125,33 @@ def _extract_role_type(raw_text: str, title: str | None) -> str | None:
     for role_type, pattern in ROLE_TYPE_PATTERNS:
         if pattern.search(search_text):
             return role_type
+
+    return None
+
+
+def _extract_seniority(
+    title: str | None,
+    raw_text: str,
+    years_match: re.Match[str] | None,
+) -> str | None:
+    title_text = title or ""
+
+    if SENIOR_LEVEL_PATTERN.search(title_text):
+        return "senior"
+
+    if MID_LEVEL_PATTERN.search(title_text):
+        return "mid"
+
+    if JUNIOR_LEVEL_PATTERN.search(title_text):
+        return "junior"
+
+    if years_match:
+        years_required = float(years_match.group(1))
+        if years_required < 1.0:
+            return "junior"
+        if years_required <= 3.0:
+            return "mid"
+        if years_required >= 5.0:
+            return "senior"
 
     return None
