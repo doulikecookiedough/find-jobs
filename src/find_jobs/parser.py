@@ -16,6 +16,13 @@ SALARY_PATTERN = re.compile(
     r"\b(CAN|CAD|USD|US)\s+base pay range per year:\s*\$([\d,]+)\s*-\s*\$([\d,]+)",
     re.IGNORECASE,
 )
+TECHNOLOGY_PATTERNS = {
+    "python": re.compile(r"\bpython\b", re.IGNORECASE),
+    "kotlin": re.compile(r"\bkotlin\b", re.IGNORECASE),
+    "aws": re.compile(r"\baws\b", re.IGNORECASE),
+    "mysql": re.compile(r"\bmysql\b", re.IGNORECASE),
+    "kubernetes": re.compile(r"\bkubernetes\b", re.IGNORECASE),
+}
 
 
 def parse_job_description(raw_text: str) -> ParsedJob:
@@ -49,6 +56,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         salary_max=salary_max,
         salary_currency=salary_currency,
         salary_period=salary_period,
+        technologies=_extract_technologies(raw_text),
     )
 
 
@@ -59,3 +67,11 @@ def _normalize_currency(raw_currency: str) -> str:
     if currency in {"US", "USD"}:
         return "USD"
     return currency
+
+
+def _extract_technologies(raw_text: str) -> list[str]:
+    return [
+        technology
+        for technology, pattern in TECHNOLOGY_PATTERNS.items()
+        if pattern.search(raw_text)
+    ]
