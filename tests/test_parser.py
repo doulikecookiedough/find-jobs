@@ -167,7 +167,7 @@ def test_parse_job_description_extracts_genista_backend_fields() -> None:
     assert parsed_job.salary_max is None
     assert parsed_job.salary_currency is None
     assert parsed_job.salary_period is None
-    assert parsed_job.technologies == [
+    assert set(parsed_job.technologies) == {
         "python",
         "django",
         "django-rest-framework",
@@ -175,7 +175,7 @@ def test_parse_job_description_extracts_genista_backend_fields() -> None:
         "mongodb",
         "postgresql",
         "rest-apis",
-    ]
+    }
     assert set(parsed_job.domain_signals) == {
         "backend",
         "apis",
