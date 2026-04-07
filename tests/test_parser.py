@@ -15,6 +15,7 @@ def test_parse_job_description_extracts_direct_fields() -> None:
     assert parsed_job.company == "Affirm"
     assert parsed_job.location == "Remote Canada"
     assert parsed_job.years_experience_required == 1.5
+    assert parsed_job.role_type == "backend"
     assert parsed_job.salary_min == 125000
     assert parsed_job.salary_max == 175000
     assert parsed_job.salary_currency == "CAD"

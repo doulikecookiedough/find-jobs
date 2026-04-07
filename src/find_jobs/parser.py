@@ -35,6 +35,13 @@ DOMAIN_SIGNAL_PATTERNS = {
     "backend": re.compile(r"\bbackend systems?\b", re.IGNORECASE),
     "account-management": re.compile(r"\baccount management\b", re.IGNORECASE),
 }
+ROLE_TYPE_PATTERNS = (
+    ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),
+    ("full-stack", re.compile(r"\bfull[ -]?stack\b", re.IGNORECASE)),
+    ("platform", re.compile(r"\bplatform\b", re.IGNORECASE)),
+    ("frontend", re.compile(r"\bfront[ -]?end\b", re.IGNORECASE)),
+    ("mobile", re.compile(r"\bmobile\b|\bios\b|\bandroid\b", re.IGNORECASE)),
+)
 
 
 def parse_job_description(raw_text: str) -> ParsedJob:
@@ -64,6 +71,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         company=company_match.group(1) if company_match else None,
         location=location,
         years_experience_required=float(years_match.group(1)) if years_match else None,
+        role_type=_extract_role_type(raw_text, title),
         salary_min=salary_min,
         salary_max=salary_max,
         salary_currency=salary_currency,
@@ -105,3 +113,13 @@ def _extract_domain_signals(raw_text: str) -> list[str]:
         for signal, pattern in DOMAIN_SIGNAL_PATTERNS.items()
         if pattern.search(raw_text)
     ]
+
+
+def _extract_role_type(raw_text: str, title: str | None) -> str | None:
+    search_text = "\n".join(filter(None, [title, raw_text]))
+
+    for role_type, pattern in ROLE_TYPE_PATTERNS:
+        if pattern.search(search_text):
+            return role_type
+
+    return None
