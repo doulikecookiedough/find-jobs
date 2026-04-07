@@ -144,9 +144,27 @@ def _extract_company(raw_text: str, opening_text: str) -> str | None:
     if company_match:
         return company_match.group(1)
 
+    header_company = _extract_company_from_header(raw_text)
+    if header_company:
+        return header_company
+
     at_company_match = AT_COMPANY_PATTERN.search(raw_text)
     if at_company_match:
         return at_company_match.group(1)
+
+    return None
+
+
+def _extract_company_from_header(raw_text: str) -> str | None:
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+    if len(lines) < 2:
+        return None
+
+    if lines[0].lower().endswith(" logo"):
+        candidate = lines[1]
+        lowered = candidate.lower()
+        if lowered not in {"share", "show more options"} and " · " not in candidate:
+            return candidate
 
     return None
 
