@@ -21,3 +21,32 @@ class ParsedJob:
     technologies: list[str] = field(default_factory=list)
     domain_signals: list[str] = field(default_factory=list)
     work_style_signals: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class CandidateProfile:
+    years_experience: float
+    preferred_roles: list[str] = field(default_factory=list)
+    preferred_domains: list[str] = field(default_factory=list)
+    preferred_technologies: list[str] = field(default_factory=list)
+    avoid_domains: list[str] = field(default_factory=list)
+    avoid_roles: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class ScoreBreakdown:
+    level_match: float = 0.0
+    stack_alignment: float = 0.0
+    domain_alignment: float = 0.0
+    role_type_alignment: float = 0.0
+    competition_realism: float = 0.0
+
+
+@dataclass(slots=True)
+class JobScore:
+    fit_score: int
+    recommendation: str
+    priority: str
+    reasons: list[str] = field(default_factory=list)
+    risks: list[str] = field(default_factory=list)
+    score_breakdown: ScoreBreakdown = field(default_factory=ScoreBreakdown)
