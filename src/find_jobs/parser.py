@@ -64,6 +64,7 @@ TECHNOLOGY_PATTERNS = {
 }
 WORK_STYLE_PATTERNS = {
     "hybrid": re.compile(r"\bhybrid\b", re.IGNORECASE),
+    "on-site": re.compile(r"\bon-site\b", re.IGNORECASE),
     "remote": re.compile(r"\bremote\b", re.IGNORECASE),
     "on-call": re.compile(r"\bon-call\b", re.IGNORECASE),
 }
