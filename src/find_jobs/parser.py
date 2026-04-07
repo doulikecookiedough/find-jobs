@@ -35,6 +35,10 @@ SALARY_BETWEEN_PATTERN = re.compile(
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
+TITLE_PATTERN = re.compile(
+    r"\b(?:software|backend|frontend|full-stack|platform)\b.*\b(?:engineer|developer)\b|\b(?:engineer|developer)\b.*\b(?:software|backend|frontend|full-stack|platform)\b",
+    re.IGNORECASE,
+)
 TECHNOLOGY_PATTERNS = {
     "c#": re.compile(r"(?<!\w)c#(?!\w)", re.IGNORECASE),
     "dotnet-core": re.compile(r"\.net core\b|\bdotnet core\b", re.IGNORECASE),
@@ -100,7 +104,7 @@ JUNIOR_LEVEL_PATTERN = re.compile(r"\b(junior|entry[ -]?level|new grad|intern)\b
 def parse_job_description(raw_text: str) -> ParsedJob:
     """Parse a raw job description into directly extracted fields."""
     lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
-    title = lines[0] if lines else None
+    title = _extract_title(lines)
     opening_text = "\n".join(lines[:6])
     location = _extract_location(lines)
 
@@ -220,6 +224,35 @@ def _extract_location(lines: list[str]) -> str | None:
                 return normalized_line.split(", CAN", maxsplit=1)[0]
             return normalized_line
     return lines[1] if len(lines) > 1 else None
+
+
+def _extract_title(lines: list[str]) -> str | None:
+    ignored_prefixes = (
+        "share",
+        "show more options",
+        "save",
+        "easy apply",
+        "about the job",
+        "applied ",
+        "see application",
+    )
+
+    for line in lines[:20]:
+        normalized_line = line.strip()
+        if not normalized_line:
+            continue
+
+        lowered = normalized_line.lower()
+        if lowered.endswith(" logo"):
+            continue
+        if lowered.startswith(ignored_prefixes):
+            continue
+        if " at " in lowered and TITLE_PATTERN.search(normalized_line):
+            continue
+        if TITLE_PATTERN.search(normalized_line):
+            return normalized_line
+
+    return lines[0] if lines else None
 
 
 def _normalize_location_candidate(line: str) -> str:
