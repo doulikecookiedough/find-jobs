@@ -11,6 +11,7 @@ COMPANY_PATTERN = re.compile(
     r"^(?!Our company\b)([A-Z][A-Za-z0-9&'., -]+?) is\b",
     re.MULTILINE,
 )
+AT_COMPANY_PATTERN = re.compile(r"\bAt\s+([A-Z][A-Za-z0-9&'. -]+),", re.MULTILINE)
 EXPERIENCE_PATTERN = re.compile(
     r"(\d+(?:\.\d+)?)\+?\s+years?\b",
     re.IGNORECASE,
@@ -86,14 +87,14 @@ def parse_job_description(raw_text: str) -> ParsedJob:
     opening_text = "\n".join(lines[:6])
     location = _extract_location(lines)
 
-    company_match = COMPANY_PATTERN.search(opening_text)
+    company = _extract_company(raw_text, opening_text)
     years_required = _extract_years_experience_required(raw_text)
     salary_min, salary_max, salary_currency, salary_period = _extract_salary(lines)
 
     return ParsedJob(
         raw_text=raw_text,
         title=title,
-        company=company_match.group(1) if company_match else None,
+        company=company,
         location=location,
         years_experience_required=years_required,
         seniority=_extract_seniority(title, years_required),
@@ -115,6 +116,18 @@ def _normalize_currency(raw_currency: str) -> str:
     if currency in {"US", "USD"}:
         return "USD"
     return currency
+
+
+def _extract_company(raw_text: str, opening_text: str) -> str | None:
+    company_match = COMPANY_PATTERN.search(opening_text)
+    if company_match:
+        return company_match.group(1)
+
+    at_company_match = AT_COMPANY_PATTERN.search(raw_text)
+    if at_company_match:
+        return at_company_match.group(1)
+
+    return None
 
 
 def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | None, str | None]:
