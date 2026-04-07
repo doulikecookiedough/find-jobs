@@ -1,0 +1,67 @@
+Metadata-Version: 2.4
+Name: find-jobs
+Version: 0.1.0
+Summary: CLI-first tool for evaluating job postings against a candidate profile.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+
+# find-jobs
+
+`find-jobs` is a backend-focused tool for evaluating job postings against a candidate profile and producing a clear match assessment.
+
+The goal is to help prioritize applications, reduce wasted effort, and make job search decisions more systematic.
+
+## Project goals
+
+- Parse raw job descriptions into structured data.
+- Score job postings against a candidate profile using explicit rules.
+- Produce a clear, CLI-friendly evaluation output.
+- Keep the architecture modular, testable, and easy to evolve.
+
+## Development approach
+
+This project will be built incrementally.
+
+We will prioritize:
+
+- clear domain models
+- readable rule-based logic before introducing AI or LLMs
+- tests alongside behavior
+- documentation as the project evolves
+
+## Project structure
+
+The initial Python package is organized by responsibility:
+
+- `src/find_jobs/cli.py`: command-line entrypoint
+- `src/find_jobs/parser.py`: job description parsing
+- `src/find_jobs/profile.py`: candidate profile handling
+- `src/find_jobs/comparison.py`: profile-to-job comparison logic
+- `src/find_jobs/scoring.py`: scoring and recommendation logic
+- `src/find_jobs/models.py`: shared domain models
+
+Each module has a corresponding pytest file under `tests/`.
+
+## Development setup
+
+This project uses `uv` for environment and dependency management.
+
+```bash
+uv sync
+uv run pytest
+uv run find-jobs
+```
+
+## Initial scope
+
+The first phase will focus on:
+
+1. project structure
+2. core models
+3. rule-based parsing
+4. scoring logic
+5. a CLI entrypoint
+
+## Status
+
+Repository initialized. Python/uv scaffold added. Core implementation has not started yet.

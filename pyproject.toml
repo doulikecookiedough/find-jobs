@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "find-jobs"
+version = "0.1.0"
+description = "CLI-first tool for evaluating job postings against a candidate profile."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+find-jobs = "find_jobs.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0,<9",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

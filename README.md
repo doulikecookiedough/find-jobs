@@ -1,8 +1,34 @@
 # find-jobs
 
-`find-jobs` is a backend-focused tool for evaluating job postings against a candidate profile and producing a clear match assessment.
+`find-jobs` is an experimental Python project for evaluating job postings against a candidate profile and producing a simple match assessment.
 
-The goal is to help prioritize applications, reduce wasted effort, and make job search decisions more systematic.
+The goal is to reduce job-search fatigue by turning raw job descriptions into something easier to review, compare, and eventually rank.
+
+This repository is intentionally being built in small stages. The current focus is not completeness. The focus is a clean structure, strong tests, and a workflow that is easy to iterate on.
+
+## Why this exists
+
+The long-term idea is:
+
+- ingest a full job description
+- extract key signals
+- compare those signals against a candidate profile
+- produce a score, reasons, and risks
+- eventually support batch evaluation and CSV export
+
+For now, the project is still in the setup and scaffolding phase.
+
+## Current approach
+
+This project is being developed with a simple progression:
+
+1. scaffold the package and test layout
+2. build a parser for raw job descriptions
+3. add a candidate profile model
+4. compare profile data against parsed job signals
+5. add scoring and recommendations
+
+The initial implementation will be rule-based and deterministic. LLM-assisted evaluation may be added later, but it is not the starting point.
 
 ## Project goals
 
@@ -11,18 +37,52 @@ The goal is to help prioritize applications, reduce wasted effort, and make job 
 - Produce a clear, CLI-friendly evaluation output.
 - Keep the architecture modular, testable, and easy to evolve.
 
-## Development approach
-
-This project will be built incrementally.
-
-We will prioritize:
+## Development principles
 
 - clear domain models
-- readable rule-based logic before introducing AI or LLMs
-- tests alongside behavior
-- documentation as the project evolves
+- readable rule-based logic first
+- tests as a first-class part of development
+- incremental design instead of premature complexity
+- simple local execution for reviewers and contributors
 
-## Initial scope
+## Project structure
+
+The Python package is organized by responsibility:
+
+- `src/find_jobs/cli.py`: command-line entrypoint
+- `src/find_jobs/parser.py`: job description parsing
+- `src/find_jobs/profile.py`: candidate profile handling
+- `src/find_jobs/comparison.py`: profile-to-job comparison logic
+- `src/find_jobs/scoring.py`: scoring and recommendation logic
+- `src/find_jobs/models.py`: shared domain models
+
+Each module has a corresponding pytest file under `tests/`.
+
+## Quick start
+
+This project uses `uv` for environment and dependency management.
+
+From the repository root:
+
+```bash
+uv sync
+uv run pytest
+uv run find-jobs
+```
+
+At the moment, the CLI is only a scaffold. The main thing to review right now is the project structure and the test layout.
+
+## Reviewer notes
+
+If you want to try the project locally:
+
+- run `uv sync` to create the local environment
+- run `uv run pytest` to execute the test suite
+- inspect `src/find_jobs/` and `tests/` together, since the project is being built module by module
+
+This repository is intentionally experimental. Expect small, reviewable changes rather than a large initial implementation.
+
+## Near-term scope
 
 The first phase will focus on:
 
@@ -34,4 +94,4 @@ The first phase will focus on:
 
 ## Status
 
-Repository initialized. README added. Core implementation has not started yet.
+Repository initialized. Python/uv scaffold added. Placeholder modules and pytest suites are in place. Core parsing and scoring logic has not started yet.
