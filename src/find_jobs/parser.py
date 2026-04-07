@@ -247,6 +247,12 @@ def _extract_domain_signals(raw_text: str) -> list[str]:
 
 
 def _extract_role_type(raw_text: str, title: str | None) -> str | None:
+    title_text = title or ""
+
+    for role_type, pattern in ROLE_TYPE_PATTERNS:
+        if pattern.search(title_text):
+            return role_type
+
     search_text = "\n".join(filter(None, [title, raw_text]))
 
     for role_type, pattern in ROLE_TYPE_PATTERNS:
