@@ -23,6 +23,10 @@ TECHNOLOGY_PATTERNS = {
     "mysql": re.compile(r"\bmysql\b", re.IGNORECASE),
     "kubernetes": re.compile(r"\bkubernetes\b", re.IGNORECASE),
 }
+WORK_STYLE_PATTERNS = {
+    "remote": re.compile(r"\bremote\b", re.IGNORECASE),
+    "on-call": re.compile(r"\bon-call\b", re.IGNORECASE),
+}
 
 
 def parse_job_description(raw_text: str) -> ParsedJob:
@@ -57,6 +61,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         salary_currency=salary_currency,
         salary_period=salary_period,
         technologies=_extract_technologies(raw_text),
+        work_style_signals=_extract_work_style_signals(raw_text),
     )
 
 
@@ -73,5 +78,13 @@ def _extract_technologies(raw_text: str) -> list[str]:
     return [
         technology
         for technology, pattern in TECHNOLOGY_PATTERNS.items()
+        if pattern.search(raw_text)
+    ]
+
+
+def _extract_work_style_signals(raw_text: str) -> list[str]:
+    return [
+        signal
+        for signal, pattern in WORK_STYLE_PATTERNS.items()
         if pattern.search(raw_text)
     ]

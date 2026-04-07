@@ -28,4 +28,4 @@ def test_parse_job_description_leaves_inferred_fields_empty_for_now() -> None:
 
     assert parsed_job.technologies == ["python", "kotlin", "aws", "mysql", "kubernetes"]
     assert parsed_job.domain_signals == []
-    assert parsed_job.work_style_signals == []
+    assert parsed_job.work_style_signals == ["remote", "on-call"]
