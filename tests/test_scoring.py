@@ -1,30 +1,58 @@
 from find_jobs.models import CandidateProfile, ParsedJob
-from find_jobs.scoring import score_level_match
+from find_jobs.scoring import score_level_match, score_stack_alignment
+
+
+def make_candidate_profile() -> CandidateProfile:
+    return CandidateProfile(
+        years_experience=3.0,
+        preferred_technologies=["python", "aws", "postgresql", "kubernetes", "java"],
+    )
 
 
 def test_score_level_match_is_high_for_matching_experience() -> None:
-    profile = CandidateProfile(years_experience=3.0)
+    profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid")
 
     assert score_level_match(job, profile) == 1.0
 
 
 def test_score_level_match_drops_for_small_experience_gap() -> None:
-    profile = CandidateProfile(years_experience=3.0)
+    profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=4.0, seniority="mid")
 
     assert score_level_match(job, profile) == 0.85
 
 
 def test_score_level_match_is_zero_for_strong_level_mismatch() -> None:
-    profile = CandidateProfile(years_experience=3.0)
+    profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=7.0, seniority="senior")
 
     assert score_level_match(job, profile) == 0.0
 
 
 def test_score_level_match_uses_seniority_when_years_are_missing() -> None:
-    profile = CandidateProfile(years_experience=3.0)
+    profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", seniority="senior")
 
     assert score_level_match(job, profile) == 0.35
+
+
+def test_score_stack_alignment_is_high_for_strong_overlap() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", technologies=["python", "aws", "postgresql"])
+
+    assert score_stack_alignment(job, profile) == 1.0
+
+
+def test_score_stack_alignment_is_partial_for_mixed_stack() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", technologies=["python", "ruby", "mysql", "aws"])
+
+    assert score_stack_alignment(job, profile) == 0.5
+
+
+def test_score_stack_alignment_returns_neutral_when_job_stack_is_missing() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job")
+
+    assert score_stack_alignment(job, profile) == 0.5

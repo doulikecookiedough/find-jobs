@@ -32,3 +32,16 @@ def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
     if years_gap <= 3.0:
         return 0.35
     return 0.0
+
+
+def score_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
+    """Score technology overlap between a job and the candidate profile."""
+    if not job.technologies:
+        return 0.5
+
+    preferred_technologies = set(profile.preferred_technologies)
+    if not preferred_technologies:
+        return 0.0
+
+    matched_technologies = preferred_technologies.intersection(job.technologies)
+    return len(matched_technologies) / len(set(job.technologies))
