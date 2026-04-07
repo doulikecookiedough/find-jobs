@@ -150,3 +150,35 @@ def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> 
         "developer-platform",
     }
     assert parsed_job.work_style_signals == ["on-site"]
+
+
+def test_parse_job_description_extracts_genista_backend_fields() -> None:
+    raw_text = (FIXTURES_DIR / "genista_backend_engineer.txt").read_text()
+
+    parsed_job = parse_job_description(raw_text)
+
+    assert parsed_job.title == "Software Engineer"
+    assert parsed_job.company == "Genista Biosciences"
+    assert parsed_job.location == "Canada"
+    assert parsed_job.years_experience_required == 2.0
+    assert parsed_job.seniority == "mid"
+    assert parsed_job.role_type == "backend"
+    assert parsed_job.salary_min is None
+    assert parsed_job.salary_max is None
+    assert parsed_job.salary_currency is None
+    assert parsed_job.salary_period is None
+    assert parsed_job.technologies == [
+        "python",
+        "django",
+        "django-rest-framework",
+        "mysql",
+        "mongodb",
+        "postgresql",
+        "rest-apis",
+    ]
+    assert set(parsed_job.domain_signals) == {
+        "backend",
+        "apis",
+        "integrations",
+    }
+    assert parsed_job.work_style_signals == ["remote"]
