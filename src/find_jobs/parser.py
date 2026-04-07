@@ -31,11 +31,24 @@ LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
 TECHNOLOGY_PATTERNS = {
+    "c#": re.compile(r"(?<!\w)c#(?!\w)", re.IGNORECASE),
+    "dotnet-core": re.compile(r"\.net core\b|\bdotnet core\b", re.IGNORECASE),
+    "typescript": re.compile(r"\btypescript\b", re.IGNORECASE),
     "python": re.compile(r"\bpython\b", re.IGNORECASE),
     "kotlin": re.compile(r"\bkotlin\b", re.IGNORECASE),
     "aws": re.compile(r"\baws\b", re.IGNORECASE),
+    "azure": re.compile(r"\bazure\b", re.IGNORECASE),
+    "docker": re.compile(r"\bdocker\b", re.IGNORECASE),
     "mysql": re.compile(r"\bmysql\b", re.IGNORECASE),
     "kubernetes": re.compile(r"\bkubernetes\b", re.IGNORECASE),
+    "postgresql": re.compile(r"\bpostgresql\b", re.IGNORECASE),
+    "sql-server": re.compile(r"\bsql server\b", re.IGNORECASE),
+    "cosmosdb": re.compile(r"\bcosmosdb\b", re.IGNORECASE),
+    "kafka": re.compile(r"\bkafka\b", re.IGNORECASE),
+    "oauth2": re.compile(r"\boauth2\b", re.IGNORECASE),
+    "jwt": re.compile(r"\bjwt\b", re.IGNORECASE),
+    "saml": re.compile(r"\bsaml\b", re.IGNORECASE),
+    "kong": re.compile(r"\bkong\b", re.IGNORECASE),
 }
 WORK_STYLE_PATTERNS = {
     "remote": re.compile(r"\bremote\b", re.IGNORECASE),
