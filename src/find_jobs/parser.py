@@ -23,6 +23,10 @@ SALARY_PATTERN = re.compile(
     r"\b(CAN|CAD|USD|US)\s+base pay range per year:\s*\$([\d,]+)\s*-\s*\$([\d,]+)",
     re.IGNORECASE,
 )
+SALARY_RANGE_PATTERN = re.compile(
+    r"\$([\d,]+)\s*(?:-|to)\s*\$([\d,]+)\s+per\s+(year|annum)",
+    re.IGNORECASE,
+)
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
@@ -66,18 +70,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
 
     company_match = COMPANY_PATTERN.search(opening_text)
     years_required = _extract_years_experience_required(raw_text)
-    salary_match = SALARY_PATTERN.search(raw_text)
-
-    salary_currency = None
-    salary_min = None
-    salary_max = None
-    salary_period = None
-
-    if salary_match:
-        salary_currency = _normalize_currency(salary_match.group(1))
-        salary_min = int(salary_match.group(2).replace(",", ""))
-        salary_max = int(salary_match.group(3).replace(",", ""))
-        salary_period = "yearly"
+    salary_min, salary_max, salary_currency, salary_period = _extract_salary(lines)
 
     return ParsedJob(
         raw_text=raw_text,
@@ -104,6 +97,33 @@ def _normalize_currency(raw_currency: str) -> str:
     if currency in {"US", "USD"}:
         return "USD"
     return currency
+
+
+def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | None, str | None]:
+    for line in lines:
+        normalized_line = line.strip()
+        if not normalized_line:
+            continue
+
+        salary_match = SALARY_PATTERN.search(normalized_line)
+        if salary_match:
+            return (
+                int(salary_match.group(2).replace(",", "")),
+                int(salary_match.group(3).replace(",", "")),
+                _normalize_currency(salary_match.group(1)),
+                "yearly",
+            )
+
+        salary_range_match = SALARY_RANGE_PATTERN.search(normalized_line)
+        if salary_range_match:
+            return (
+                int(salary_range_match.group(1).replace(",", "")),
+                int(salary_range_match.group(2).replace(",", "")),
+                "CAD",
+                "yearly",
+            )
+
+    return None, None, None, None
 
 
 def _extract_years_experience_required(raw_text: str) -> float | None:
