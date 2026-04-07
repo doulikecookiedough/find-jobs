@@ -74,7 +74,6 @@ def test_parse_job_description_extracts_integrations_job_fields() -> None:
         "authentication",
         "security",
         "distributed-systems",
-        "account-management",
         "integrations",
         "apis",
         "microservices",

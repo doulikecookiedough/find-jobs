@@ -61,6 +61,10 @@ DOMAIN_SIGNAL_PATTERNS = {
     "distributed-systems": re.compile(r"\bdistributed systems\b", re.IGNORECASE),
     "backend": re.compile(r"\bbackend systems?\b", re.IGNORECASE),
     "account-management": re.compile(r"\baccount management\b", re.IGNORECASE),
+    "integrations": re.compile(r"\bintegrations?\b|\bintegration platform\b", re.IGNORECASE),
+    "apis": re.compile(r"\bapi\b|\bapis\b|\bapi gateways\b|\bapi development\b", re.IGNORECASE),
+    "microservices": re.compile(r"\bmicroservices architecture\b|\bmicroservices\b", re.IGNORECASE),
+    "event-streaming": re.compile(r"\bevent streaming\b|\bmessage queues\b|\bservice bus\b|\bkafka\b", re.IGNORECASE),
 }
 ROLE_TYPE_PATTERNS = (
     ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),
