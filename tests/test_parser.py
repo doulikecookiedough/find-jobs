@@ -182,3 +182,37 @@ def test_parse_job_description_extracts_genista_backend_fields() -> None:
         "integrations",
     }
     assert parsed_job.work_style_signals == ["remote"]
+
+
+def test_parse_job_description_extracts_stripe_backend_fields() -> None:
+    raw_text = (FIXTURES_DIR / "stripe_backend_engineer.txt").read_text()
+
+    parsed_job = parse_job_description(raw_text)
+
+    assert parsed_job.title == "Backend Engineer, Developer Experience & Product Platform"
+    assert parsed_job.company == "Stripe"
+    assert parsed_job.location == "Canada"
+    assert parsed_job.years_experience_required == 2.0
+    assert parsed_job.seniority == "mid"
+    assert parsed_job.role_type == "backend"
+    assert parsed_job.salary_min == 135200
+    assert parsed_job.salary_max == 258000
+    assert parsed_job.salary_currency == "CAD"
+    assert parsed_job.salary_period == "yearly"
+    assert set(parsed_job.technologies) == {
+        "aws",
+        "java",
+        "ruby",
+        "oauth",
+        "sso",
+        "scim",
+    }
+    assert set(parsed_job.domain_signals) == {
+        "authentication",
+        "security",
+        "backend",
+        "distributed-systems",
+        "developer-platform",
+        "iam",
+    }
+    assert set(parsed_job.work_style_signals) == {"remote", "hybrid"}
