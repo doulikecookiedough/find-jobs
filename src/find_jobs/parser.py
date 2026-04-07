@@ -32,6 +32,10 @@ SALARY_BETWEEN_PATTERN = re.compile(
     r"\bbetween\s+\$([\d,]+)\s+and\s+\$([\d,]+)",
     re.IGNORECASE,
 )
+SALARY_CURRENCY_RANGE_PATTERN = re.compile(
+    r"\b(CA|US)\$([\d,]+)\s*-\s*(?:CA\$|US\$|\$)([\d,]+)",
+    re.IGNORECASE,
+)
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
@@ -138,7 +142,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
 
 def _normalize_currency(raw_currency: str) -> str:
     currency = raw_currency.upper()
-    if currency in {"CAN", "CAD"}:
+    if currency in {"CA", "CAN", "CAD"}:
         return "CAD"
     if currency in {"US", "USD"}:
         return "USD"
@@ -205,6 +209,15 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
                 int(salary_between_match.group(1).replace(",", "")),
                 int(salary_between_match.group(2).replace(",", "")),
                 "CAD",
+                "yearly",
+            )
+
+        salary_currency_range_match = SALARY_CURRENCY_RANGE_PATTERN.search(normalized_line)
+        if salary_currency_range_match:
+            return (
+                int(salary_currency_range_match.group(2).replace(",", "")),
+                int(salary_currency_range_match.group(3).replace(",", "")),
+                _normalize_currency(salary_currency_range_match.group(1)),
                 "yearly",
             )
 
