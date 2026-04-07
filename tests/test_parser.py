@@ -116,3 +116,35 @@ def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
         "ci-cd",
     ]
     assert parsed_job.work_style_signals == ["on-call"]
+
+
+def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> None:
+    raw_text = (FIXTURES_DIR / "zepp_connected_partnerships.txt").read_text()
+
+    parsed_job = parse_job_description(raw_text)
+
+    assert parsed_job.title == "Full-Stack Engineer, Connected Partnerships"
+    assert parsed_job.company == "Zepp Health"
+    assert parsed_job.location == "Vancouver, BC"
+    assert parsed_job.years_experience_required == 3.0
+    assert parsed_job.seniority == "mid"
+    assert parsed_job.role_type == "full-stack"
+    assert parsed_job.salary_min is None
+    assert parsed_job.salary_max is None
+    assert parsed_job.salary_currency is None
+    assert parsed_job.salary_period is None
+    assert parsed_job.technologies == [
+        "java",
+        "spring-boot",
+        "rest-apis",
+        "oauth",
+        "webhooks",
+    ]
+    assert parsed_job.domain_signals == [
+        "backend",
+        "integrations",
+        "apis",
+        "distributed-systems",
+        "developer-platform",
+    ]
+    assert parsed_job.work_style_signals == ["on-site"]
