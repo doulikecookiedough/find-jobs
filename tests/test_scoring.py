@@ -1,11 +1,13 @@
 from find_jobs.models import CandidateProfile, ParsedJob
-from find_jobs.scoring import score_level_match, score_stack_alignment
+from find_jobs.scoring import score_domain_alignment, score_level_match, score_stack_alignment
 
 
 def make_candidate_profile() -> CandidateProfile:
     return CandidateProfile(
         years_experience=3.0,
+        preferred_domains=["distributed-systems", "apis", "integrations", "backend"],
         preferred_technologies=["python", "aws", "postgresql", "kubernetes", "java"],
+        avoid_domains=["mobile", "frontend", "networking"],
     )
 
 
@@ -56,3 +58,24 @@ def test_score_stack_alignment_returns_neutral_when_job_stack_is_missing() -> No
     job = ParsedJob(raw_text="job")
 
     assert score_stack_alignment(job, profile) == 0.5
+
+
+def test_score_domain_alignment_is_high_for_preferred_domains() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", domain_signals=["backend", "apis", "distributed-systems"])
+
+    assert score_domain_alignment(job, profile) == 1.0
+
+
+def test_score_domain_alignment_returns_neutral_for_unknown_domains() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", domain_signals=["wearables"])
+
+    assert score_domain_alignment(job, profile) == 0.5
+
+
+def test_score_domain_alignment_drops_for_avoid_domains() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", domain_signals=["mobile", "frontend"])
+
+    assert score_domain_alignment(job, profile) == 0.0

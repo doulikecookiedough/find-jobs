@@ -45,3 +45,22 @@ def score_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
 
     matched_technologies = preferred_technologies.intersection(job.technologies)
     return len(matched_technologies) / len(set(job.technologies))
+
+
+def score_domain_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
+    """Score how well a job's domain signals align with the candidate profile."""
+    if not job.domain_signals:
+        return 0.5
+
+    job_domains = set(job.domain_signals)
+    preferred_domains = set(profile.preferred_domains)
+    avoid_domains = set(profile.avoid_domains)
+
+    positive_matches = len(job_domains.intersection(preferred_domains))
+    negative_matches = len(job_domains.intersection(avoid_domains))
+
+    if positive_matches == 0 and negative_matches == 0:
+        return 0.5
+
+    raw_score = (positive_matches - negative_matches) / len(job_domains)
+    return max(0.0, min(1.0, 0.5 + raw_score))
