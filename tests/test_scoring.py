@@ -1,5 +1,6 @@
 from find_jobs.models import CandidateProfile, ParsedJob
 from find_jobs.scoring import (
+    score_competition_realism,
     score_domain_alignment,
     score_level_match,
     score_role_type_alignment,
@@ -107,3 +108,24 @@ def test_score_role_type_alignment_is_zero_for_avoid_role() -> None:
     job = ParsedJob(raw_text="job", role_type="frontend")
 
     assert score_role_type_alignment(job, profile) == 0.0
+
+
+def test_score_competition_realism_is_high_for_reachable_role() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid", role_type="backend")
+
+    assert score_competition_realism(job, profile) == 1.0
+
+
+def test_score_competition_realism_drops_for_stretch_role() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", years_experience_required=5.0, seniority="senior", role_type="backend")
+
+    assert score_competition_realism(job, profile) == 0.55
+
+
+def test_score_competition_realism_is_zero_for_avoid_role() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid", role_type="frontend")
+
+    assert score_competition_realism(job, profile) == 0.0
