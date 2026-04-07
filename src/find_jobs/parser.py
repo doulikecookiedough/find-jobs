@@ -7,7 +7,10 @@ import re
 from find_jobs.models import ParsedJob
 
 
-COMPANY_PATTERN = re.compile(r"^([A-Z][A-Za-z0-9&'., -]+?) is\b", re.MULTILINE)
+COMPANY_PATTERN = re.compile(
+    r"^(?!Our company\b)([A-Z][A-Za-z0-9&'., -]+?) is\b",
+    re.MULTILINE,
+)
 EXPERIENCE_PATTERN = re.compile(
     r"(\d+(?:\.\d+)?)\+?\s+years? of experience",
     re.IGNORECASE,
@@ -52,8 +55,9 @@ def parse_job_description(raw_text: str) -> ParsedJob:
     lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
     title = lines[0] if lines else None
     location = lines[1] if len(lines) > 1 else None
+    opening_text = "\n".join(lines[:6])
 
-    company_match = COMPANY_PATTERN.search(raw_text)
+    company_match = COMPANY_PATTERN.search(opening_text)
     years_match = EXPERIENCE_PATTERN.search(raw_text)
     salary_match = SALARY_PATTERN.search(raw_text)
 
