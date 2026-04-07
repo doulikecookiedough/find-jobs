@@ -1,5 +1,10 @@
-import find_jobs.models as models
+from find_jobs.models import ParsedJob
 
 
-def test_models_module_exists() -> None:
-    assert models is not None
+def test_parsed_job_defaults() -> None:
+    parsed_job = ParsedJob(raw_text="Job text")
+
+    assert parsed_job.raw_text == "Job text"
+    assert parsed_job.title is None
+    assert parsed_job.salary_min is None
+    assert parsed_job.technologies == []
