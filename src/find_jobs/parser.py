@@ -35,6 +35,9 @@ SALARY_BETWEEN_PATTERN = re.compile(
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
+COUNTRY_LOCATION_PATTERN = re.compile(r"^(Canada|United States|USA|US)$", re.IGNORECASE)
+REMOTE_LOCATION_PATTERN = re.compile(r"^Remote\s+(Canada|United States|USA|US)$", re.IGNORECASE)
+LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
 TITLE_PATTERN = re.compile(
     r"\b(?:software|backend|frontend|full-stack|platform)\b.*\b(?:engineer|developer)\b|\b(?:engineer|developer)\b.*\b(?:software|backend|frontend|full-stack|platform)\b",
     re.IGNORECASE,
@@ -237,11 +240,17 @@ def _extract_location(lines: list[str]) -> str | None:
         if line.startswith("Job category:") or line.startswith("Requisition number:"):
             continue
         normalized_line = _normalize_location_candidate(line)
+        if REMOTE_LOCATION_PATTERN.match(normalized_line):
+            return normalized_line
+        if COUNTRY_LOCATION_PATTERN.match(normalized_line):
+            return normalized_line
+        if LONG_LOCATION_PATTERN.match(normalized_line):
+            return normalized_line
         if LOCATION_PATTERN.match(normalized_line):
             if ", CAN" in normalized_line:
                 return normalized_line.split(", CAN", maxsplit=1)[0]
             return normalized_line
-    return lines[1] if len(lines) > 1 else None
+    return None
 
 
 def _extract_title(lines: list[str]) -> str | None:
