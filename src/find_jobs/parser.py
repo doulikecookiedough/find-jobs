@@ -208,11 +208,18 @@ def _extract_location(lines: list[str]) -> str | None:
     for line in lines[:12]:
         if line.startswith("Job category:") or line.startswith("Requisition number:"):
             continue
-        if LOCATION_PATTERN.match(line):
-            if ", CAN" in line:
-                return line.split(", CAN", maxsplit=1)[0]
-            return line
+        normalized_line = _normalize_location_candidate(line)
+        if LOCATION_PATTERN.match(normalized_line):
+            if ", CAN" in normalized_line:
+                return normalized_line.split(", CAN", maxsplit=1)[0]
+            return normalized_line
     return lines[1] if len(lines) > 1 else None
+
+
+def _normalize_location_candidate(line: str) -> str:
+    candidate = line.split(" · ", maxsplit=1)[0]
+    candidate = re.sub(r"\s+\([^)]*\)$", "", candidate)
+    return candidate.strip()
 
 
 def _extract_technologies(raw_text: str) -> list[str]:
