@@ -44,6 +44,8 @@ TECHNOLOGY_PATTERNS = {
     "java": re.compile(r"\bjava\b", re.IGNORECASE),
     "scala": re.compile(r"\bscala\b", re.IGNORECASE),
     "kotlin": re.compile(r"\bkotlin\b", re.IGNORECASE),
+    "spring-boot": re.compile(r"\bspring boot\b", re.IGNORECASE),
+    "rest-apis": re.compile(r"\brest apis?\b", re.IGNORECASE),
     "aws": re.compile(r"\baws\b", re.IGNORECASE),
     "azure": re.compile(r"\bazure\b", re.IGNORECASE),
     "docker": re.compile(r"\bdocker\b", re.IGNORECASE),
@@ -54,8 +56,10 @@ TECHNOLOGY_PATTERNS = {
     "cosmosdb": re.compile(r"\bcosmosdb\b", re.IGNORECASE),
     "kafka": re.compile(r"\bkafka\b", re.IGNORECASE),
     "oauth2": re.compile(r"\boauth2\b", re.IGNORECASE),
+    "oauth": re.compile(r"\boauth\b", re.IGNORECASE),
     "jwt": re.compile(r"\bjwt\b", re.IGNORECASE),
     "saml": re.compile(r"\bsaml\b", re.IGNORECASE),
+    "webhooks": re.compile(r"\bwebhooks\b", re.IGNORECASE),
     "kong": re.compile(r"\bkong\b", re.IGNORECASE),
 }
 WORK_STYLE_PATTERNS = {
