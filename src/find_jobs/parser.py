@@ -12,11 +12,11 @@ COMPANY_PATTERN = re.compile(
     re.MULTILINE,
 )
 EXPERIENCE_PATTERN = re.compile(
-    r"(\d+(?:\.\d+)?)\+?\s+years? of experience",
+    r"(\d+(?:\.\d+)?)\+?\s+years?\b",
     re.IGNORECASE,
 )
 EXPERIENCE_RANGE_PATTERN = re.compile(
-    r"(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s+years?\b(?:(?!\n).){0,120}?\bexperience\b",
+    r"(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s+years?\b",
     re.IGNORECASE,
 )
 SALARY_PATTERN = re.compile(
@@ -107,11 +107,26 @@ def _normalize_currency(raw_currency: str) -> str:
 
 
 def _extract_years_experience_required(raw_text: str) -> float | None:
-    range_match = EXPERIENCE_RANGE_PATTERN.search(raw_text)
+    for line in raw_text.splitlines():
+        normalized_line = line.strip()
+        if not normalized_line:
+            continue
+        if "experience" not in normalized_line.lower():
+            continue
+
+        years_required = _extract_years_from_line(normalized_line)
+        if years_required is not None:
+            return years_required
+
+    return None
+
+
+def _extract_years_from_line(line: str) -> float | None:
+    range_match = EXPERIENCE_RANGE_PATTERN.search(line)
     if range_match:
         return float(range_match.group(1))
 
-    years_match = EXPERIENCE_PATTERN.search(raw_text)
+    years_match = EXPERIENCE_PATTERN.search(line)
     if years_match:
         return float(years_match.group(1))
 
