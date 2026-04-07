@@ -80,3 +80,39 @@ def test_parse_job_description_extracts_integrations_job_fields() -> None:
         "event-streaming",
     ]
     assert parsed_job.work_style_signals == ["hybrid"]
+
+
+def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
+    raw_text = (FIXTURES_DIR / "apple_workflow_foundations.txt").read_text()
+
+    parsed_job = parse_job_description(raw_text)
+
+    assert parsed_job.title == "Software Engineer, Workflow Foundations"
+    assert parsed_job.company == "Apple"
+    assert parsed_job.location == "Vancouver, British Columbia, Canada"
+    assert parsed_job.years_experience_required == 3.0
+    assert parsed_job.seniority == "mid"
+    assert parsed_job.role_type == "backend"
+    assert parsed_job.salary_min == 116800
+    assert parsed_job.salary_max == 226000
+    assert parsed_job.salary_currency == "CAD"
+    assert parsed_job.salary_period == "yearly"
+    assert parsed_job.technologies == [
+        "go",
+        "python",
+        "java",
+        "scala",
+        "kotlin",
+    ]
+    assert parsed_job.domain_signals == [
+        "distributed-systems",
+        "backend",
+        "integrations",
+        "apis",
+        "microservices",
+        "developer-productivity",
+        "event-driven",
+        "observability",
+        "ci-cd",
+    ]
+    assert parsed_job.work_style_signals == ["on-call"]
