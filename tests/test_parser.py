@@ -209,3 +209,42 @@ def test_parse_job_description_extracts_stripe_backend_fields() -> None:
         ],
         "work_style_signals": ["hybrid", "remote"],
     }
+
+
+def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> None:
+    parsed_job = parse_job_description(load_fixture("berkeley_payments_senior_backend.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": None,
+        "company": "Berkeley Payments",
+        "location": "Remote",
+        "years_experience_required": 5.0,
+        "seniority": "senior",
+        "role_type": "backend",
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": [
+            "aws",
+            "docker",
+            "github",
+            "git",
+            "javascript",
+            "jenkins",
+            "kubernetes",
+            "mysql",
+            "postgresql",
+            "react",
+            "rest-apis",
+            "terraform",
+        ],
+        "domain_signals": [
+            "apis",
+            "backend",
+            "integrations",
+            "microservices",
+            "security",
+        ],
+        "work_style_signals": ["remote"],
+    }
