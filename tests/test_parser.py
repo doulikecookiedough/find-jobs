@@ -1,218 +1,211 @@
 from pathlib import Path
 
+from find_jobs.models import ParsedJob
 from find_jobs.parser import parse_job_description
 
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
-def test_parse_job_description_extracts_direct_fields() -> None:
-    raw_text = (FIXTURES_DIR / "affirm_backend_engineer.txt").read_text()
-
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.title == "Software Engineer II, Backend (Consumer Authentication)"
-    assert parsed_job.company == "Affirm"
-    assert parsed_job.location == "Remote Canada"
-    assert parsed_job.years_experience_required == 1.5
-    assert parsed_job.seniority == "mid"
-    assert parsed_job.role_type == "backend"
-    assert parsed_job.salary_min == 125000
-    assert parsed_job.salary_max == 175000
-    assert parsed_job.salary_currency == "CAD"
-    assert parsed_job.salary_period == "yearly"
+def load_fixture(name: str) -> str:
+    return (FIXTURES_DIR / name).read_text()
 
 
-def test_parse_job_description_leaves_inferred_fields_empty_for_now() -> None:
-    raw_text = (FIXTURES_DIR / "affirm_backend_engineer.txt").read_text()
-
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.technologies == ["python", "kotlin", "aws", "mysql", "kubernetes"]
-    assert set(parsed_job.domain_signals) == {
-        "authentication",
-        "security",
-        "fraud",
-        "distributed-systems",
-        "backend",
-        "account-management",
+def parsed_job_snapshot(parsed_job: ParsedJob) -> dict[str, object]:
+    return {
+        "title": parsed_job.title,
+        "company": parsed_job.company,
+        "location": parsed_job.location,
+        "years_experience_required": parsed_job.years_experience_required,
+        "seniority": parsed_job.seniority,
+        "role_type": parsed_job.role_type,
+        "salary_min": parsed_job.salary_min,
+        "salary_max": parsed_job.salary_max,
+        "salary_currency": parsed_job.salary_currency,
+        "salary_period": parsed_job.salary_period,
+        "technologies": sorted(parsed_job.technologies),
+        "domain_signals": sorted(parsed_job.domain_signals),
+        "work_style_signals": sorted(parsed_job.work_style_signals),
     }
-    assert parsed_job.work_style_signals == ["remote", "on-call"]
+
+
+def test_parse_job_description_extracts_affirm_job_fields() -> None:
+    parsed_job = parse_job_description(load_fixture("affirm_backend_engineer.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Software Engineer II, Backend (Consumer Authentication)",
+        "company": "Affirm",
+        "location": "Remote Canada",
+        "years_experience_required": 1.5,
+        "seniority": "mid",
+        "role_type": "backend",
+        "salary_min": 125000,
+        "salary_max": 175000,
+        "salary_currency": "CAD",
+        "salary_period": "yearly",
+        "technologies": ["aws", "kotlin", "kubernetes", "mysql", "python"],
+        "domain_signals": [
+            "account-management",
+            "authentication",
+            "backend",
+            "distributed-systems",
+            "fraud",
+            "security",
+        ],
+        "work_style_signals": ["on-call", "remote"],
+    }
 
 
 def test_parse_job_description_extracts_integrations_job_fields() -> None:
-    raw_text = (FIXTURES_DIR / "integrations_engineer.txt").read_text()
+    parsed_job = parse_job_description(load_fixture("integrations_engineer.txt"))
 
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.title == "Software Engineer, Integrations"
-    assert parsed_job.company is None
-    assert parsed_job.location == "Vancouver, BC"
-    assert parsed_job.years_experience_required == 3.0
-    assert parsed_job.seniority == "mid"
-    assert parsed_job.role_type == "platform"
-    assert parsed_job.salary_min == 105000
-    assert parsed_job.salary_max == 115000
-    assert parsed_job.salary_currency == "CAD"
-    assert parsed_job.salary_period == "yearly"
-    assert parsed_job.technologies == [
-        "c#",
-        "dotnet-core",
-        "typescript",
-        "azure",
-        "docker",
-        "postgresql",
-        "sql-server",
-        "cosmosdb",
-        "kafka",
-        "oauth2",
-        "jwt",
-        "saml",
-        "kong",
-    ]
-    assert set(parsed_job.domain_signals) == {
-        "authentication",
-        "security",
-        "distributed-systems",
-        "integrations",
-        "apis",
-        "microservices",
-        "event-streaming",
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Software Engineer, Integrations",
+        "company": None,
+        "location": "Vancouver, BC",
+        "years_experience_required": 3.0,
+        "seniority": "mid",
+        "role_type": "platform",
+        "salary_min": 105000,
+        "salary_max": 115000,
+        "salary_currency": "CAD",
+        "salary_period": "yearly",
+        "technologies": [
+            "azure",
+            "c#",
+            "cosmosdb",
+            "docker",
+            "dotnet-core",
+            "jwt",
+            "kafka",
+            "kong",
+            "oauth2",
+            "postgresql",
+            "saml",
+            "sql-server",
+            "typescript",
+        ],
+        "domain_signals": [
+            "apis",
+            "authentication",
+            "distributed-systems",
+            "event-streaming",
+            "integrations",
+            "microservices",
+            "security",
+        ],
+        "work_style_signals": ["hybrid"],
     }
-    assert parsed_job.work_style_signals == ["hybrid"]
 
 
 def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
-    raw_text = (FIXTURES_DIR / "apple_workflow_foundations.txt").read_text()
+    parsed_job = parse_job_description(load_fixture("apple_workflow_foundations.txt"))
 
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.title == "Software Engineer, Workflow Foundations"
-    assert parsed_job.company == "Apple"
-    assert parsed_job.location == "Vancouver, British Columbia, Canada"
-    assert parsed_job.years_experience_required == 3.0
-    assert parsed_job.seniority == "mid"
-    assert parsed_job.role_type == "backend"
-    assert parsed_job.salary_min == 116800
-    assert parsed_job.salary_max == 226000
-    assert parsed_job.salary_currency == "CAD"
-    assert parsed_job.salary_period == "yearly"
-    assert parsed_job.technologies == [
-        "go",
-        "python",
-        "java",
-        "scala",
-        "kotlin",
-    ]
-    assert set(parsed_job.domain_signals) == {
-        "distributed-systems",
-        "backend",
-        "integrations",
-        "apis",
-        "microservices",
-        "developer-platform",
-        "developer-productivity",
-        "event-driven",
-        "observability",
-        "ci-cd",
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Software Engineer, Workflow Foundations",
+        "company": "Apple",
+        "location": "Vancouver, British Columbia, Canada",
+        "years_experience_required": 3.0,
+        "seniority": "mid",
+        "role_type": "backend",
+        "salary_min": 116800,
+        "salary_max": 226000,
+        "salary_currency": "CAD",
+        "salary_period": "yearly",
+        "technologies": ["go", "java", "kotlin", "python", "scala"],
+        "domain_signals": [
+            "apis",
+            "backend",
+            "ci-cd",
+            "developer-platform",
+            "developer-productivity",
+            "distributed-systems",
+            "event-driven",
+            "integrations",
+            "microservices",
+            "observability",
+        ],
+        "work_style_signals": ["on-call"],
     }
-    assert parsed_job.work_style_signals == ["on-call"]
 
 
 def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> None:
-    raw_text = (FIXTURES_DIR / "zepp_connected_partnerships.txt").read_text()
+    parsed_job = parse_job_description(load_fixture("zepp_connected_partnerships.txt"))
 
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.title == "Full-Stack Engineer, Connected Partnerships"
-    assert parsed_job.company == "Zepp Health"
-    assert parsed_job.location == "Vancouver, BC"
-    assert parsed_job.years_experience_required == 3.0
-    assert parsed_job.seniority == "mid"
-    assert parsed_job.role_type == "full-stack"
-    assert parsed_job.salary_min is None
-    assert parsed_job.salary_max is None
-    assert parsed_job.salary_currency is None
-    assert parsed_job.salary_period is None
-    assert parsed_job.technologies == [
-        "java",
-        "spring-boot",
-        "rest-apis",
-        "oauth",
-        "webhooks",
-    ]
-    assert set(parsed_job.domain_signals) == {
-        "security",
-        "backend",
-        "integrations",
-        "apis",
-        "distributed-systems",
-        "developer-platform",
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Full-Stack Engineer, Connected Partnerships",
+        "company": "Zepp Health",
+        "location": "Vancouver, BC",
+        "years_experience_required": 3.0,
+        "seniority": "mid",
+        "role_type": "full-stack",
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": ["java", "oauth", "rest-apis", "spring-boot", "webhooks"],
+        "domain_signals": [
+            "apis",
+            "backend",
+            "developer-platform",
+            "distributed-systems",
+            "integrations",
+            "security",
+        ],
+        "work_style_signals": ["on-site"],
     }
-    assert parsed_job.work_style_signals == ["on-site"]
 
 
 def test_parse_job_description_extracts_genista_backend_fields() -> None:
-    raw_text = (FIXTURES_DIR / "genista_backend_engineer.txt").read_text()
+    parsed_job = parse_job_description(load_fixture("genista_backend_engineer.txt"))
 
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.title == "Software Engineer"
-    assert parsed_job.company == "Genista Biosciences"
-    assert parsed_job.location == "Canada"
-    assert parsed_job.years_experience_required == 2.0
-    assert parsed_job.seniority == "mid"
-    assert parsed_job.role_type == "backend"
-    assert parsed_job.salary_min is None
-    assert parsed_job.salary_max is None
-    assert parsed_job.salary_currency is None
-    assert parsed_job.salary_period is None
-    assert set(parsed_job.technologies) == {
-        "python",
-        "django",
-        "django-rest-framework",
-        "mysql",
-        "mongodb",
-        "postgresql",
-        "rest-apis",
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Software Engineer",
+        "company": "Genista Biosciences",
+        "location": "Canada",
+        "years_experience_required": 2.0,
+        "seniority": "mid",
+        "role_type": "backend",
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": [
+            "django",
+            "django-rest-framework",
+            "mongodb",
+            "mysql",
+            "postgresql",
+            "python",
+            "rest-apis",
+        ],
+        "domain_signals": ["apis", "backend", "integrations"],
+        "work_style_signals": ["remote"],
     }
-    assert set(parsed_job.domain_signals) == {
-        "backend",
-        "apis",
-        "integrations",
-    }
-    assert parsed_job.work_style_signals == ["remote"]
 
 
 def test_parse_job_description_extracts_stripe_backend_fields() -> None:
-    raw_text = (FIXTURES_DIR / "stripe_backend_engineer.txt").read_text()
+    parsed_job = parse_job_description(load_fixture("stripe_backend_engineer.txt"))
 
-    parsed_job = parse_job_description(raw_text)
-
-    assert parsed_job.title == "Backend Engineer, Developer Experience & Product Platform"
-    assert parsed_job.company == "Stripe"
-    assert parsed_job.location == "Canada"
-    assert parsed_job.years_experience_required == 2.0
-    assert parsed_job.seniority == "mid"
-    assert parsed_job.role_type == "backend"
-    assert parsed_job.salary_min == 135200
-    assert parsed_job.salary_max == 258000
-    assert parsed_job.salary_currency == "CAD"
-    assert parsed_job.salary_period == "yearly"
-    assert set(parsed_job.technologies) == {
-        "aws",
-        "java",
-        "ruby",
-        "oauth",
-        "sso",
-        "scim",
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Backend Engineer, Developer Experience & Product Platform",
+        "company": "Stripe",
+        "location": "Canada",
+        "years_experience_required": 2.0,
+        "seniority": "mid",
+        "role_type": "backend",
+        "salary_min": 135200,
+        "salary_max": 258000,
+        "salary_currency": "CAD",
+        "salary_period": "yearly",
+        "technologies": ["aws", "java", "oauth", "ruby", "scim", "sso"],
+        "domain_signals": [
+            "apis",
+            "authentication",
+            "backend",
+            "developer-platform",
+            "iam",
+            "security",
+        ],
+        "work_style_signals": ["hybrid", "remote"],
     }
-    assert set(parsed_job.domain_signals) == {
-        "authentication",
-        "security",
-        "backend",
-        "apis",
-        "developer-platform",
-        "iam",
-    }
-    assert set(parsed_job.work_style_signals) == {"remote", "hybrid"}
