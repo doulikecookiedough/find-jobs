@@ -215,7 +215,7 @@ def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> No
     parsed_job = parse_job_description(load_fixture("berkeley_payments_senior_backend.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
-        "title": None,
+        "title": "Senior Software Engineer",
         "company": "Berkeley Payments",
         "location": "Remote",
         "years_experience_required": 5.0,

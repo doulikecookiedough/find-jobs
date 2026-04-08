@@ -45,7 +45,11 @@ REMOTE_ONLY_LOCATION_PATTERN = re.compile(r"^Remote$", re.IGNORECASE)
 REMOTE_POSITION_PATTERN = re.compile(r"^This is a remote position\.?$", re.IGNORECASE)
 LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
 TITLE_PATTERN = re.compile(
-    r"\b(?:software|backend|frontend|full-stack|platform)\b.*\b(?:engineer|developer)\b|\b(?:engineer|developer)\b.*\b(?:software|backend|frontend|full-stack|platform)\b",
+    r"^(?=.*\b(?:engineer|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|platform|senior|junior|staff|principal|lead)\b).+$",
+    re.IGNORECASE,
+)
+TITLE_PHRASE_PATTERN = re.compile(
+    r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|Platform)\s+(?:Engineer|Developer)\b",
     re.IGNORECASE,
 )
 TECHNOLOGY_PATTERNS = {
@@ -314,10 +318,13 @@ def _extract_title(lines: list[str]) -> str | None:
             continue
         if _is_section_heading(normalized_line):
             continue
-        if " at " in lowered and TITLE_PATTERN.search(normalized_line):
-            continue
+        phrase_match = TITLE_PHRASE_PATTERN.search(normalized_line)
+        if " at " in lowered and phrase_match:
+            return phrase_match.group(0)
         if TITLE_PATTERN.search(normalized_line):
             return normalized_line
+        if phrase_match:
+            return phrase_match.group(0)
 
     return None
 
