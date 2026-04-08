@@ -31,5 +31,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Fit Score: {job_score.fit_score}")
     print(f"Recommendation: {job_score.recommendation}")
     print(f"Priority: {job_score.priority}")
+    if job_score.reasons:
+        print("Reasons:")
+        for reason in job_score.reasons:
+            print(f"- {reason}")
+    if job_score.risks:
+        print("Risks:")
+        for risk in job_score.risks:
+            print(f"- {risk}")
 
     return 0

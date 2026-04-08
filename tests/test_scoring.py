@@ -177,6 +177,9 @@ def test_score_job_returns_apply_for_strong_fit() -> None:
     assert score.recommendation == "apply"
     assert score.priority == "high"
     assert score.score_breakdown.strength_alignment == 1.0
+    assert "Role type aligns well with your target focus (backend)." in score.reasons
+    assert any("Relevant stack overlap found:" in reason for reason in score.reasons)
+    assert score.risks == []
 
 
 def test_score_job_returns_skip_for_clear_mismatch() -> None:
@@ -195,6 +198,7 @@ def test_score_job_returns_skip_for_clear_mismatch() -> None:
     assert score.fit_score < 40
     assert score.recommendation == "skip"
     assert score.priority == "low"
+    assert any("Role type is in your avoid list" in risk for risk in score.risks)
 
 
 def test_score_job_returns_consider_for_mixed_fit() -> None:
@@ -213,3 +217,5 @@ def test_score_job_returns_consider_for_mixed_fit() -> None:
     assert 60 <= score.fit_score < 80
     assert score.recommendation == "consider"
     assert score.priority == "medium"
+    assert any("Experience requirement is above your current profile" in risk for risk in score.risks)
+    assert any("Role type aligns well with your target focus (platform)." in reason for reason in score.reasons)

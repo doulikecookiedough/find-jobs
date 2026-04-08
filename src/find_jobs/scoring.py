@@ -162,11 +162,14 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     fit_score = round(weighted_score * 100)
     recommendation = _recommendation_for_score(fit_score)
     priority = _priority_for_score(fit_score)
+    reasons, risks = _build_reasons_and_risks(job, profile, breakdown)
 
     return JobScore(
         fit_score=fit_score,
         recommendation=recommendation,
         priority=priority,
+        reasons=reasons,
+        risks=risks,
         score_breakdown=breakdown,
     )
 
@@ -185,3 +188,47 @@ def _priority_for_score(fit_score: int) -> str:
     if fit_score >= 55:
         return "medium"
     return "low"
+
+
+def _build_reasons_and_risks(
+    job: ParsedJob,
+    profile: CandidateProfile,
+    breakdown: ScoreBreakdown,
+) -> tuple[list[str], list[str]]:
+    reasons: list[str] = []
+    risks: list[str] = []
+
+    if breakdown.role_type_alignment >= 1.0 and job.role_type:
+        reasons.append(f"Role type aligns well with your target focus ({job.role_type}).")
+
+    if breakdown.strength_alignment >= 0.85:
+        reasons.append("Job content matches several of your strongest backend and systems skills.")
+
+    if breakdown.domain_alignment >= 0.75 and job.domain_signals:
+        reasons.append("Domain signals overlap well with your preferred backend and integration work.")
+
+    matched_technologies = sorted(set(job.technologies).intersection(profile.preferred_technologies))
+    if matched_technologies:
+        reasons.append(f"Relevant stack overlap found: {', '.join(matched_technologies[:4])}.")
+
+    if job.work_style_signals and "remote" in job.work_style_signals:
+        reasons.append("Work style includes remote flexibility.")
+
+    if job.years_experience_required is not None and job.years_experience_required > profile.years_experience:
+        risks.append(
+            f"Experience requirement is above your current profile ({job.years_experience_required:g}+ years vs {profile.years_experience:g})."
+        )
+
+    if job.seniority == "senior":
+        risks.append("Role is explicitly senior-level.")
+
+    if breakdown.stack_alignment < 0.4:
+        risks.append("Core stack overlap is limited, so ramp-up may be required.")
+
+    if breakdown.competition_realism <= 0.55:
+        risks.append("This may be a stretch role relative to your current experience level.")
+
+    if job.role_type in profile.avoid_roles:
+        risks.append(f"Role type is in your avoid list ({job.role_type}).")
+
+    return reasons, risks

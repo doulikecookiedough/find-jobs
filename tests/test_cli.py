@@ -24,3 +24,5 @@ def test_main_evaluate_command_prints_score_summary(capsys) -> None:
     assert "Fit Score:" in captured.out
     assert "Recommendation: apply" in captured.out
     assert "Priority: high" in captured.out
+    assert "Reasons:" in captured.out
+    assert "- Role type aligns well with your target focus (backend)." in captured.out
