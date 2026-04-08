@@ -26,6 +26,16 @@ class ParsedJob:
 @dataclass(slots=True)
 class CandidateProfile:
     years_experience: float
+    headline: str | None = None
+    target_focus: str | None = None
+    primary_languages: list[str] = field(default_factory=list)
+    secondary_languages: list[str] = field(default_factory=list)
+    frameworks: list[str] = field(default_factory=list)
+    cloud_platforms: list[str] = field(default_factory=list)
+    databases: list[str] = field(default_factory=list)
+    infrastructure_tools: list[str] = field(default_factory=list)
+    developer_tools: list[str] = field(default_factory=list)
+    strengths: list[str] = field(default_factory=list)
     preferred_roles: list[str] = field(default_factory=list)
     preferred_domains: list[str] = field(default_factory=list)
     preferred_technologies: list[str] = field(default_factory=list)
