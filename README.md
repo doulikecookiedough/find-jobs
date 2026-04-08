@@ -1,22 +1,22 @@
 # find-jobs
 
-`find-jobs` is an experimental Python project for evaluating job postings against a candidate profile and producing a simple match assessment.
+`find-jobs` is an experimental Python project for evaluating job postings against a candidate profile and producing an explainable fit assessment.
 
 The goal is to reduce job-search fatigue by turning raw job descriptions into something easier to review, compare, and eventually rank.
 
-This repository is intentionally being built in small stages. The current focus is not completeness. The focus is a clean structure, strong tests, and a workflow that is easy to iterate on.
+This repository is intentionally being built in small stages. The focus is a clean structure, strong tests, and a workflow that is easy to iterate on.
 
 ## Why this exists
 
-The long-term idea is:
+The long-term idea is to:
 
 - ingest a full job description
 - extract key signals
 - compare those signals against a candidate profile
 - produce a score, reasons, and risks
-- eventually support batch evaluation and CSV export
+- eventually support batch evaluation, CSV export, and browser-assisted ingestion
 
-Today, the project is in the parser-first phase. The parser is being hardened against real-world fixtures before scoring logic is introduced.
+The current MVP already supports parsing and scoring from a text file. The next likely step is exposing the evaluator through a small local API so a browser extension can call it directly from job pages.
 
 ## Current approach
 
@@ -45,6 +45,15 @@ The parser currently extracts:
 - domain signals
 - work style signals
 
+The scorer currently produces:
+
+- fit score
+- recommendation
+- priority
+- reasons
+- risks
+- score breakdown by factor
+
 The parser is tested against multiple real-world fixture styles, including:
 
 - direct pasted job descriptions
@@ -60,6 +69,7 @@ Current parser fixtures:
 - `tests/fixtures/zepp_connected_partnerships.txt`
 - `tests/fixtures/genista_backend_engineer.txt`
 - `tests/fixtures/stripe_backend_engineer.txt`
+- `tests/fixtures/berkeley_payments_senior_backend.txt`
 
 ## Project goals
 
@@ -98,10 +108,36 @@ From the repository root:
 ```bash
 uv sync
 uv run pytest
-uv run find-jobs
+uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt
 ```
 
-At the moment, the CLI is still a scaffold. The main implemented area is the parser plus its test fixtures.
+Example output:
+
+```text
+Title: Software Engineer II, Backend (Consumer Authentication)
+Company: Affirm
+Fit Score: 85
+Recommendation: apply
+Priority: high
+Reasons:
+- Role type aligns well with your target focus (backend).
+- Job content matches several of your strongest backend and systems skills.
+- Relevant stack overlap found: aws, kubernetes, python.
+- Work style includes remote flexibility.
+```
+
+## Scoring model
+
+The current weighted score uses:
+
+- level match
+- stack alignment
+- domain alignment
+- strength alignment
+- role type alignment
+- competition realism
+
+The implementation is still heuristic and intentionally transparent. The score is meant to support triage, not replace judgment.
 
 ## Reviewer notes
 
@@ -109,21 +145,22 @@ If you want to try the project locally:
 
 - run `uv sync` to create the local environment
 - run `uv run pytest` to execute the test suite
-- inspect `src/find_jobs/parser.py` and `tests/test_parser.py` together
-- review `tests/fixtures/` to see the types of postings currently used to shape the parser
+- run `uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt`
+- inspect `src/find_jobs/parser.py`, `src/find_jobs/scoring.py`, and the corresponding tests
+- review `tests/fixtures/` to see the posting styles shaping the parser
 
 This repository is intentionally experimental. Expect small, reviewable changes rather than a large initial implementation.
 
 ## Near-term scope
 
-The first phase will focus on:
+Near-term work is likely to focus on:
 
-1. project structure
-2. core models
-3. rule-based parsing
-4. scoring logic
-5. a CLI entrypoint
+1. local FastAPI endpoint for evaluation
+2. browser-extension-friendly ingestion
+3. pasted text / stdin support
+4. batch mode and CSV export
+5. configurable candidate profiles
 
 ## Status
 
-Repository initialized. Python/uv scaffold added. Rule-based parser is implemented and fixture-driven tests are passing. Scoring and profile comparison are the next major steps.
+Parser, profile, scoring, end-to-end comparison, and CLI MVP are implemented. The project is now in the “make ingestion easier” phase rather than the “can we score jobs at all?” phase.
