@@ -1,0 +1,172 @@
+This is a remote position.
+About Us:
+
+Berkeley Payments is a leading payment technology provider specializing in innovative solutions for businesses to manage and process payments seamlessly. We pride ourselves on offering cutting-edge financial technology to our clients, empowering businesses to streamline operations and improve their payment processes.
+
+ 
+Role Overview:
+
+We are looking for a talented and passionate Senior Software Engineer to join our technology team. This is a backend-focused role, with 90% backend development and 10% frontend work, along with occasional data engineering tasks. As a Senior Software Engineer at Berkeley Payments, you will be responsible for building, maintaining, and enhancing payment processing systems and applications. You will collaborate with cross-functional teams to design and develop secure, scalable, and high-performance software solutions that meet the needs of our customers. We're seeking developers who take a product engineering approach—those who think critically about the end-user experience and bring a holistic view of product development into their work, from ideation to implementation.
+
+ 
+We're looking for developers who thrive in a fast-paced, dynamic environment. As a growing company with a startup mentality, you should be comfortable with evolving requirements and enjoy the challenge of building systems that scale while keeping pace with business needs. This is a role for someone who is proactive, adaptable, and able to deliver high-quality solutions even when priorities shift.
+
+ 
+Key Responsibilities:
+
+Architect and develop high-quality backend software solutions for payment processing systems, ensuring scalability and performance.
+
+ 
+Design and implement robust APIs and services for various payment functionalities, adhering to security standards.
+
+ 
+Lead technical discussions and decisions, providing architectural guidance and mentoring junior developers.
+
+ 
+Collaborate closely with product managers and designers to shape product features, ensuring technical feasibility and alignment with business goals.
+
+ 
+Optimize and refactor existing codebases to improve performance, maintainability, and scalability.
+
+ 
+Write clean, maintainable, and scalable code following industry best practices with a focus on building product features that align with user needs.
+
+ 
+Contribute to setting the technical direction of the team, driving best practices in software engineering.
+
+ 
+Troubleshoot, debug, and resolve complex technical issues across the application stack, ensuring minimal downtime and quick resolution.
+
+ 
+Ensure code quality through rigorous testing, including unit, integration, and performance tests.
+
+ 
+Work with DevOps and infrastructure teams to ensure system stability, security, and performance.
+
+ 
+Participate in code reviews, provide feedback, and improve coding standards within the team.
+
+ 
+Occasionally assist with data engineering tasks, such as building and optimizing data pipelines, integrating data from various sources, and managing databases.
+
+ 
+Bring a product-oriented mindset by considering how the software being developed impacts user experience and business goals.
+
+ 
+Stay updated on industry trends, especially in payments technology, and apply new tools and approaches to improve the overall development process.
+
+ 
+Identify and mitigate risks related to system architecture, security, and scalability, ensuring the integrity of financial transactions.
+
+ 
+Be comfortable with changing requirements and able to adapt quickly to new challenges and priorities as they arise in a startup environment.
+
+ 
+ 
+Tech Stack:
+
+Backend: Elixir, Golang (both are preferred but not required; willingness to learn quickly is essential)
+
+ 
+Frontend: React, Javascript
+
+ 
+Databases: MySQL, PostgreSQL
+
+ 
+APIs: RESTful services
+
+ 
+DevOps: AWS, Docker, Kubernetes, Spinnaker, Jenkins
+
+ 
+Version Control: Git, GitHub
+
+ 
+Infrastructure as Code (IaC): Terraform
+
+ 
+ 
+Qualifications:
+
+Bachelor’s degree in Computer Science, Engineering, or a related field (or equivalent work experience).
+
+ 
+5+ years of experience in software development, preferably within fintech or payment industries.
+
+ 
+Proficiency in one or more programming languages such as Elixir, Golang, or JavaScript.
+
+ 
+Strong understanding of APIs, microservices architecture, and RESTful services.
+
+ 
+Experience with databases such as MySQL and PostgreSQL.
+
+ 
+Familiarity with payment processing technologies, gateways, or integrations is a plus.
+
+ 
+Strong leadership and mentorship skills, with the ability to help guide junior developers and shape the team’s technical direction.
+
+ 
+Strong knowledge of version control (Git) and collaboration tools (JIRA, Confluence).
+
+ 
+Excellent problem-solving skills and attention to detail.
+
+ 
+Strong communication and collaboration skills to work effectively in a team environment.
+
+ 
+ 
+Preferred Skills:
+
+Experience with building frontend components with React and Javascript
+
+ 
+Experience with cloud platforms like AWS, Google Cloud, or Azure.
+
+ 
+Knowledge of security protocols and encryption techniques in payment processing.
+
+ 
+Familiarity with containerization tools like Docker and orchestration tools like Kubernetes.
+
+ 
+Prior experience working in agile development environments.
+
+ 
+ 
+What We Offer:
+
+At Berkeley Payments, we believe in creating an environment where our team members can thrive both professionally and personally. As a part of our team, you’ll benefit from:
+
+Competitive Compensation: We offer a salary package that reflects your experience and contributions.
+
+ 
+Comprehensive Benefits: Enjoy health, dental, and vision coverage, along with paid time off.
+
+ 
+Fully Remote Environment: We are a fully remote company, allowing you to work from anywhere.
+
+ 
+Professional Development: We invest in your growth through ongoing learning opportunities, mentorship, and chances to work with cutting-edge technologies.
+
+ 
+Ownership and Impact: Be a part of a small, agile team where your work has direct and visible impacts on our products and customers.
+
+ 
+Leadership Opportunities: As a senior team member, you'll have the potential to grow into a leadership role in the future.
+
+ 
+Inclusive Culture: We are committed to fostering a diverse and inclusive workplace where everyone’s voice is heard and valued.
+
+ 
+Exciting Fintech Landscape: Join a dynamic industry at the forefront of payments technology, where you’ll tackle complex problems and contribute to innovative solutions that shape the future of fintech.
+
+ 
+ 
+Don’t meet every single requirement?
+
+At Berkeley Payments, we are dedicated to building a diverse and inclusive workplace. If you’re excited about this role but your experience doesn’t align perfectly with every qualification in the job description and you have a passion for learning and growth, we encourage you to apply anyway.
