@@ -48,6 +48,7 @@ class ScoreBreakdown:
     level_match: float = 0.0
     stack_alignment: float = 0.0
     domain_alignment: float = 0.0
+    strength_alignment: float = 0.0
     role_type_alignment: float = 0.0
     competition_realism: float = 0.0
 
