@@ -2,7 +2,24 @@
 
 from __future__ import annotations
 
+import re
+
 from find_jobs.models import CandidateProfile, JobScore, ParsedJob, ScoreBreakdown
+
+
+STRENGTH_PATTERNS = {
+    "backend": re.compile(r"\bbackend(?: systems?| services?| infrastructure)?\b", re.IGNORECASE),
+    "data-platforms": re.compile(r"\bdata platforms?\b|\bdata pipelines?\b|\bdata lake\b", re.IGNORECASE),
+    "distributed-systems": re.compile(r"\bdistributed systems?\b|\bsystems? that scale\b|\bscalable\b", re.IGNORECASE),
+    "data-integrity": re.compile(r"\bdata integrity\b|\bconsistency\b|\bcorrectness\b", re.IGNORECASE),
+    "concurrency": re.compile(r"\bconcurr(?:ent|ency)\b|\basynchronous\b|\basync\b", re.IGNORECASE),
+    "schema-migrations": re.compile(r"\bschema migrations?\b|\bdatabase migrations?\b|\bdata backfill\b", re.IGNORECASE),
+    "apis": re.compile(r"\bapi\b|\bapis\b|\brest apis?\b|\brestful apis?\b", re.IGNORECASE),
+    "integrations": re.compile(r"\bintegrations?\b|\bintegration platform\b", re.IGNORECASE),
+    "reliability": re.compile(r"\breliability\b|\breliable\b|\bproduction systems?\b|\bon-call\b", re.IGNORECASE),
+    "etl": re.compile(r"\betl\b|\bdata ingestion\b|\bdata pipelines?\b", re.IGNORECASE),
+    "observability": re.compile(r"\bobservability\b|\bmetrics\b|\blogging\b|\btracing\b", re.IGNORECASE),
+}
 
 
 def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
@@ -66,6 +83,26 @@ def score_domain_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
     return positive_matches / len(job_domains)
 
 
+def score_strength_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
+    """Score how well the raw job text matches the candidate's strongest areas."""
+    if not profile.strengths:
+        return 0.0
+
+    matched_strengths = 0
+    for strength in set(profile.strengths):
+        pattern = STRENGTH_PATTERNS.get(strength)
+        if pattern and pattern.search(job.raw_text):
+            matched_strengths += 1
+
+    if matched_strengths == 0:
+        return 0.5
+    if matched_strengths == 1:
+        return 0.7
+    if matched_strengths == 2:
+        return 0.85
+    return 1.0
+
+
 def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
     """Score how well a job's role type aligns with the candidate profile."""
     if not job.role_type:
@@ -109,6 +146,7 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         level_match=score_level_match(job, profile),
         stack_alignment=score_stack_alignment(job, profile),
         domain_alignment=score_domain_alignment(job, profile),
+        strength_alignment=score_strength_alignment(job, profile),
         role_type_alignment=score_role_type_alignment(job, profile),
         competition_realism=score_competition_realism(job, profile),
     )
@@ -116,7 +154,7 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     weighted_score = (
         breakdown.level_match * 0.30
         + breakdown.stack_alignment * 0.25
-        + breakdown.domain_alignment * 0.15
+        + ((breakdown.domain_alignment + breakdown.strength_alignment) / 2) * 0.15
         + breakdown.role_type_alignment * 0.15
         + breakdown.competition_realism * 0.15
     )

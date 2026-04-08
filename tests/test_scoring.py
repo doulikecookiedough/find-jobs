@@ -6,6 +6,7 @@ from find_jobs.scoring import (
     score_level_match,
     score_role_type_alignment,
     score_stack_alignment,
+    score_strength_alignment,
 )
 
 
@@ -15,6 +16,14 @@ def make_candidate_profile() -> CandidateProfile:
         preferred_roles=["backend", "platform"],
         preferred_domains=["distributed-systems", "apis", "integrations", "backend"],
         preferred_technologies=["python", "aws", "postgresql", "kubernetes", "java"],
+        strengths=[
+            "backend",
+            "distributed-systems",
+            "apis",
+            "integrations",
+            "reliability",
+            "observability",
+        ],
         avoid_domains=["mobile", "frontend", "networking"],
         avoid_roles=["mobile", "frontend"],
     )
@@ -90,6 +99,25 @@ def test_score_domain_alignment_drops_for_avoid_domains() -> None:
     assert score_domain_alignment(job, profile) == 0.0
 
 
+def test_score_strength_alignment_is_high_for_multiple_matching_strengths() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text=(
+            "Build backend infrastructure, improve API reliability, and design systems "
+            "that scale across multiple integrations."
+        )
+    )
+
+    assert score_strength_alignment(job, profile) == 1.0
+
+
+def test_score_strength_alignment_returns_neutral_without_matching_strengths() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="Work on wearables partnerships and customer engagement tools.")
+
+    assert score_strength_alignment(job, profile) == 0.5
+
+
 def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", role_type="backend")
@@ -135,7 +163,7 @@ def test_score_competition_realism_is_zero_for_avoid_role() -> None:
 def test_score_job_returns_apply_for_strong_fit() -> None:
     profile = make_candidate_profile()
     job = ParsedJob(
-        raw_text="job",
+        raw_text="Build reliable backend APIs and distributed systems integrations.",
         years_experience_required=3.0,
         seniority="mid",
         role_type="backend",
@@ -148,6 +176,7 @@ def test_score_job_returns_apply_for_strong_fit() -> None:
     assert score.fit_score == 100
     assert score.recommendation == "apply"
     assert score.priority == "high"
+    assert score.score_breakdown.strength_alignment == 1.0
 
 
 def test_score_job_returns_skip_for_clear_mismatch() -> None:

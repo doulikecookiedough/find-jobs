@@ -36,7 +36,7 @@ def test_evaluate_job_text_returns_mixed_fit_for_zepp() -> None:
     assert job_score.recommendation in {"consider", "skip"}
 
 
-def test_evaluate_job_text_returns_consider_for_stripe_under_current_rules() -> None:
+def test_evaluate_job_text_returns_apply_for_stripe_with_strength_alignment() -> None:
     parsed_job, job_score = evaluate_job_text(
         load_fixture("stripe_backend_engineer.txt"),
         build_default_candidate_profile(),
@@ -44,7 +44,8 @@ def test_evaluate_job_text_returns_consider_for_stripe_under_current_rules() -> 
 
     assert parsed_job.company == "Stripe"
     assert parsed_job.role_type == "backend"
-    assert 70 <= job_score.fit_score < 80
-    assert job_score.recommendation == "consider"
+    assert job_score.fit_score >= 80
+    assert job_score.recommendation == "apply"
     assert job_score.score_breakdown.level_match == 1.0
+    assert job_score.score_breakdown.strength_alignment == 1.0
     assert job_score.score_breakdown.competition_realism == 1.0
