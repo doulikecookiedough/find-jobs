@@ -8,13 +8,16 @@ version = "0.1.0"
 description = "CLI-first tool for evaluating job postings against a candidate profile."
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi>=0.116,<1",
+]
 
 [project.scripts]
 find-jobs = "find_jobs.cli:main"
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28,<1",
     "pytest>=8.0,<9",
 ]
 
@@ -26,4 +29,3 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
