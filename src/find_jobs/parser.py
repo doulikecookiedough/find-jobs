@@ -96,7 +96,11 @@ DOMAIN_SIGNAL_PATTERNS = {
     "apis": re.compile(r"\bapi\b|\bapis\b|\bapi gateways\b|\bapi development\b", re.IGNORECASE),
     "microservices": re.compile(r"\bmicroservices architecture\b|\bmicroservices\b", re.IGNORECASE),
     "event-streaming": re.compile(r"\bevent streaming\b|\bmessage queues\b|\bservice bus\b|\bkafka\b", re.IGNORECASE),
-    "developer-platform": re.compile(r"\bdeveloper platform\b|\bdeveloper ecosystems?\b", re.IGNORECASE),
+    "iam": re.compile(r"\biam\b|\bidentity and access management\b", re.IGNORECASE),
+    "developer-platform": re.compile(
+        r"\bdeveloper platform\b|\bdeveloper ecosystems?\b|\bproduct platform\b|\bdeveloper experience\b",
+        re.IGNORECASE,
+    ),
     "developer-productivity": re.compile(r"\bdeveloper productivity\b|\bworkflow engine\b|\bdevelopment workflow\b", re.IGNORECASE),
     "event-driven": re.compile(r"\bevent-driven architectures?\b|\basynchronous messaging systems?\b", re.IGNORECASE),
     "observability": re.compile(r"\bobservability\b|\blogging\b|\btracing\b", re.IGNORECASE),
