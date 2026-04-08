@@ -41,6 +41,8 @@ LOCATION_PATTERN = re.compile(
 )
 COUNTRY_LOCATION_PATTERN = re.compile(r"^(Canada|United States|USA|US)$", re.IGNORECASE)
 REMOTE_LOCATION_PATTERN = re.compile(r"^Remote\s+(Canada|United States|USA|US)$", re.IGNORECASE)
+REMOTE_ONLY_LOCATION_PATTERN = re.compile(r"^Remote$", re.IGNORECASE)
+REMOTE_POSITION_PATTERN = re.compile(r"^This is a remote position\.?$", re.IGNORECASE)
 LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
 TITLE_PATTERN = re.compile(
     r"\b(?:software|backend|frontend|full-stack|platform)\b.*\b(?:engineer|developer)\b|\b(?:engineer|developer)\b.*\b(?:software|backend|frontend|full-stack|platform)\b",
@@ -121,8 +123,9 @@ JUNIOR_LEVEL_PATTERN = re.compile(r"\b(junior|entry[ -]?level|new grad|intern)\b
 def parse_job_description(raw_text: str) -> ParsedJob:
     """Parse a raw job description into directly extracted fields."""
     lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
-    title = _extract_title(lines)
-    opening_text = "\n".join(lines[:6])
+    content_lines = [line for line in lines if not _is_ignored_opening_line(line)]
+    title = _extract_title(content_lines)
+    opening_text = "\n".join(content_lines[:6])
     location = _extract_location(lines)
 
     company = _extract_company(raw_text, opening_text)
@@ -263,6 +266,10 @@ def _extract_location(lines: list[str]) -> str | None:
         if line.startswith("Job category:") or line.startswith("Requisition number:"):
             continue
         normalized_line = _normalize_location_candidate(line)
+        if REMOTE_POSITION_PATTERN.match(normalized_line):
+            return "Remote"
+        if REMOTE_ONLY_LOCATION_PATTERN.match(normalized_line):
+            return normalized_line
         if REMOTE_LOCATION_PATTERN.match(normalized_line):
             return normalized_line
         if COUNTRY_LOCATION_PATTERN.match(normalized_line):
@@ -297,12 +304,34 @@ def _extract_title(lines: list[str]) -> str | None:
             continue
         if lowered.startswith(ignored_prefixes):
             continue
+        if _is_section_heading(normalized_line):
+            continue
         if " at " in lowered and TITLE_PATTERN.search(normalized_line):
             continue
         if TITLE_PATTERN.search(normalized_line):
             return normalized_line
 
-    return lines[0] if lines else None
+    return None
+
+
+def _is_ignored_opening_line(line: str) -> bool:
+    lowered = line.strip().lower()
+    return lowered in {
+        "this is a remote position.",
+        "this is a remote position",
+    }
+
+
+def _is_section_heading(line: str) -> bool:
+    return line.strip().lower() in {
+        "about us:",
+        "role overview:",
+        "key responsibilities:",
+        "tech stack:",
+        "qualifications:",
+        "preferred skills:",
+        "what we offer:",
+    }
 
 
 def _normalize_location_candidate(line: str) -> str:
