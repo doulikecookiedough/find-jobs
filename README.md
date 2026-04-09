@@ -58,6 +58,7 @@ The API currently exposes:
 
 - `GET /health`
 - `POST /evaluate`
+- `POST /evaluate-text`
 
 The parser is tested against multiple real-world fixture styles, including:
 
@@ -128,6 +129,23 @@ Then test it:
 curl -s http://127.0.0.1:8000/health
 ```
 
+For manual reviewer testing, the easiest option is FastAPI docs:
+
+- open `http://127.0.0.1:8000/docs`
+- use `POST /evaluate-text`
+- click `Try it out`
+- paste a full job description as plain text
+- click `Execute`
+
+You can also test the plain-text endpoint from the command line:
+
+```bash
+curl -s \
+  -X POST http://127.0.0.1:8000/evaluate-text \
+  -H "Content-Type: text/plain" \
+  --data-binary @tests/fixtures/affirm_backend_engineer.txt
+```
+
 Example output:
 
 ```text
@@ -164,7 +182,8 @@ If you want to try the project locally:
 - run `uv run pytest` to execute the test suite
 - run `uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt`
 - run `uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload`
-- call `GET /health` or `POST /evaluate` against the local API
+- call `GET /health`, `POST /evaluate`, or `POST /evaluate-text` against the local API
+- open `http://127.0.0.1:8000/docs` for interactive API testing
 - inspect `src/find_jobs/parser.py`, `src/find_jobs/scoring.py`, and the corresponding tests
 - inspect `src/find_jobs/api.py` and `tests/test_api.py` for the local service boundary
 - review `tests/fixtures/` to see the posting styles shaping the parser
