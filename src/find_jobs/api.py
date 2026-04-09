@@ -21,6 +21,9 @@ class EvaluateJobResponse(BaseModel):
     company: str | None
     location: str | None
     fit_score: int
+    skills_alignment: int
+    interview_probability_min: int
+    interview_probability_max: int
     recommendation: str
     priority: str
     reasons: list[str]
@@ -58,6 +61,9 @@ def _evaluate_job_text(job_text: str) -> EvaluateJobResponse:
         company=parsed_job.company,
         location=parsed_job.location,
         fit_score=job_score.fit_score,
+        skills_alignment=job_score.skills_alignment,
+        interview_probability_min=job_score.interview_probability_min,
+        interview_probability_max=job_score.interview_probability_max,
         recommendation=job_score.recommendation,
         priority=job_score.priority,
         reasons=job_score.reasons,

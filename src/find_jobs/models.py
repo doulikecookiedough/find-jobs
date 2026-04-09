@@ -58,6 +58,9 @@ class JobScore:
     fit_score: int
     recommendation: str
     priority: str
+    skills_alignment: int = 0
+    interview_probability_min: int = 0
+    interview_probability_max: int = 0
     reasons: list[str] = field(default_factory=list)
     risks: list[str] = field(default_factory=list)
     missing_fields: list[str] = field(default_factory=list)

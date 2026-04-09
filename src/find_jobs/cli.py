@@ -29,6 +29,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Title: {parsed_job.title or 'Unknown'}")
     print(f"Company: {parsed_job.company or 'Unknown'}")
     print(f"Fit Score: {job_score.fit_score}")
+    print(f"Skills Alignment: {job_score.skills_alignment}")
+    print(
+        "Interview Probability: "
+        f"{job_score.interview_probability_min}-{job_score.interview_probability_max}%"
+    )
     print(f"Recommendation: {job_score.recommendation}")
     print(f"Priority: {job_score.priority}")
     if job_score.reasons:

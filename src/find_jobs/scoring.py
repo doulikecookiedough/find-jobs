@@ -160,18 +160,60 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
 
     fit_score = round(weighted_score * 100)
+    skills_alignment = _skills_alignment_for_breakdown(breakdown)
+    interview_probability_min, interview_probability_max = _interview_probability_for_breakdown(
+        breakdown,
+        fit_score,
+        job,
+    )
     recommendation = _recommendation_for_score(fit_score)
     priority = _priority_for_score(fit_score)
     reasons, risks = _build_reasons_and_risks(job, profile, breakdown)
 
     return JobScore(
         fit_score=fit_score,
+        skills_alignment=skills_alignment,
+        interview_probability_min=interview_probability_min,
+        interview_probability_max=interview_probability_max,
         recommendation=recommendation,
         priority=priority,
         reasons=reasons,
         risks=risks,
         score_breakdown=breakdown,
     )
+
+
+def _skills_alignment_for_breakdown(breakdown: ScoreBreakdown) -> int:
+    """Estimate technical overlap independent of level fit."""
+    weighted_score = (
+        breakdown.stack_alignment * 0.50
+        + breakdown.strength_alignment * 0.30
+        + breakdown.domain_alignment * 0.20
+    )
+    return round(weighted_score * 100)
+
+
+def _interview_probability_for_breakdown(
+    breakdown: ScoreBreakdown,
+    fit_score: int,
+    job: ParsedJob,
+) -> tuple[int, int]:
+    """Estimate interview probability range from fit and realism."""
+    base_probability = (
+        fit_score * 0.25
+        + breakdown.competition_realism * 100 * 0.50
+        + breakdown.level_match * 100 * 0.25
+    )
+
+    if job.seniority == "senior":
+        base_probability -= 5
+    if job.seniority in {"staff", "principal"}:
+        base_probability -= 10
+
+    center = max(0, min(100, round(base_probability)))
+    lower_bound = max(0, center - 5)
+    upper_bound = min(100, center + 5)
+    return lower_bound, upper_bound
 
 
 def _recommendation_for_score(fit_score: int) -> str:

@@ -28,6 +28,9 @@ def test_evaluate_returns_scored_job_summary() -> None:
         "company": "Affirm",
         "location": "Remote Canada",
         "fit_score": 85,
+        "skills_alignment": 67,
+        "interview_probability_min": 91,
+        "interview_probability_max": 100,
         "recommendation": "apply",
         "priority": "high",
         "reasons": [
@@ -55,6 +58,9 @@ def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
     assert payload["title"] == "Software Engineer II, Backend (Consumer Authentication)"
     assert payload["company"] == "Affirm"
     assert payload["fit_score"] == 85
+    assert payload["skills_alignment"] == 67
+    assert payload["interview_probability_min"] == 91
+    assert payload["interview_probability_max"] == 100
     assert payload["recommendation"] == "apply"
     assert payload["priority"] == "high"
     assert payload["missing_fields"] == []
@@ -98,6 +104,9 @@ def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
     assert payload["title"] == "Senior Software Engineer"
     assert payload["company"] == "Berkeley Payments"
     assert payload["fit_score"] == 62
+    assert 45 <= payload["skills_alignment"] <= 65
+    assert payload["interview_probability_min"] >= 35
+    assert payload["interview_probability_max"] <= 65
     assert payload["recommendation"] == "consider"
     assert payload["priority"] == "medium"
     assert any("Role type aligns well with your target focus (backend)." == reason for reason in payload["reasons"])

@@ -22,6 +22,8 @@ def test_main_evaluate_command_prints_score_summary(capsys) -> None:
     assert "Title: Software Engineer II, Backend (Consumer Authentication)" in captured.out
     assert "Company: Affirm" in captured.out
     assert "Fit Score:" in captured.out
+    assert "Skills Alignment:" in captured.out
+    assert "Interview Probability:" in captured.out
     assert "Recommendation: apply" in captured.out
     assert "Priority: high" in captured.out
     assert "Reasons:" in captured.out
