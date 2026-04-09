@@ -177,14 +177,20 @@ function metricCard(label, value, tooltip) {
 }
 
 function infoBadge(text) {
+  const wrapper = document.createElement("span");
   const badge = document.createElement("button");
+  const tooltip = document.createElement("span");
 
+  wrapper.className = "tooltip";
   badge.type = "button";
   badge.className = "info-badge";
   badge.textContent = "i";
-  badge.title = text;
   badge.setAttribute("aria-label", text);
-  return badge;
+  tooltip.className = "tooltip-panel";
+  tooltip.textContent = text;
+
+  wrapper.append(badge, tooltip);
+  return wrapper;
 }
 
 function listBlock(title, items) {
