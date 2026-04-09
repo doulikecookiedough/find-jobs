@@ -53,6 +53,7 @@ The scorer currently produces:
 - reasons
 - risks
 - score breakdown by factor
+- missing-field diagnostics for incomplete parses
 
 The API currently exposes:
 
@@ -159,6 +160,28 @@ Reasons:
 - Job content matches several of your strongest backend and systems skills.
 - Relevant stack overlap found: aws, kubernetes, python.
 - Work style includes remote flexibility.
+```
+
+## Incomplete evaluation logging
+
+When an evaluation is missing important parsed fields, the project writes a structured review record to:
+
+- `logs/incomplete_evaluations.jsonl`
+
+This file is intended to help improve the parser and scorer over time. Each line stores:
+
+- parsed metadata
+- missing fields
+- parser warnings
+- fit score and recommendation
+- the raw job description text
+
+The `logs/` directory is tracked so its location is obvious, but the log contents are git-ignored.
+
+You can override the default path with:
+
+```bash
+FIND_JOBS_INCOMPLETE_LOG_PATH=/custom/path/incomplete.jsonl
 ```
 
 ## Scoring model

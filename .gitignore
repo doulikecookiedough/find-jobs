@@ -5,3 +5,5 @@ __pycache__/
 htmlcov/
 *.egg-info/
 .vscode/
+logs/*
+!logs/.gitkeep
