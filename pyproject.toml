@@ -19,6 +19,7 @@ find-jobs = "find_jobs.cli:main"
 dev = [
     "httpx>=0.28,<1",
     "pytest>=8.0,<9",
+    "uvicorn>=0.35,<1",
 ]
 
 [tool.setuptools]
