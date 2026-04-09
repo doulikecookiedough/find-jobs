@@ -250,3 +250,23 @@ def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> No
         ],
         "work_style_signals": ["remote"],
     }
+
+
+def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> None:
+    parsed_job = parse_job_description(load_fixture("narvar_distributed_systems.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Sr. Software Engineer II (Distributed Systems)",
+        "company": "Narvar",
+        "location": "Canada",
+        "years_experience_required": 7.0,
+        "seniority": "senior",
+        "role_type": None,
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": ["aws", "go", "java", "mongodb", "mysql", "python", "scala"],
+        "domain_signals": ["distributed-systems", "integrations"],
+        "work_style_signals": ["remote"],
+    }
