@@ -40,6 +40,29 @@ def test_evaluate_returns_scored_job_summary() -> None:
     }
 
 
+def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
+    response = client.post(
+        "/evaluate-text",
+        content=(FIXTURES_DIR / "affirm_backend_engineer.txt").read_text(),
+        headers={"Content-Type": "text/plain"},
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+    assert payload["title"] == "Software Engineer II, Backend (Consumer Authentication)"
+    assert payload["company"] == "Affirm"
+    assert payload["fit_score"] == 85
+    assert payload["recommendation"] == "apply"
+    assert payload["priority"] == "high"
+
+
+def test_evaluate_text_returns_validation_error_for_missing_plain_text_body() -> None:
+    response = client.post("/evaluate-text", content="", headers={"Content-Type": "text/plain"})
+
+    assert response.status_code == 422
+
+
 def test_evaluate_returns_validation_error_when_job_text_is_missing() -> None:
     response = client.post("/evaluate", json={})
 

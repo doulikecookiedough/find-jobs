@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from pydantic import BaseModel
 
 from find_jobs.comparison import evaluate_job_text
@@ -36,8 +36,19 @@ def health() -> dict[str, str]:
 @app.post("/evaluate", response_model=EvaluateJobResponse)
 def evaluate(request: EvaluateJobRequest) -> EvaluateJobResponse:
     """Evaluate raw job text using the default candidate profile."""
+    return _evaluate_job_text(request.job_text)
+
+
+@app.post("/evaluate-text", response_model=EvaluateJobResponse)
+def evaluate_text(job_text: str = Body(..., media_type="text/plain")) -> EvaluateJobResponse:
+    """Evaluate raw job text from a plain-text request body."""
+    return _evaluate_job_text(job_text)
+
+
+def _evaluate_job_text(job_text: str) -> EvaluateJobResponse:
+    """Shared evaluator used by both JSON and plain-text endpoints."""
     parsed_job, job_score = evaluate_job_text(
-        request.job_text,
+        job_text,
         build_default_candidate_profile(),
     )
     return EvaluateJobResponse(
