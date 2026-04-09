@@ -131,7 +131,7 @@ function scoreBlock(evaluation) {
   const metrics = document.createElement("div");
 
   score.className = "score";
-  scoreValue.textContent = evaluation.fit_score;
+  scoreValue.textContent = evaluation.fit_score + " %";
   scoreLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
   meta.className = "meta";
   meta.textContent = `${evaluation.company ?? "Unknown company"} | ${evaluation.title ?? "Unknown title"}`;
@@ -151,11 +151,11 @@ function scoreBlock(evaluation) {
   );
 
   score.append(
+    scoreValue,
     labelWithInfo(
       "Fit",
       "Overall application-priority score. This blends level match, stack overlap, domain fit, role fit, and competition realism.",
     ),
-    scoreValue,
     scoreLabel,
   );
   container.append(score, meta, metrics);
