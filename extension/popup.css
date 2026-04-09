@@ -241,6 +241,6 @@ ul {
 }
 
 li {
-  margin-bottom: 6px;
+  margin: 6px 0;
   line-height: 1.35;
 }
