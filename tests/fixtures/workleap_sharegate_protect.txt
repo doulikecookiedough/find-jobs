@@ -1,0 +1,33 @@
+Software Developer II - ShareGate Protect
+Canada
+Workleap · Canada (Remote)
+
+About the job
+Workleap is a Montreal-based tech company on a mission to make work simpler.
+
+Job Description
+
+You’ll be joining a team of experienced developers who design and evolve widely used products. In this role, you’ll actively contribute to the development of complete features, from Front-End to Back-End, while taking part in both technical and product decisions. Beyond code, you’ll also be involved in discussions around customer value, performance, quality, and maintainability of the solutions.
+
+Responsibilities:
+
+Design, develop, and maintain fullstack features using C# .NET and React;
+Work closely with the Product Manager and Product Designer to turn needs into real solutions;
+Work with SQL databases (primarily PostgreSQL), including data modeling and query optimization;
+Contribute to architectural decisions and development best practices;
+Ensure code quality through reviews, testing, and continuous improvement;
+Actively participate in both product and technical discussions within the team.
+
+What are the next challenges awaiting your team?
+
+The main upcoming challenges will be tied to managing and leveraging large volumes of data. We will need to design efficient solutions that allow users to query, filter, and display this data smoothly and meaningfully. This will require both smart technical decisions around performance and user experience, as well as thoughtful data and interface architecture.
+
+Qualifications
+
+3+ years of experience in software development;
+Fullstack development experience;
+Proficiency in C# .NET;
+Experience with React;
+Solid understanding of SQL databases;
+Experience with PostgreSQL;
+Strong interest in product development.
