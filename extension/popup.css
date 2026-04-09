@@ -106,7 +106,7 @@ button:disabled {
   margin-bottom: 10px;
 }
 
-.score-header {
+.label-with-info {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -151,12 +151,6 @@ button:disabled {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.metric-heading {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .metric-card strong {
@@ -227,6 +221,10 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.section-heading h2 {
+  margin: 0;
 }
 
 h2 {

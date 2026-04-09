@@ -129,20 +129,14 @@ function scoreBlock(evaluation) {
   const scoreLabel = document.createElement("span");
   const meta = document.createElement("p");
   const metrics = document.createElement("div");
-  const scoreHeader = document.createElement("div");
 
   score.className = "score";
-  scoreHeader.className = "score-header";
   scoreValue.textContent = evaluation.fit_score;
   scoreLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
   meta.className = "meta";
   meta.textContent = `${evaluation.company ?? "Unknown company"} | ${evaluation.title ?? "Unknown title"}`;
   metrics.className = "metrics";
 
-  scoreHeader.append(
-    document.createTextNode("Fit"),
-    infoBadge("Overall application-priority score. This blends level match, stack overlap, domain fit, role fit, and competition realism."),
-  );
   metrics.append(
     metricCard(
       "Skills",
@@ -156,24 +150,36 @@ function scoreBlock(evaluation) {
     ),
   );
 
-  score.append(scoreHeader, scoreValue, scoreLabel);
+  score.append(
+    labelWithInfo(
+      "Fit",
+      "Overall application-priority score. This blends level match, stack overlap, domain fit, role fit, and competition realism.",
+    ),
+    scoreValue,
+    scoreLabel,
+  );
   container.append(score, meta, metrics);
   return container;
 }
 
 function metricCard(label, value, tooltip) {
   const card = document.createElement("div");
-  const heading = document.createElement("div");
-  const headingLabel = document.createElement("span");
   const metricValue = document.createElement("strong");
 
   card.className = "metric-card";
-  heading.className = "metric-heading";
-  headingLabel.textContent = label;
   metricValue.textContent = value;
-  heading.append(headingLabel, infoBadge(tooltip));
-  card.append(heading, metricValue);
+  card.append(labelWithInfo(label, tooltip), metricValue);
   return card;
+}
+
+function labelWithInfo(label, tooltip) {
+  const heading = document.createElement("div");
+  const headingLabel = document.createElement("span");
+
+  heading.className = "label-with-info";
+  headingLabel.textContent = label;
+  heading.append(headingLabel, infoBadge(tooltip));
+  return heading;
 }
 
 function infoBadge(text) {
@@ -195,21 +201,18 @@ function infoBadge(text) {
 
 function listBlock(title, items) {
   const section = document.createElement("section");
-  const headingRow = document.createElement("div");
-  const heading = document.createElement("h2");
   const list = document.createElement("ul");
 
-  heading.textContent = title;
-  headingRow.className = "section-heading";
-  headingRow.append(heading);
-
   if (title === "Screening Risks") {
-    headingRow.append(
-      infoBadge("Specific reasons a hiring team may screen you out early, such as direct stack mismatch, seniority mismatch, or avoid-role signals."),
+    section.append(
+      sectionHeading(
+        title,
+        "Specific reasons a hiring team may screen you out early, such as direct stack mismatch, seniority mismatch, or avoid-role signals.",
+      ),
     );
+  } else {
+    section.append(sectionHeading(title));
   }
-
-  section.append(headingRow);
 
   for (const item of items ?? []) {
     const listItem = document.createElement("li");
@@ -225,6 +228,21 @@ function listBlock(title, items) {
 
   section.append(list);
   return section;
+}
+
+function sectionHeading(title, tooltip) {
+  const headingRow = document.createElement("div");
+  const heading = document.createElement("h2");
+
+  headingRow.className = "section-heading";
+  heading.textContent = title;
+  headingRow.append(heading);
+
+  if (tooltip) {
+    headingRow.append(infoBadge(tooltip));
+  }
+
+  return headingRow;
 }
 
 function setLoading(isLoading) {
