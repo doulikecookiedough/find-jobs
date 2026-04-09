@@ -100,10 +100,10 @@ button:disabled {
 
 .score {
   display: flex;
-  flex-direction: column;
   align-items: baseline;
   gap: 8px;
   margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .label-with-info {
@@ -127,12 +127,14 @@ button:disabled {
   color: #4e5d53;
   font-size: 13px;
   line-height: 1.35;
+  width: 100%;
 }
 
 .metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  margin-bottom: 18px;
 }
 
 .metric-card {
