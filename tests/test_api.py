@@ -37,6 +37,8 @@ def test_evaluate_returns_scored_job_summary() -> None:
             "Work style includes remote flexibility.",
         ],
         "risks": [],
+        "missing_fields": [],
+        "parser_warnings": [],
     }
 
 
@@ -55,6 +57,8 @@ def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
     assert payload["fit_score"] == 85
     assert payload["recommendation"] == "apply"
     assert payload["priority"] == "high"
+    assert payload["missing_fields"] == []
+    assert payload["parser_warnings"] == []
 
 
 def test_evaluate_text_returns_validation_error_for_missing_plain_text_body() -> None:
@@ -98,3 +102,5 @@ def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
     assert payload["priority"] == "medium"
     assert any("Role type aligns well with your target focus (backend)." == reason for reason in payload["reasons"])
     assert any("Role is explicitly senior-level." == risk for risk in payload["risks"])
+    assert payload["missing_fields"] == []
+    assert payload["parser_warnings"] == []

@@ -39,5 +39,9 @@ def main(argv: list[str] | None = None) -> int:
         print("Risks:")
         for risk in job_score.risks:
             print(f"- {risk}")
+    if job_score.parser_warnings:
+        print("Parser Warnings:")
+        for warning in job_score.parser_warnings:
+            print(f"- {warning}")
 
     return 0

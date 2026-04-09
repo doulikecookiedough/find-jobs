@@ -29,3 +29,5 @@ def test_job_score_defaults() -> None:
     assert score.score_breakdown == ScoreBreakdown()
     assert score.reasons == []
     assert score.risks == []
+    assert score.missing_fields == []
+    assert score.parser_warnings == []

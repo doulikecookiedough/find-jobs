@@ -25,6 +25,8 @@ class EvaluateJobResponse(BaseModel):
     priority: str
     reasons: list[str]
     risks: list[str]
+    missing_fields: list[str]
+    parser_warnings: list[str]
 
 
 @app.get("/health")
@@ -60,4 +62,6 @@ def _evaluate_job_text(job_text: str) -> EvaluateJobResponse:
         priority=job_score.priority,
         reasons=job_score.reasons,
         risks=job_score.risks,
+        missing_fields=job_score.missing_fields,
+        parser_warnings=job_score.parser_warnings,
     )

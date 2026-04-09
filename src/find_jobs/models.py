@@ -60,4 +60,6 @@ class JobScore:
     priority: str
     reasons: list[str] = field(default_factory=list)
     risks: list[str] = field(default_factory=list)
+    missing_fields: list[str] = field(default_factory=list)
+    parser_warnings: list[str] = field(default_factory=list)
     score_breakdown: ScoreBreakdown = field(default_factory=ScoreBreakdown)
