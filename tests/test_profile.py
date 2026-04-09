@@ -6,7 +6,7 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
 
     assert profile.years_experience == 3.0
     assert profile.headline is not None
-    assert profile.target_focus == "Backend / Data Platforms"
+    assert profile.target_focus == "Backend / Data Platforms / Product Engineering"
     assert profile.primary_languages == ["python"]
     assert profile.secondary_languages == ["java", "typescript", "bash"]
     assert profile.frameworks == ["flask", "django", "next.js", "react", "prisma"]
@@ -35,6 +35,8 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
     ]
     assert profile.strengths == [
         "backend",
+        "full-stack",
+        "product-engineering",
         "data-platforms",
         "distributed-systems",
         "data-integrity",
@@ -44,6 +46,8 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
         "integrations",
         "reliability",
         "etl",
+        "testing",
+        "documentation",
     ]
     assert profile.preferred_roles == ["backend", "platform"]
     assert profile.preferred_domains == [

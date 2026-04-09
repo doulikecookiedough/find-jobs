@@ -10,10 +10,11 @@ def build_default_candidate_profile() -> CandidateProfile:
     return CandidateProfile(
         years_experience=3.0,
         headline=(
-            "Backend engineer with experience building and operating production "
-            "systems using Python, PostgreSQL, AWS, and Kubernetes."
+            "Backend-first engineer with experience building and operating production "
+            "systems using Python, PostgreSQL, AWS, and Kubernetes, with credible "
+            "full-stack and product-engineering exposure in TypeScript, React, and Next.js."
         ),
-        target_focus="Backend / Data Platforms",
+        target_focus="Backend / Data Platforms / Product Engineering",
         primary_languages=["python"],
         secondary_languages=["java", "typescript", "bash"],
         frameworks=["flask", "django", "next.js", "react", "prisma"],
@@ -34,6 +35,8 @@ def build_default_candidate_profile() -> CandidateProfile:
         developer_tools=["git", "github", "github-actions", "maven", "junit", "pytest", "vitest"],
         strengths=[
             "backend",
+            "full-stack",
+            "product-engineering",
             "data-platforms",
             "distributed-systems",
             "data-integrity",
@@ -43,6 +46,8 @@ def build_default_candidate_profile() -> CandidateProfile:
             "integrations",
             "reliability",
             "etl",
+            "testing",
+            "documentation",
         ],
         preferred_roles=["backend", "platform"],
         preferred_domains=[
