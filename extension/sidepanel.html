@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>find-jobs side panel</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">find-jobs</p>
+        <h1>Evaluate this job</h1>
+      </header>
+
+      <button id="evaluate-button" type="button">Evaluate Job</button>
+      <p id="status" class="status">Open a job page, start the local API, then evaluate.</p>
+      <details id="extracted-preview" class="extracted-preview" hidden>
+        <summary>Preview extracted text</summary>
+        <pre id="extracted-text"></pre>
+      </details>
+
+      <section id="result" class="result" hidden></section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

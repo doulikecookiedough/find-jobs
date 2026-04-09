@@ -3,10 +3,13 @@
   "name": "find-jobs",
   "version": "0.1.0",
   "description": "Evaluate job postings against the local find-jobs FastAPI service.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "sidePanel"],
   "host_permissions": ["http://127.0.0.1:8000/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Evaluate job fit"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
   }
 }
