@@ -1,39 +1,45 @@
 body {
   margin: 0;
-  width: 360px;
-  color: #17211a;
-  background: #f3efe4;
-  font-family: Georgia, "Times New Roman", serif;
+  width: 380px;
+  color: #12201a;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(94, 129, 108, 0.22), transparent 28%),
+    linear-gradient(145deg, #f6f2e8 0%, #e7efe9 100%);
+  font-family: Avenir Next, Avenir, "Helvetica Neue", Helvetica, sans-serif;
 }
 
 main {
-  padding: 18px;
+  padding: 20px;
 }
 
 .eyebrow {
   margin: 0 0 4px;
-  color: #5f6f57;
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  color: #607464;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 h1 {
-  margin: 0 0 16px;
-  font-size: 24px;
+  margin: 0 0 18px;
+  font-size: 25px;
+  letter-spacing: -0.04em;
   line-height: 1.1;
 }
 
 button {
   width: 100%;
   border: 0;
-  border-radius: 10px;
-  padding: 12px 14px;
-  color: #f8f4eb;
-  background: #2d4f3a;
+  border-radius: 14px;
+  padding: 13px 14px;
+  color: #f8f5ec;
+  background: linear-gradient(135deg, #1f5a3b 0%, #123623 100%);
+  box-shadow: 0 12px 24px rgba(26, 61, 40, 0.2);
   cursor: pointer;
   font: inherit;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 button:disabled {
@@ -43,15 +49,18 @@ button:disabled {
 
 .status {
   margin: 12px 0 0;
-  color: #5b5b4f;
+  color: #56645b;
   font-size: 13px;
   line-height: 1.4;
 }
 
 .result {
   margin-top: 16px;
-  border-top: 1px solid #d7d0bd;
-  padding-top: 14px;
+  border: 1px solid rgba(42, 74, 53, 0.18);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 252, 245, 0.74);
+  box-shadow: 0 14px 30px rgba(44, 59, 49, 0.08);
 }
 
 .score {
@@ -62,18 +71,21 @@ button:disabled {
 }
 
 .score strong {
-  font-size: 34px;
+  font-size: 40px;
+  letter-spacing: -0.08em;
 }
 
 .meta {
   margin: 0 0 12px;
-  color: #4d5548;
+  color: #4e5d53;
   font-size: 13px;
+  line-height: 1.35;
 }
 
 h2 {
   margin: 14px 0 6px;
   font-size: 15px;
+  letter-spacing: -0.02em;
 }
 
 ul {

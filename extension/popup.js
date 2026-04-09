@@ -15,18 +15,23 @@ evaluateButton.addEventListener("click", async () => {
       throw new Error("Could not find the active browser tab.");
     }
 
-    const [{ result }] = await chrome.scripting.executeScript({
+    const injectionResults = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: extractVisibleJobText,
     });
+    const result = injectionResults?.[0]?.result;
+
+    if (result?.error) {
+      throw new Error(result.error);
+    }
 
     if (!result?.jobText?.trim()) {
-      throw new Error("Could not extract readable job text from this page.");
+      throw new Error(`Could not extract readable job text from this page. Source: ${result?.source ?? "unknown"}.`);
     }
 
     const evaluation = await evaluateJobText(result.jobText);
     renderEvaluation(evaluation);
-    statusElement.textContent = "Evaluation complete.";
+    statusElement.textContent = `Evaluation complete. Extracted ${result.characterCount} characters from ${result.source}.`;
   } catch (error) {
     statusElement.textContent = error.message;
   } finally {
@@ -35,10 +40,42 @@ evaluateButton.addEventListener("click", async () => {
 });
 
 function extractVisibleJobText() {
-  const title = document.querySelector("h1")?.innerText ?? document.title;
-  const bodyText = document.body?.innerText ?? "";
-  const jobText = [title, bodyText].filter(Boolean).join("\n\n");
-  return { jobText };
+  function textFromSelector(selector) {
+    const element = document.querySelector(selector);
+    return (element?.innerText || element?.textContent || "").trim();
+  }
+
+  function normalizeWhitespace(text) {
+    return text
+      .replace(/\u00a0/g, " ")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  const root = document.querySelector("main") ?? document.body ?? document.documentElement;
+  if (!root) {
+    return { jobText: "", source: "no document body", characterCount: 0 };
+  }
+
+  const title = textFromSelector("h1") || document.title || "";
+  const company = textFromSelector(".job-details-jobs-unified-top-card__company-name, .jobs-unified-top-card__company-name");
+  const location = textFromSelector(".job-details-jobs-unified-top-card__primary-description-container, .jobs-unified-top-card__bullet");
+  const description = textFromSelector(
+    ".jobs-description__content, .jobs-box__html-content, .jobs-description-content__text, .jobs-description, [class*='jobs-description']",
+  );
+  const fallbackText = root.innerText || root.textContent || "";
+  const source = description ? "LinkedIn job description selectors" : "main/body fallback text";
+  const jobText = normalizeWhitespace([title, company, location, description || fallbackText]
+    .filter(Boolean)
+    .join("\n\n")
+    .trim());
+
+  return {
+    jobText,
+    source,
+    characterCount: jobText.length,
+  };
 }
 
 async function evaluateJobText(jobText) {
