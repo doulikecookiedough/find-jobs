@@ -48,6 +48,8 @@ The parser currently extracts:
 The scorer currently produces:
 
 - fit score
+- skills alignment
+- interview probability range
 - recommendation
 - priority
 - reasons
@@ -63,9 +65,11 @@ The API currently exposes:
 
 The Chrome extension currently provides:
 
-- a popup UI for evaluating the active browser tab
+- a side panel UI for evaluating the active browser tab
 - visible text extraction from LinkedIn-style job pages
 - a collapsed extracted-text preview for real-world parser debugging
+- scoring metric cards for fit, skills, and interview likelihood
+- inline help tooltips for understanding the scoring outputs
 - local API integration through `POST /evaluate-text`
 
 The parser is tested against multiple real-world fixture styles, including:
@@ -147,7 +151,8 @@ To test the Chrome extension locally:
 6. Open a job posting page.
 7. Click the `find-jobs` extension to open the side panel.
 8. Click `Evaluate Job`.
-9. Expand `Preview extracted text` if the score looks wrong.
+9. Hover the info icons beside the score labels if you want help interpreting the metrics.
+10. Expand `Preview extracted text` if the score looks wrong.
 
 For manual reviewer testing, the easiest option is FastAPI docs:
 
@@ -172,6 +177,8 @@ Example output:
 Title: Software Engineer II, Backend (Consumer Authentication)
 Company: Affirm
 Fit Score: 85
+Skills Alignment: 78
+Interview Probability: 83-93%
 Recommendation: apply
 Priority: high
 Reasons:
