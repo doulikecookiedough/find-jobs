@@ -25,3 +25,9 @@ def test_extension_manifest_can_call_local_api() -> None:
     assert "scripting" in manifest["permissions"]
     assert "activeTab" in manifest["permissions"]
     assert "sidePanel" in manifest["permissions"]
+
+
+def test_extension_manifest_can_read_linkedin_pages() -> None:
+    manifest = json.loads((EXTENSION_DIR / "manifest.json").read_text())
+
+    assert "https://www.linkedin.com/*" in manifest["host_permissions"]
