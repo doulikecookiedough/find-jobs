@@ -175,8 +175,8 @@ def test_score_job_returns_apply_for_strong_fit() -> None:
 
     assert score.fit_score == 100
     assert score.skills_alignment == 100
-    assert score.interview_probability_min == 95
-    assert score.interview_probability_max == 100
+    assert score.interview_probability_min == 78
+    assert score.interview_probability_max == 89
     assert score.recommendation == "apply"
     assert score.priority == "high"
     assert score.score_breakdown.strength_alignment == 1.0
@@ -221,7 +221,7 @@ def test_score_job_returns_consider_for_mixed_fit() -> None:
 
     assert 60 <= score.fit_score < 80
     assert 40 <= score.skills_alignment <= 70
-    assert 70 <= score.interview_probability_min <= 80
+    assert 20 <= score.interview_probability_min <= 30
     assert score.recommendation == "consider"
     assert score.priority == "medium"
     assert any("Experience requirement is above your current profile" in risk for risk in score.risks)
@@ -246,5 +246,5 @@ def test_score_job_can_show_stronger_skills_than_overall_fit_for_stretch_role() 
 
     assert score.fit_score < score.skills_alignment
     assert score.skills_alignment >= 80
-    assert 0 <= score.interview_probability_min <= 25
-    assert 10 <= score.interview_probability_max <= 35
+    assert 0 <= score.interview_probability_min <= 5
+    assert 0 <= score.interview_probability_max <= 10

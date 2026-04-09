@@ -238,35 +238,166 @@ def _interview_probability_for_breakdown(
     skills_alignment: int,
     job: ParsedJob,
 ) -> tuple[int, int]:
-    """Estimate interview probability range from fit and realism."""
+    """Estimate interview probability with a deliberately conservative bias.
+
+    Philosophy:
+    - Interview odds are about passing screening, not just being capable of the job.
+    - Missing core stack requirements should sharply reduce both the center and ceiling.
+    - Weak proof of required skills matters more than general transferable fit.
+    - Multiple medium mismatches compound harshly.
+    - The upper bound is intentionally restrained to temper expectations.
+    """
+
+    def clamp(value: float, lower: float = 0.0, upper: float = 100.0) -> float:
+        return max(lower, min(upper, value))
+
+    # Conservative base: general fit helps, but not too much.
     base_probability = (
-        fit_score * 0.40
-        + skills_alignment * 0.25
-        + breakdown.competition_realism * 100 * 0.15
-        + breakdown.level_match * 100 * 0.10
-        + breakdown.role_type_alignment * 100 * 0.10
+        fit_score * 0.22
+        + skills_alignment * 0.10
+        + breakdown.competition_realism * 100 * 0.18
+        + breakdown.level_match * 100 * 0.25
+        + breakdown.role_type_alignment * 100 * 0.25
     )
 
-    if breakdown.stack_alignment < 0.4:
-        base_probability -= 8
-    elif breakdown.stack_alignment < 0.6:
-        base_probability -= 4
+    multiplier = 1.0
+    upper_cap = 100
 
-    if 0.0 < breakdown.role_type_alignment < 1.0:
-        base_probability -= 4
+    # Optional evidence field: how well the resume proves the required stack.
+    # Defaults to stack_alignment if not explicitly available.
+    required_stack_proof = getattr(
+        breakdown,
+        "required_stack_proof",
+        breakdown.stack_alignment,
+    )
 
-    if job.seniority == "senior":
-        base_probability -= 8
-    if job.seniority in {"staff", "principal"}:
-        base_probability -= 15
-    if job.years_experience_required is not None and job.years_experience_required >= 7.0:
+    # Stack alignment penalties
+    if breakdown.stack_alignment < 0.30:
+        base_probability -= 28
+        multiplier *= 0.42
+    elif breakdown.stack_alignment < 0.50:
+        base_probability -= 18
+        multiplier *= 0.62
+    elif breakdown.stack_alignment < 0.65:
+        base_probability -= 10
+        multiplier *= 0.82
+
+    # Required stack proof penalties
+    if required_stack_proof < 0.25:
         base_probability -= 20
+        multiplier *= 0.45
+        upper_cap = min(upper_cap, 15)
+    elif required_stack_proof < 0.50:
+        base_probability -= 12
+        multiplier *= 0.68
+        upper_cap = min(upper_cap, 20)
+    elif required_stack_proof < 0.70:
+        base_probability -= 6
+        multiplier *= 0.86
+        upper_cap = min(upper_cap, 28)
 
-    center = max(0, min(100, round(base_probability)))
-    lower_bound = max(0, center - 5)
-    upper_bound = min(100, center + 5)
+    # Role type mismatch
+    if breakdown.role_type_alignment < 0.50:
+        base_probability -= 16
+        multiplier *= 0.68
+    elif breakdown.role_type_alignment < 0.80:
+        base_probability -= 8
+        multiplier *= 0.86
+
+    # Level mismatch
+    if breakdown.level_match < 0.50:
+        base_probability -= 20
+        multiplier *= 0.62
+    elif breakdown.level_match < 0.75:
+        base_probability -= 10
+        multiplier *= 0.82
+
+    # Competition harshness
+    if breakdown.competition_realism < 0.30:
+        multiplier *= 0.58
+    elif breakdown.competition_realism < 0.50:
+        multiplier *= 0.74
+    elif breakdown.competition_realism < 0.70:
+        multiplier *= 0.88
+
+    # Seniority penalties
+    if job.seniority == "senior":
+        base_probability -= 15
+        multiplier *= 0.80
+    elif job.seniority in {"staff", "principal"}:
+        base_probability -= 32
+        multiplier *= 0.52
+        upper_cap = min(upper_cap, 18)
+
+    # Years of experience penalties
+    if job.years_experience_required is not None:
+        years_required = job.years_experience_required
+        if years_required >= 10:
+            base_probability -= 24
+            multiplier *= 0.70
+        elif years_required >= 7:
+            base_probability -= 18
+            multiplier *= 0.80
+        elif years_required >= 5:
+            base_probability -= 10
+            multiplier *= 0.90
+
+    # Hard screen for core stack miss
+    if getattr(job, "core_stack_mismatch", False):
+        base_probability -= 22
+        multiplier *= 0.35
+        upper_cap = min(upper_cap, 15)
+
+    # Even harsher if more than one core technology is missing
+    if getattr(job, "multiple_core_stack_misses", False):
+        base_probability -= 10
+        multiplier *= 0.72
+        upper_cap = min(upper_cap, 12)
+
+    # Optional stretch-role flag
+    if getattr(job, "is_stretch_role", False):
+        multiplier *= 0.78
+        upper_cap = min(upper_cap, 18)
+
+    # Compound mismatch penalty
+    medium_mismatches = 0
+    if breakdown.stack_alignment < 0.65:
+        medium_mismatches += 1
+    if required_stack_proof < 0.50:
+        medium_mismatches += 1
+    if breakdown.role_type_alignment < 0.80:
+        medium_mismatches += 1
+    if breakdown.level_match < 0.75:
+        medium_mismatches += 1
+    if breakdown.competition_realism < 0.60:
+        medium_mismatches += 1
+
+    if medium_mismatches >= 4:
+        multiplier *= 0.62
+    elif medium_mismatches == 3:
+        multiplier *= 0.76
+    elif medium_mismatches == 2:
+        multiplier *= 0.90
+
+    # Final pessimism discount: real hiring is usually harsher than rubrics.
+    final_probability = base_probability * multiplier * 0.85
+
+    center = round(clamp(final_probability, 0, upper_cap))
+
+    # Asymmetric range to keep optimism in check.
+    if center >= 30:
+        lower_spread = 7
+        upper_spread = 4
+    elif center >= 15:
+        lower_spread = 6
+        upper_spread = 3
+    else:
+        lower_spread = 4
+        upper_spread = 2
+
+    lower_bound = max(0, center - lower_spread)
+    upper_bound = min(upper_cap, center + upper_spread)
     return lower_bound, upper_bound
-
 
 def _recommendation_for_score(fit_score: int) -> str:
     if fit_score >= 80:

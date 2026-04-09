@@ -29,8 +29,8 @@ def test_evaluate_returns_scored_job_summary() -> None:
         "location": "Remote Canada",
         "fit_score": 85,
         "skills_alignment": 78,
-        "interview_probability_min": 83,
-        "interview_probability_max": 93,
+        "interview_probability_min": 22,
+        "interview_probability_max": 28,
         "recommendation": "apply",
         "priority": "high",
         "reasons": [
@@ -59,8 +59,8 @@ def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
     assert payload["company"] == "Affirm"
     assert payload["fit_score"] == 85
     assert payload["skills_alignment"] == 78
-    assert payload["interview_probability_min"] == 83
-    assert payload["interview_probability_max"] == 93
+    assert payload["interview_probability_min"] == 22
+    assert payload["interview_probability_max"] == 28
     assert payload["recommendation"] == "apply"
     assert payload["priority"] == "high"
     assert payload["missing_fields"] == []
@@ -105,8 +105,8 @@ def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
     assert payload["company"] == "Berkeley Payments"
     assert payload["fit_score"] == 62
     assert 65 <= payload["skills_alignment"] <= 75
-    assert 45 <= payload["interview_probability_min"] <= 50
-    assert 50 <= payload["interview_probability_max"] <= 60
+    assert 0 == payload["interview_probability_min"]
+    assert 0 <= payload["interview_probability_max"] <= 2
     assert payload["recommendation"] == "consider"
     assert payload["priority"] == "medium"
     assert any("Role type aligns well with your target focus (backend)." == reason for reason in payload["reasons"])

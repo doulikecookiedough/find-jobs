@@ -91,6 +91,6 @@ def test_evaluate_job_text_returns_balanced_midlevel_fit_for_workleap() -> None:
     assert parsed_job.years_experience_required == 3.0
     assert 65 <= job_score.fit_score <= 80
     assert 60 <= job_score.skills_alignment <= 75
-    assert 55 <= job_score.interview_probability_min <= 65
-    assert 60 <= job_score.interview_probability_max <= 70
+    assert 0 <= job_score.interview_probability_min <= 15
+    assert 0 <= job_score.interview_probability_max <= 15
     assert job_score.recommendation == "consider"
