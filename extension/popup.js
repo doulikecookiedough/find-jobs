@@ -117,7 +117,7 @@ function renderEvaluation(evaluation) {
   resultElement.append(
     scoreBlock(evaluation),
     listBlock("Reasons", evaluation.reasons),
-    listBlock("Risks", evaluation.risks),
+    listBlock("Screening Risks", evaluation.risks),
     listBlock("Parser Warnings", evaluation.parser_warnings),
   );
 }
@@ -129,46 +129,81 @@ function scoreBlock(evaluation) {
   const scoreLabel = document.createElement("span");
   const meta = document.createElement("p");
   const metrics = document.createElement("div");
+  const scoreHeader = document.createElement("div");
 
   score.className = "score";
+  scoreHeader.className = "score-header";
   scoreValue.textContent = evaluation.fit_score;
   scoreLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
   meta.className = "meta";
   meta.textContent = `${evaluation.company ?? "Unknown company"} | ${evaluation.title ?? "Unknown title"}`;
   metrics.className = "metrics";
 
+  scoreHeader.append(
+    document.createTextNode("Fit"),
+    infoBadge("Overall application-priority score. This blends level match, stack overlap, domain fit, role fit, and competition realism."),
+  );
   metrics.append(
-    metricCard("Skills", `${evaluation.skills_alignment}%`),
+    metricCard(
+      "Skills",
+      `${evaluation.skills_alignment}%`,
+      "Technical overlap score. This focuses on known stack, strengths, and domain signals rather than level realism.",
+    ),
     metricCard(
       "Interview",
       `${evaluation.interview_probability_min}-${evaluation.interview_probability_max}%`,
+      "Cold-application interview likelihood estimate, not your odds of passing once you are already in the interview loop.",
     ),
   );
 
-  score.append(scoreValue, scoreLabel);
+  score.append(scoreHeader, scoreValue, scoreLabel);
   container.append(score, meta, metrics);
   return container;
 }
 
-function metricCard(label, value) {
+function metricCard(label, value, tooltip) {
   const card = document.createElement("div");
-  const heading = document.createElement("span");
+  const heading = document.createElement("div");
+  const headingLabel = document.createElement("span");
   const metricValue = document.createElement("strong");
 
   card.className = "metric-card";
-  heading.textContent = label;
+  heading.className = "metric-heading";
+  headingLabel.textContent = label;
   metricValue.textContent = value;
+  heading.append(headingLabel, infoBadge(tooltip));
   card.append(heading, metricValue);
   return card;
 }
 
+function infoBadge(text) {
+  const badge = document.createElement("button");
+
+  badge.type = "button";
+  badge.className = "info-badge";
+  badge.textContent = "i";
+  badge.title = text;
+  badge.setAttribute("aria-label", text);
+  return badge;
+}
+
 function listBlock(title, items) {
   const section = document.createElement("section");
+  const headingRow = document.createElement("div");
   const heading = document.createElement("h2");
   const list = document.createElement("ul");
 
   heading.textContent = title;
-  section.append(heading);
+  headingRow.className = "section-heading";
+  headingRow.append(heading);
+
+  if (title === "Screening Risks") {
+    headingRow.append(
+      infoBadge("Specific reasons a hiring team may screen you out early, such as direct stack mismatch, seniority mismatch, or avoid-role signals."),
+    );
+  }
+
+  section.append(headingRow);
 
   for (const item of items ?? []) {
     const listItem = document.createElement("li");

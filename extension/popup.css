@@ -100,9 +100,21 @@ button:disabled {
 
 .score {
   display: flex;
+  flex-direction: column;
   align-items: baseline;
   gap: 8px;
   margin-bottom: 10px;
+}
+
+.score-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #5f7065;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .score strong {
@@ -141,10 +153,45 @@ button:disabled {
   text-transform: uppercase;
 }
 
+.metric-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .metric-card strong {
   color: #173324;
   font-size: 18px;
   letter-spacing: -0.03em;
+}
+
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 1px solid rgba(42, 74, 53, 0.2);
+  border-radius: 999px;
+  padding: 0;
+  color: #3f5547;
+  background: rgba(255, 252, 245, 0.95);
+  box-shadow: none;
+  cursor: help;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.info-badge:hover {
+  background: rgba(244, 248, 241, 1);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 h2 {
