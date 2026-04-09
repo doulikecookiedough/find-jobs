@@ -16,7 +16,7 @@ The long-term idea is to:
 - produce a score, reasons, and risks
 - eventually support batch evaluation, CSV export, and browser-assisted ingestion
 
-The current MVP already supports parsing and scoring from a text file. The next likely step is exposing the evaluator through a small local API so a browser extension can call it directly from job pages.
+The current MVP supports parsing and scoring from both a text file and a local FastAPI endpoint. The next likely step is using that local API as the backend for a browser extension that can evaluate job pages directly.
 
 ## Current approach
 
@@ -53,6 +53,11 @@ The scorer currently produces:
 - reasons
 - risks
 - score breakdown by factor
+
+The API currently exposes:
+
+- `GET /health`
+- `POST /evaluate`
 
 The parser is tested against multiple real-world fixture styles, including:
 
@@ -111,6 +116,18 @@ uv run pytest
 uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt
 ```
 
+To run the local API:
+
+```bash
+uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload
+```
+
+Then test it:
+
+```bash
+curl -s http://127.0.0.1:8000/health
+```
+
 Example output:
 
 ```text
@@ -146,7 +163,10 @@ If you want to try the project locally:
 - run `uv sync` to create the local environment
 - run `uv run pytest` to execute the test suite
 - run `uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt`
+- run `uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload`
+- call `GET /health` or `POST /evaluate` against the local API
 - inspect `src/find_jobs/parser.py`, `src/find_jobs/scoring.py`, and the corresponding tests
+- inspect `src/find_jobs/api.py` and `tests/test_api.py` for the local service boundary
 - review `tests/fixtures/` to see the posting styles shaping the parser
 
 This repository is intentionally experimental. Expect small, reviewable changes rather than a large initial implementation.
@@ -155,12 +175,12 @@ This repository is intentionally experimental. Expect small, reviewable changes 
 
 Near-term work is likely to focus on:
 
-1. local FastAPI endpoint for evaluation
-2. browser-extension-friendly ingestion
-3. pasted text / stdin support
-4. batch mode and CSV export
-5. configurable candidate profiles
+1. browser-extension-friendly ingestion
+2. pasted text / stdin support
+3. batch mode and CSV export
+4. configurable candidate profiles
+5. local API refinements for extension integration
 
 ## Status
 
-Parser, profile, scoring, end-to-end comparison, and CLI MVP are implemented. The project is now in the “make ingestion easier” phase rather than the “can we score jobs at all?” phase.
+Parser, profile, scoring, end-to-end comparison, CLI MVP, and a local FastAPI evaluation API are implemented. The project is now in the “make ingestion easier” phase rather than the “can we score jobs at all?” phase.
