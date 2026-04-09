@@ -128,7 +128,7 @@ ROLE_TYPE_PATTERNS = (
     ("mobile", re.compile(r"\bmobile\b|\bios\b|\bandroid\b", re.IGNORECASE)),
 )
 MID_LEVEL_PATTERN = re.compile(r"\b(engineer ii|software engineer ii|mid(?:-level)?|intermediate)\b", re.IGNORECASE)
-SENIOR_LEVEL_PATTERN = re.compile(r"\b(senior|staff|principal|lead)\b", re.IGNORECASE)
+SENIOR_LEVEL_PATTERN = re.compile(r"\b(senior|sr\.?|staff|principal|lead)\b", re.IGNORECASE)
 JUNIOR_LEVEL_PATTERN = re.compile(r"\b(junior|entry[ -]?level|new grad|intern)\b", re.IGNORECASE)
 
 
@@ -382,6 +382,9 @@ def _extract_domain_signals(raw_text: str) -> list[str]:
 def _extract_role_type(raw_text: str, title: str | None) -> str | None:
     title_text = title or ""
 
+    if re.search(r"\bintegrations?\b", title_text, re.IGNORECASE):
+        return "platform"
+
     for role_type, pattern in ROLE_TYPE_PATTERNS:
         if pattern.search(title_text):
             return role_type
@@ -389,6 +392,8 @@ def _extract_role_type(raw_text: str, title: str | None) -> str | None:
     search_text = "\n".join(filter(None, [title, raw_text]))
 
     for role_type, pattern in ROLE_TYPE_PATTERNS:
+        if role_type == "platform":
+            continue
         if pattern.search(search_text):
             return role_type
 

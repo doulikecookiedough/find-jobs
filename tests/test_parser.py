@@ -267,6 +267,6 @@ def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> N
         "salary_currency": None,
         "salary_period": None,
         "technologies": ["aws", "go", "java", "mongodb", "mysql", "python", "scala"],
-        "domain_signals": ["distributed-systems", "integrations"],
+        "domain_signals": ["apis", "distributed-systems", "integrations"],
         "work_style_signals": ["remote"],
     }
