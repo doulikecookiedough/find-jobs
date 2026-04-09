@@ -62,3 +62,19 @@ def test_evaluate_job_text_returns_apply_for_stripe_with_strength_alignment() ->
     assert job_score.score_breakdown.level_match == 1.0
     assert job_score.score_breakdown.strength_alignment == 1.0
     assert job_score.score_breakdown.competition_realism == 1.0
+
+
+def test_evaluate_job_text_returns_low_probability_stretch_for_narvar() -> None:
+    parsed_job, job_score = evaluate_job_text(
+        load_fixture("narvar_distributed_systems.txt"),
+        build_default_candidate_profile(),
+    )
+
+    assert parsed_job.company == "Narvar"
+    assert parsed_job.years_experience_required == 7.0
+    assert parsed_job.seniority == "senior"
+    assert job_score.skills_alignment >= 60
+    assert job_score.fit_score <= 50
+    assert job_score.interview_probability_max <= 30
+    assert job_score.skills_alignment > job_score.fit_score
+    assert job_score.recommendation in {"consider", "skip"}
