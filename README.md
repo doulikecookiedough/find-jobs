@@ -145,7 +145,7 @@ To test the Chrome extension locally:
 4. Click `Load unpacked`.
 5. Select the `extension/` directory in this repository.
 6. Open a job posting page.
-7. Click the `find-jobs` extension.
+7. Click the `find-jobs` extension to open the side panel.
 8. Click `Evaluate Job`.
 9. Expand `Preview extracted text` if the score looks wrong.
 

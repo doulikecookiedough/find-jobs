@@ -17,7 +17,7 @@ Then load the extension:
 3. Click `Load unpacked`.
 4. Select the `extension/` directory in this repository.
 5. Open a job posting page.
-6. Click the `find-jobs` extension.
+6. Click the `find-jobs` extension to open the side panel.
 7. Click `Evaluate Job`.
 8. Expand `Preview extracted text` if the score looks wrong or the parser misses important fields.
 
@@ -37,16 +37,16 @@ Chrome extension popups are temporary. The popup closes when focus returns to th
 
 This is expected Chrome behavior, not a bug in the extension.
 
-## Planned Side Panel
+## Side Panel
 
-The next extension improvement is a Chrome side panel. The side panel should keep the same core workflow as the popup, but it will remain open beside the page while reviewing multiple jobs.
+The extension now uses a Chrome side panel as the primary UI. It keeps the same core workflow as the popup, but it remains open beside the page while reviewing multiple jobs.
 
 The expected testing process is:
 
 1. Start the local FastAPI service.
 2. Reload the unpacked extension in `chrome://extensions`.
 3. Open LinkedIn jobs.
-4. Open the `find-jobs` side panel once.
+4. Click the `find-jobs` extension to open the side panel once.
 5. Click through job postings in LinkedIn.
 6. Click `Evaluate Job` in the side panel for each posting.
 7. Use `Preview extracted text` to verify what was sent to the parser.
