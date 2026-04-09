@@ -128,16 +128,38 @@ function scoreBlock(evaluation) {
   const scoreValue = document.createElement("strong");
   const scoreLabel = document.createElement("span");
   const meta = document.createElement("p");
+  const metrics = document.createElement("div");
 
   score.className = "score";
   scoreValue.textContent = evaluation.fit_score;
   scoreLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
   meta.className = "meta";
   meta.textContent = `${evaluation.company ?? "Unknown company"} | ${evaluation.title ?? "Unknown title"}`;
+  metrics.className = "metrics";
+
+  metrics.append(
+    metricCard("Skills", `${evaluation.skills_alignment}%`),
+    metricCard(
+      "Interview",
+      `${evaluation.interview_probability_min}-${evaluation.interview_probability_max}%`,
+    ),
+  );
 
   score.append(scoreValue, scoreLabel);
-  container.append(score, meta);
+  container.append(score, meta, metrics);
   return container;
+}
+
+function metricCard(label, value) {
+  const card = document.createElement("div");
+  const heading = document.createElement("span");
+  const metricValue = document.createElement("strong");
+
+  card.className = "metric-card";
+  heading.textContent = label;
+  metricValue.textContent = value;
+  card.append(heading, metricValue);
+  return card;
 }
 
 function listBlock(title, items) {

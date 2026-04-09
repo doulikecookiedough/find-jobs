@@ -117,6 +117,36 @@ button:disabled {
   line-height: 1.35;
 }
 
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid rgba(42, 74, 53, 0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(244, 248, 241, 0.9);
+}
+
+.metric-card span {
+  color: #5f7065;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  color: #173324;
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
 h2 {
   margin: 14px 0 6px;
   font-size: 15px;
