@@ -145,7 +145,7 @@ button:disabled {
   background: rgba(244, 248, 241, 0.9);
 }
 
-.metric-card span {
+.label-text {
   color: #5f7065;
   font-size: 11px;
   font-weight: 700;

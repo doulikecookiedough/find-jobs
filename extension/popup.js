@@ -177,6 +177,7 @@ function labelWithInfo(label, tooltip) {
   const headingLabel = document.createElement("span");
 
   heading.className = "label-with-info";
+  headingLabel.className = "label-text";
   headingLabel.textContent = label;
   heading.append(headingLabel, infoBadge(tooltip));
   return heading;
