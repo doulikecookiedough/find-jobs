@@ -16,7 +16,7 @@ The long-term idea is to:
 - produce a score, reasons, and risks
 - eventually support batch evaluation, CSV export, and browser-assisted ingestion
 
-The current MVP supports parsing and scoring from both a text file and a local FastAPI endpoint. The next likely step is using that local API as the backend for a browser extension that can evaluate job pages directly.
+The current MVP supports parsing and scoring from a text file, a local FastAPI endpoint, and a local Chrome extension that can evaluate visible job pages directly.
 
 ## Current approach
 
@@ -60,6 +60,13 @@ The API currently exposes:
 - `GET /health`
 - `POST /evaluate`
 - `POST /evaluate-text`
+
+The Chrome extension currently provides:
+
+- a popup UI for evaluating the active browser tab
+- visible text extraction from LinkedIn-style job pages
+- a collapsed extracted-text preview for real-world parser debugging
+- local API integration through `POST /evaluate-text`
 
 The parser is tested against multiple real-world fixture styles, including:
 
@@ -129,6 +136,18 @@ Then test it:
 ```bash
 curl -s http://127.0.0.1:8000/health
 ```
+
+To test the Chrome extension locally:
+
+1. Start the local API with the `uvicorn` command above.
+2. Open `chrome://extensions`.
+3. Enable `Developer mode`.
+4. Click `Load unpacked`.
+5. Select the `extension/` directory in this repository.
+6. Open a job posting page.
+7. Click the `find-jobs` extension.
+8. Click `Evaluate Job`.
+9. Expand `Preview extracted text` if the score looks wrong.
 
 For manual reviewer testing, the easiest option is FastAPI docs:
 
@@ -217,7 +236,7 @@ This repository is intentionally experimental. Expect small, reviewable changes 
 
 Near-term work is likely to focus on:
 
-1. browser-extension-friendly ingestion
+1. a persistent Chrome side panel for evaluating multiple LinkedIn jobs without reopening the popup
 2. pasted text / stdin support
 3. batch mode and CSV export
 4. configurable candidate profiles
@@ -225,4 +244,4 @@ Near-term work is likely to focus on:
 
 ## Status
 
-Parser, profile, scoring, end-to-end comparison, CLI MVP, and a local FastAPI evaluation API are implemented. The project is now in the “make ingestion easier” phase rather than the “can we score jobs at all?” phase.
+Parser, profile, scoring, end-to-end comparison, CLI MVP, local FastAPI evaluation API, and Chrome extension MVP are implemented. The project is now in the “make ingestion faster for real job-search workflows” phase rather than the “can we score jobs at all?” phase.
