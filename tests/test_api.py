@@ -38,3 +38,40 @@ def test_evaluate_returns_scored_job_summary() -> None:
         ],
         "risks": [],
     }
+
+
+def test_evaluate_returns_validation_error_when_job_text_is_missing() -> None:
+    response = client.post("/evaluate", json={})
+
+    assert response.status_code == 422
+
+    payload = response.json()
+    assert payload["detail"][0]["loc"] == ["body", "job_text"]
+    assert payload["detail"][0]["type"] == "missing"
+
+
+def test_evaluate_returns_validation_error_for_wrong_job_text_type() -> None:
+    response = client.post("/evaluate", json={"job_text": 123})
+
+    assert response.status_code == 422
+
+    payload = response.json()
+    assert payload["detail"][0]["loc"] == ["body", "job_text"]
+
+
+def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
+    response = client.post(
+        "/evaluate",
+        json={"job_text": (FIXTURES_DIR / "berkeley_payments_senior_backend.txt").read_text()},
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+    assert payload["title"] == "Senior Software Engineer"
+    assert payload["company"] == "Berkeley Payments"
+    assert payload["fit_score"] == 62
+    assert payload["recommendation"] == "consider"
+    assert payload["priority"] == "medium"
+    assert any("Role type aligns well with your target focus (backend)." == reason for reason in payload["reasons"])
+    assert any("Role is explicitly senior-level." == risk for risk in payload["risks"])
