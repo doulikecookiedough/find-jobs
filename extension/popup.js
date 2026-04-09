@@ -3,11 +3,14 @@ const API_URL = "http://127.0.0.1:8000/evaluate-text";
 const evaluateButton = document.querySelector("#evaluate-button");
 const statusElement = document.querySelector("#status");
 const resultElement = document.querySelector("#result");
+const extractedPreviewElement = document.querySelector("#extracted-preview");
+const extractedTextElement = document.querySelector("#extracted-text");
 
 evaluateButton.addEventListener("click", async () => {
   setLoading(true);
   resultElement.hidden = true;
   resultElement.replaceChildren();
+  resetExtractedPreview();
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -29,6 +32,7 @@ evaluateButton.addEventListener("click", async () => {
       throw new Error(`Could not extract readable job text from this page. Source: ${result?.source ?? "unknown"}.`);
     }
 
+    renderExtractedPreview(result.jobText);
     const evaluation = await evaluateJobText(result.jobText);
     renderEvaluation(evaluation);
     statusElement.textContent = `Evaluation complete. Extracted ${result.characterCount} characters from ${result.source}.`;
@@ -76,6 +80,22 @@ function extractVisibleJobText() {
     source,
     characterCount: jobText.length,
   };
+}
+
+function resetExtractedPreview() {
+  extractedPreviewElement.hidden = true;
+  extractedPreviewElement.open = false;
+  extractedTextElement.textContent = "";
+}
+
+function renderExtractedPreview(jobText) {
+  const previewLength = 1200;
+  const previewText = jobText.length > previewLength
+    ? `${jobText.slice(0, previewLength)}\n\n[Preview truncated at ${previewLength} characters]`
+    : jobText;
+
+  extractedPreviewElement.hidden = false;
+  extractedTextElement.textContent = previewText;
 }
 
 async function evaluateJobText(jobText) {

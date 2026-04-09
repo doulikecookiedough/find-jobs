@@ -54,6 +54,32 @@ button:disabled {
   line-height: 1.4;
 }
 
+.extracted-preview {
+  margin-top: 12px;
+  border: 1px solid rgba(42, 74, 53, 0.16);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 252, 245, 0.58);
+}
+
+.extracted-preview summary {
+  cursor: pointer;
+  color: #405347;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.extracted-preview pre {
+  max-height: 180px;
+  margin: 10px 0 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: #34453a;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .result {
   margin-top: 16px;
   border: 1px solid rgba(42, 74, 53, 0.18);
