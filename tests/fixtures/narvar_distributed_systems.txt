@@ -1,0 +1,39 @@
+Sr. Software Engineer II (Distributed Systems)
+Canada
+Narvar · Canada (Remote)
+
+About the job
+Narvar is Growing! We are looking for Senior Software Engineers that focus on Distributed Systems. In this role, you will build products that power the post-purchase experience for the biggest brands in the retail industry. As a Distributed Systems Software Engineer, you will help us drive decisions on how best to scale and extend our platform and own reliability and scalability KPIs.
+
+Note that we are hiring for these roles across multiple products and platform teams.
+
+Day-to-day
+
+Work in a group of motivated engineers and help the members of your team grow technically
+Get inspired and influenced by your team and embrace modern engineering practices that will enable you to frequently release high-quality services
+Work with the team to design, estimate, develop and launch new products & features
+Resolve complex technical issues and drive innovations that improve system availability, resilience, and performance
+
+What We're Looking For
+
+BS/MS in computer science, engineering, or equivalent experience
+You have 7+ years of experience as a software engineer working on distributed systems
+Numerous years of hands-on experience in architecture, design and development of enterprise applications, integrations & data infrastructure
+You have experience designing, developing, debugging, and operating resilient distributed systems
+You have experience with managing large, complex systems in the cloud
+You have proven track record in delivering efficient, scalable, reliable and maintainable customer facing systems on time
+Deep hands-on expertise in one or more of the following server-side languages: Java, Python, Go, Scala, Rust
+Extensive experience designing, building, and integrating with RESTful APIs
+Experience designing and scaling relational and NoSQL database platforms (such as MySQL, Postgres, Cassandra, DynamoDB, MongoDB, Redis, Elasticache)
+Experience with cloud computing platforms like AWS or GCP
+Experience building high volume, high performance, and highly available SaaS or consumer-facing products
+Previous startup experience strongly preferred
+
+Bonus Points
+
+You have demonstrated experience managing, delivering and owning the services end-to-end
+You have led the technical architecture of maintainable and scalable applications and data systems
+
+Narvar Pay Range
+
+$180,000—$230,000 CAD
