@@ -78,3 +78,19 @@ def test_evaluate_job_text_returns_low_probability_stretch_for_narvar() -> None:
     assert job_score.interview_probability_max <= 30
     assert job_score.skills_alignment > job_score.fit_score
     assert job_score.recommendation in {"consider", "skip"}
+
+
+def test_evaluate_job_text_returns_balanced_midlevel_fit_for_workleap() -> None:
+    parsed_job, job_score = evaluate_job_text(
+        load_fixture("workleap_sharegate_protect.txt"),
+        build_default_candidate_profile(),
+    )
+
+    assert parsed_job.company == "Workleap"
+    assert parsed_job.role_type == "full-stack"
+    assert parsed_job.years_experience_required == 3.0
+    assert 65 <= job_score.fit_score <= 80
+    assert 60 <= job_score.skills_alignment <= 75
+    assert 55 <= job_score.interview_probability_min <= 65
+    assert 60 <= job_score.interview_probability_max <= 70
+    assert job_score.recommendation == "consider"

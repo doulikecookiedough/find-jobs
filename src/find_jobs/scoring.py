@@ -160,10 +160,11 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
 
     fit_score = round(weighted_score * 100)
-    skills_alignment = _skills_alignment_for_breakdown(breakdown)
+    skills_alignment = _skills_alignment_for_breakdown(job, profile, breakdown)
     interview_probability_min, interview_probability_max = _interview_probability_for_breakdown(
         breakdown,
         fit_score,
+        skills_alignment,
         job,
     )
     recommendation = _recommendation_for_score(fit_score)
@@ -183,32 +184,76 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
 
 
-def _skills_alignment_for_breakdown(breakdown: ScoreBreakdown) -> int:
+def _skills_alignment_for_breakdown(
+    job: ParsedJob,
+    profile: CandidateProfile,
+    breakdown: ScoreBreakdown,
+) -> int:
     """Estimate technical overlap independent of level fit."""
     weighted_score = (
-        breakdown.stack_alignment * 0.50
-        + breakdown.strength_alignment * 0.30
-        + breakdown.domain_alignment * 0.20
+        score_skills_stack_alignment(job, profile) * 0.60
+        + breakdown.strength_alignment * 0.25
+        + breakdown.domain_alignment * 0.15
     )
     return round(weighted_score * 100)
+
+
+def _candidate_known_technologies(profile: CandidateProfile) -> set[str]:
+    """Return the candidate's broader known technology set."""
+    return {
+        *profile.primary_languages,
+        *profile.secondary_languages,
+        *profile.frameworks,
+        *profile.cloud_platforms,
+        *profile.databases,
+        *profile.infrastructure_tools,
+        *profile.developer_tools,
+        *profile.preferred_technologies,
+    }
+
+
+def score_skills_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
+    """Score stack overlap using the candidate's broader known technologies."""
+    if not job.technologies:
+        return 0.5
+
+    known_technologies = _candidate_known_technologies(profile)
+    if not known_technologies:
+        return 0.0
+
+    matched_known = len(set(job.technologies).intersection(known_technologies)) / len(set(job.technologies))
+    return min(1.0, matched_known)
 
 
 def _interview_probability_for_breakdown(
     breakdown: ScoreBreakdown,
     fit_score: int,
+    skills_alignment: int,
     job: ParsedJob,
 ) -> tuple[int, int]:
     """Estimate interview probability range from fit and realism."""
     base_probability = (
-        fit_score * 0.25
-        + breakdown.competition_realism * 100 * 0.50
-        + breakdown.level_match * 100 * 0.25
+        fit_score * 0.40
+        + skills_alignment * 0.25
+        + breakdown.competition_realism * 100 * 0.15
+        + breakdown.level_match * 100 * 0.10
+        + breakdown.role_type_alignment * 100 * 0.10
     )
 
+    if breakdown.stack_alignment < 0.4:
+        base_probability -= 8
+    elif breakdown.stack_alignment < 0.6:
+        base_probability -= 4
+
+    if 0.0 < breakdown.role_type_alignment < 1.0:
+        base_probability -= 4
+
     if job.seniority == "senior":
-        base_probability -= 5
+        base_probability -= 8
     if job.seniority in {"staff", "principal"}:
-        base_probability -= 10
+        base_probability -= 15
+    if job.years_experience_required is not None and job.years_experience_required >= 7.0:
+        base_probability -= 20
 
     center = max(0, min(100, round(base_probability)))
     lower_bound = max(0, center - 5)
