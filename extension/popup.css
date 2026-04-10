@@ -119,11 +119,6 @@ button:disabled {
 
 .score strong {
   font-size: 40px;
-  letter-spacing: -0.08em;
-}
-
-.score-value-range {
-  letter-spacing: -0.04em;
 }
 
 .meta {
