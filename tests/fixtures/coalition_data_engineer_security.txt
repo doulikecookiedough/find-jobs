@@ -1,0 +1,46 @@
+Data Engineer, Security
+
+Coalition, Inc.
+
+Canada · Reposted 9 hours ago · Over 100 people clicked apply
+
+Promoted by hirer · Responses managed off LinkedIn
+
+About the job
+
+About Us
+
+Coalition is the world's first Active Insurance provider designed to help prevent digital risk before it strikes. Founded in 2017, Coalition combines comprehensive insurance coverage and innovative cybersecurity tools to help businesses manage and mitigate potential cyberattacks.
+
+Opportunities to make an impact with bold thinking are real—and happening daily at Coalition.
+
+About The Role
+
+We are hiring a Data Engineer to build our data platform across our Cyber Security value chain. This includes Security and Sales management. You will be the go-to partner for Stakeholders, Research team and Data Science team requiring Cyber Security related Data.
+
+As a Data Engineer, you will design and develop our data lifecycle, transforming raw data into high-performance data products. You will build and scale our Medallion Architecture on Snowflake, utilizing dbt to ensure our data is clean, modeled, and ready for both business intelligence in Looker and advanced AI/ML applications.
+
+Responsibilities
+
+Data Modeling & Architecture: Design and implement robust Star Schema models within a Medallion Architecture (Bronze/Silver/Gold) to support complex Cyber Insurance and Cyber Security analytics .
+Pipeline Engineering: Build scalable ELT pipelines using Snowflake and dbt, ensuring high data quality and observability .
+Monitoring & Observability: Define and implement critical SLIs—specifically around data freshness, volume, and schema integrity. Build automated alerting to ensure SLOs are met .
+BI Enablement: Develop and maintain the LookML semantic layer for business stakeholders .
+Security & Compliance: Implement data masking, RBAC, and secure data handling practices .
+Engineering Excellence & Mentorship: Act as a technical peer helping the team level up through Code Reviews and sharing dbt/Python best practices
+AI Integration: Build feature stores and data foundations for AI-driven risk scoring and automated underwriting.
+
+Skills And Qualifications
+
+BI Tools: Experience with Looker (LookML) .
+Modern Tooling: Active user of Cursor or other AI-assisted coding environments .
+Industry Experience: Prior experience in Cybersecurity or Cyber Insurance .
+AI/ML Interest: Experience building data foundations for AI Agents.
+
+Compensation
+
+As a remote-first organization, our compensation reflects the cost of labor across several Canadian geographic markets.
+
+In Alberta, British Columbia & Ontario the base salary for this position ranges from $115,300.00/year up to $144,100.00/year.
+
+For all other locations, the base salary for this position ranges from $103,800.00/year up to $129,690.00/year.

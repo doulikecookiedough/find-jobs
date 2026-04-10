@@ -110,3 +110,19 @@ def test_evaluate_job_text_recovers_wellfound_picovoice_fields() -> None:
     assert "python" in parsed_job.technologies
     assert "years_experience_required" not in job_score.missing_fields
     assert "role_type" in job_score.missing_fields
+
+
+def test_evaluate_job_text_filters_down_data_engineer_screening_odds() -> None:
+    parsed_job, job_score = evaluate_job_text(
+        load_fixture("coalition_data_engineer_security.txt"),
+        build_default_candidate_profile(),
+    )
+
+    assert parsed_job.title == "Data Engineer, Security"
+    assert parsed_job.company == "Coalition, Inc."
+    assert parsed_job.role_type == "data"
+    assert parsed_job.years_experience_required is None
+    assert "go" not in parsed_job.technologies
+    assert job_score.fit_score <= 45
+    assert job_score.interview_probability_max <= 2
+    assert job_score.recommendation == "skip"

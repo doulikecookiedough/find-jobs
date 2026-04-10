@@ -49,11 +49,11 @@ REMOTE_ONLY_LOCATION_PATTERN = re.compile(r"^Remote$", re.IGNORECASE)
 REMOTE_POSITION_PATTERN = re.compile(r"^This is a remote position\.?$", re.IGNORECASE)
 LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
 TITLE_PATTERN = re.compile(
-    r"^(?=.*\b(?:engineer|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|platform|senior|junior|staff|principal|lead)\b).+$",
+    r"^(?=.*\b(?:engineer|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|platform|data|senior|junior|staff|principal|lead)\b).+$",
     re.IGNORECASE,
 )
 TITLE_PHRASE_PATTERN = re.compile(
-    r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|Platform)\s+(?:Engineer|Developer)\b",
+    r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|Platform|Data)\s+(?:Engineer|Developer)\b",
     re.IGNORECASE,
 )
 TECHNOLOGY_PATTERNS = {
@@ -61,7 +61,7 @@ TECHNOLOGY_PATTERNS = {
     "dotnet-core": re.compile(r"\.net core\b|\bdotnet core\b", re.IGNORECASE),
     "typescript": re.compile(r"\btypescript\b", re.IGNORECASE),
     "javascript": re.compile(r"\bjavascript\b", re.IGNORECASE),
-    "go": re.compile(r"(?<!\w)go(?!\w)", re.IGNORECASE),
+    "go": re.compile(r"\bgo\b(?!-)", re.IGNORECASE),
     "golang": re.compile(r"\bgolang\b", re.IGNORECASE),
     "python": re.compile(r"\bpython\b", re.IGNORECASE),
     "java": re.compile(r"\bjava\b", re.IGNORECASE),
@@ -72,6 +72,9 @@ TECHNOLOGY_PATTERNS = {
     "django-rest-framework": re.compile(r"\bdjango rest framework\b|\bdrf\b", re.IGNORECASE),
     "spring-boot": re.compile(r"\bspring boot\b", re.IGNORECASE),
     "react": re.compile(r"\breact\b", re.IGNORECASE),
+    "dbt": re.compile(r"\bdbt\b", re.IGNORECASE),
+    "snowflake": re.compile(r"\bsnowflake\b", re.IGNORECASE),
+    "looker": re.compile(r"\blooker\b|\blookml\b", re.IGNORECASE),
     "rest-apis": re.compile(r"\brest apis?\b", re.IGNORECASE),
     "aws": re.compile(r"\baws\b", re.IGNORECASE),
     "azure": re.compile(r"\bazure\b", re.IGNORECASE),
@@ -128,6 +131,7 @@ ROLE_TYPE_PATTERNS = (
     ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),
     ("full-stack", re.compile(r"\bfull[ -]?stack\b", re.IGNORECASE)),
     ("platform", re.compile(r"\bplatform\b", re.IGNORECASE)),
+    ("data", re.compile(r"\bdata engineer(?:ing)?\b|\bdata platform\b|\bdata pipelines?\b", re.IGNORECASE)),
     ("frontend", re.compile(r"\bfront[ -]?end\b", re.IGNORECASE)),
     ("mobile", re.compile(r"\bmobile\b|\bios\b|\bandroid\b", re.IGNORECASE)),
 )
@@ -144,7 +148,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
     opening_text = "\n".join(content_lines[:6])
     location = _extract_location(lines)
 
-    company = _extract_company(raw_text, opening_text)
+    company = _extract_company(raw_text, opening_text, title)
     years_required = _extract_years_experience_required(raw_text)
     salary_min, salary_max, salary_currency, salary_period = _extract_salary(lines)
 
@@ -175,10 +179,14 @@ def _normalize_currency(raw_currency: str) -> str:
     return currency
 
 
-def _extract_company(raw_text: str, opening_text: str) -> str | None:
+def _extract_company(raw_text: str, opening_text: str, title: str | None = None) -> str | None:
     company_match = COMPANY_PATTERN.search(opening_text)
     if company_match:
         return company_match.group(1)
+
+    title_adjacent_company = _extract_company_after_title(raw_text, title)
+    if title_adjacent_company:
+        return title_adjacent_company
 
     header_company = _extract_company_from_header(raw_text)
     if header_company:
@@ -201,6 +209,45 @@ def _extract_company_from_header(raw_text: str) -> str | None:
         lowered = candidate.lower()
         if lowered not in {"share", "show more options"} and " · " not in candidate:
             return candidate
+
+    return None
+
+
+def _extract_company_after_title(raw_text: str, title: str | None) -> str | None:
+    if not title:
+        return None
+
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+    try:
+        title_index = lines.index(title)
+    except ValueError:
+        return None
+
+    if title_index + 1 >= len(lines):
+        return None
+
+    candidate = lines[title_index + 1]
+    lowered = candidate.lower()
+    if " · " in candidate:
+        return None
+    if lowered.startswith(("job category:", "requisition number:", "location:", "remote work policy")):
+        return None
+    if lowered in {"about the job", "apply", "save", "share", "show more options"}:
+        return None
+    if lowered in {"remote", "on-site", "onsite", "in office", "hybrid", "full-time", "full time"}:
+        return None
+    if TITLE_PATTERN.search(candidate):
+        return None
+    if (
+        LOCATION_PATTERN.match(candidate)
+        or COUNTRY_LOCATION_PATTERN.match(candidate)
+        or REMOTE_LOCATION_PATTERN.match(candidate)
+        or REMOTE_ONLY_LOCATION_PATTERN.match(candidate)
+        or REMOTE_POSITION_PATTERN.match(candidate)
+        or LONG_LOCATION_PATTERN.match(candidate)
+    ):
+        return None
+    return candidate
 
     return None
 
