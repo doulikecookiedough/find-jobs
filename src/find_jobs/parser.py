@@ -49,11 +49,11 @@ REMOTE_ONLY_LOCATION_PATTERN = re.compile(r"^Remote$", re.IGNORECASE)
 REMOTE_POSITION_PATTERN = re.compile(r"^This is a remote position\.?$", re.IGNORECASE)
 LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
 TITLE_PATTERN = re.compile(
-    r"^(?=.*\b(?:engineer|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|platform|data|senior|junior|staff|principal|lead)\b).+$",
+    r"^(?=.*\b(?:engineer|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|platform|data|zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead)\b).+$",
     re.IGNORECASE,
 )
 TITLE_PHRASE_PATTERN = re.compile(
-    r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|Platform|Data)\s+(?:Engineer|Developer)\b",
+    r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|Platform|Data|Zuora|Salesforce)\s+(?:Engineer|Developer)\b",
     re.IGNORECASE,
 )
 TECHNOLOGY_PATTERNS = {
@@ -75,6 +75,12 @@ TECHNOLOGY_PATTERNS = {
     "dbt": re.compile(r"\bdbt\b", re.IGNORECASE),
     "snowflake": re.compile(r"\bsnowflake\b", re.IGNORECASE),
     "looker": re.compile(r"\blooker\b|\blookml\b", re.IGNORECASE),
+    "zuora": re.compile(r"\bzuora\b", re.IGNORECASE),
+    "salesforce": re.compile(r"\bsalesforce\b", re.IGNORECASE),
+    "cpq": re.compile(r"\bcpq\b", re.IGNORECASE),
+    "netsuite": re.compile(r"\bnetsuite\b", re.IGNORECASE),
+    "revpro": re.compile(r"\brevpro\b", re.IGNORECASE),
+    "mulesoft": re.compile(r"\bmulesoft\b", re.IGNORECASE),
     "rest-apis": re.compile(r"\brest apis?\b", re.IGNORECASE),
     "aws": re.compile(r"\baws\b", re.IGNORECASE),
     "azure": re.compile(r"\bazure\b", re.IGNORECASE),
@@ -114,6 +120,10 @@ DOMAIN_SIGNAL_PATTERNS = {
     "backend": re.compile(r"\bbackend(?: systems?| services?)?\b", re.IGNORECASE),
     "account-management": re.compile(r"\baccount management\b", re.IGNORECASE),
     "integrations": re.compile(r"\bintegrations?\b|\bintegration platform\b", re.IGNORECASE),
+    "business-systems": re.compile(
+        r"\bzuora\b|\bsalesforce\b|\bcpq\b|\bnetsuite\b|\brevpro\b|\bmulesoft\b|\bquote-to-cash\b|\border-to-revenue\b",
+        re.IGNORECASE,
+    ),
     "apis": re.compile(r"\bapi\b|\bapis\b|\bapi gateways\b|\bapi development\b", re.IGNORECASE),
     "microservices": re.compile(r"\bmicroservices architecture\b|\bmicroservices\b", re.IGNORECASE),
     "event-streaming": re.compile(r"\bevent streaming\b|\bmessage queues\b|\bservice bus\b|\bkafka\b", re.IGNORECASE),
@@ -132,6 +142,7 @@ ROLE_TYPE_PATTERNS = (
     ("full-stack", re.compile(r"\bfull[ -]?stack\b", re.IGNORECASE)),
     ("platform", re.compile(r"\bplatform\b", re.IGNORECASE)),
     ("data", re.compile(r"\bdata engineer(?:ing)?\b|\bdata platform\b|\bdata pipelines?\b", re.IGNORECASE)),
+    ("business-systems", re.compile(r"\bzuora developer\b|\bzuora\b|\bsalesforce\b|\bcpq\b|\bnetsuite\b|\brevpro\b|\bmulesoft\b", re.IGNORECASE)),
     ("frontend", re.compile(r"\bfront[ -]?end\b", re.IGNORECASE)),
     ("mobile", re.compile(r"\bmobile\b|\bios\b|\bandroid\b", re.IGNORECASE)),
 )

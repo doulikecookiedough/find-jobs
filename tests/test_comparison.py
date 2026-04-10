@@ -126,3 +126,19 @@ def test_evaluate_job_text_filters_down_data_engineer_screening_odds() -> None:
     assert job_score.fit_score <= 45
     assert job_score.interview_probability_max <= 2
     assert job_score.recommendation == "skip"
+
+
+def test_evaluate_job_text_filters_down_business_systems_roles() -> None:
+    parsed_job, job_score = evaluate_job_text(
+        load_fixture("surveymonkey_zuora_developer.txt"),
+        build_default_candidate_profile(),
+    )
+
+    assert parsed_job.title == "Zuora Developer"
+    assert parsed_job.company == "SurveyMonkey"
+    assert parsed_job.role_type == "business-systems"
+    assert "zuora" in parsed_job.technologies
+    assert "salesforce" in parsed_job.technologies
+    assert job_score.fit_score <= 40
+    assert job_score.interview_probability_max <= 5
+    assert job_score.recommendation == "skip"

@@ -1,0 +1,38 @@
+Zuora Developer
+
+SurveyMonkey
+
+Canada · Reposted 2 days ago · 49 people clicked apply
+
+Promoted by hirer · Responses managed off LinkedIn
+
+About the job
+
+SurveyMonkey is the world’s most popular platform for surveys and forms, built for business—loved by users. We combine powerful capabilities with intuitive design, effectively serving every use case, from customer experience to employee engagement, market research to payment and registration forms. With built-in research expertise and AI-powered technology, it’s like having a team of expert researchers at your fingertips.
+
+Trusted by millions—from startups to Fortune 500 companies—SurveyMonkey helps teams gather insights and information that inspire better decisions, create experiences people love, and drive business growth. Discover how at surveymonkey.com.
+
+What We’re Looking For
+
+We’re seeking an experienced Zuora Developer to join our team in a hands-on role supporting subscription billing and revenue automation. This role focuses on implementing, configuring, enhancing, and supporting Zuora Billing and its integrations, particularly with Salesforce. Industry background is flexible, but practical experience with Zuora Billing is required. This role operates within the U.S. Central Time Zone.
+
+What You’ll Be Working On
+
+Configure, customize, and maintain Zuora Billing, including product catalog, rate plans, subscriptions, invoicing, taxation, payments, and related workflows.
+Partner cross-functionally with Sales, Finance, RevOps, and Engineering to support and optimize the SaaS subscription and order-to-revenue lifecycle.
+Support end-to-end order-to-revenue processes by troubleshooting issues, performing root cause analysis, and implementing sustainable solutions.
+Build and maintain Zuora workflows, notifications, custom fields, data mappings, and Salesforce integrations, including data migration activities.
+Participate in Agile/Scrum ceremonies and ensure system changes follow best practices, compliance standards, and internal governance requirements.
+
+We’d love to hear from people with
+
+1+ years of hands-on experience configuring, customizing, and supporting Zuora Billing in a production environment.
+Experience with Zuora Orders and Orders API.
+Experience in writing solution documents, POC, and analyzing issues.
+Experience with quote-to-cash and financial systems such as Zuora, Salesforce (including CPQ), NetSuite, or RevPro.
+Conducting demos and design walkthrough sessions with other teams and the stakeholders.
+A bachelor’s degree in Finance, Accounting, Business, Management Information Systems, or equivalent professional experience.
+Working knowledge of core finance and accounting processes (e.g., Order to Cash, Record to Report).
+Strong communication skills, attention to detail, and the ability to prioritize work while learning new technologies.
+Experience in Zuora Revenue, Salesforce CPQ and Mulesoft (Nice to have)
+Experience with data migration and cleansing (Nice to have)

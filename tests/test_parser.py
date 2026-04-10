@@ -224,6 +224,26 @@ def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None
     }
 
 
+def test_parse_job_description_extracts_surveymonkey_zuora_fields() -> None:
+    parsed_job = parse_job_description(load_fixture("surveymonkey_zuora_developer.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Zuora Developer",
+        "company": "SurveyMonkey",
+        "location": "Canada",
+        "years_experience_required": 1.0,
+        "seniority": "mid",
+        "role_type": "business-systems",
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": ["cpq", "mulesoft", "netsuite", "revpro", "salesforce", "zuora"],
+        "domain_signals": ["apis", "business-systems", "integrations"],
+        "work_style_signals": [],
+    }
+
+
 def test_parse_job_description_extracts_stripe_backend_fields() -> None:
     parsed_job = parse_job_description(load_fixture("stripe_backend_engineer.txt"))
 

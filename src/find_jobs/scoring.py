@@ -121,6 +121,8 @@ def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> floa
         return 1.0
     if job.role_type == "data":
         return 0.25
+    if job.role_type == "business-systems":
+        return 0.15
     return 0.5
 
 
@@ -136,6 +138,8 @@ def score_competition_realism(job: ParsedJob, profile: CandidateProfile) -> floa
             return 0.25
         if job.role_type == "data":
             return 0.3
+        if job.role_type == "business-systems":
+            return 0.25
         return 0.45
 
     years_gap = job.years_experience_required - profile.years_experience
@@ -394,6 +398,10 @@ def _interview_probability_for_breakdown(
         base_probability -= 10
         multiplier *= 0.72
         upper_cap = min(upper_cap, 12)
+    elif job.role_type == "business-systems":
+        base_probability -= 16
+        multiplier *= 0.58
+        upper_cap = min(upper_cap, 8)
 
     # Hard screen for core stack miss
     if getattr(job, "core_stack_mismatch", False):

@@ -69,6 +69,6 @@ def build_default_candidate_profile() -> CandidateProfile:
             "rest-apis",
             "docker",
         ],
-        avoid_domains=["mobile", "frontend", "networking", "low-level-systems"],
-        avoid_roles=["frontend", "mobile"],
+        avoid_domains=["mobile", "frontend", "networking", "low-level-systems", "business-systems"],
+        avoid_roles=["frontend", "mobile", "business-systems"],
     )
