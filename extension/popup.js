@@ -163,6 +163,7 @@ function scoreBlock(evaluation) {
   const interviewValue = document.createElement("strong");
   const interviewLabel = document.createElement("span");
   const meta = document.createElement("p");
+  const applySignal = buildApplySignal(evaluation);
   const metrics = document.createElement("div");
 
   interviewHero.className = "score";
@@ -194,7 +195,11 @@ function scoreBlock(evaluation) {
       "Technical overlap score. This focuses on known stack, strengths, and domain signals rather than level realism.",
     ),
   );
-  container.append(interviewHero, meta, metrics);
+  container.append(interviewHero, meta);
+  if (applySignal) {
+    container.append(applySignal);
+  }
+  container.append(metrics);
   return container;
 }
 
@@ -206,6 +211,29 @@ function formatResultMeta(evaluation) {
   }
 
   return "Parsed job details";
+}
+
+function buildApplySignal(evaluation) {
+  if (
+    evaluation.fit_score < 80
+    || evaluation.skills_alignment < 80
+    || evaluation.interview_probability_max < 20
+  ) {
+    return null;
+  }
+
+  const signal = document.createElement("p");
+  const lead = document.createElement("strong");
+  const comment = document.createElement("span");
+
+  signal.className = "apply-signal";
+  lead.className = "apply-signal-lead";
+  lead.textContent = "Apply to this job.";
+  comment.className = "apply-signal-comment";
+  comment.textContent = " This clears your high-confidence threshold for fit, skills, and interview odds.";
+
+  signal.append(lead, comment);
+  return signal;
 }
 
 function metricCard(label, value, tooltip) {
