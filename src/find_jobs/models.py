@@ -61,6 +61,11 @@ class JobScore:
     skills_alignment: int = 0
     interview_probability_min: int = 0
     interview_probability_max: int = 0
+    years_experience_required: float | None = None
+    candidate_years_experience: float | None = None
+    years_experience_gap: float | None = None
+    years_experience_match_status: str = "unknown"
+    years_experience_match_label: str = "Experience requirement unclear"
     reasons: list[str] = field(default_factory=list)
     risks: list[str] = field(default_factory=list)
     missing_fields: list[str] = field(default_factory=list)

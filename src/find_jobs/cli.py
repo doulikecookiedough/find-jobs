@@ -34,6 +34,7 @@ def main(argv: list[str] | None = None) -> int:
         "Interview Probability: "
         f"{job_score.interview_probability_min}-{job_score.interview_probability_max}%"
     )
+    print(f"Years Match: {job_score.years_experience_match_label}")
     print(f"Recommendation: {job_score.recommendation}")
     print(f"Priority: {job_score.priority}")
     if job_score.reasons:

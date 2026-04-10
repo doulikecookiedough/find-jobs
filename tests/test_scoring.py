@@ -177,6 +177,9 @@ def test_score_job_returns_apply_for_strong_fit() -> None:
     assert score.skills_alignment == 100
     assert score.interview_probability_min == 78
     assert score.interview_probability_max == 89
+    assert score.years_experience_gap == 0.0
+    assert score.years_experience_match_status == "strong"
+    assert score.years_experience_match_label == "Strong match: requires about 3 years, profile is 3 years."
     assert score.recommendation == "apply"
     assert score.priority == "high"
     assert score.score_breakdown.strength_alignment == 1.0
@@ -201,6 +204,7 @@ def test_score_job_returns_skip_for_clear_mismatch() -> None:
     assert score.fit_score < 40
     assert score.skills_alignment < 30
     assert score.interview_probability_max <= 10
+    assert score.years_experience_match_status == "stretch"
     assert score.recommendation == "skip"
     assert score.priority == "low"
     assert any("Role type is in your avoid list" in risk for risk in score.risks)
@@ -222,6 +226,7 @@ def test_score_job_returns_consider_for_mixed_fit() -> None:
     assert 60 <= score.fit_score < 80
     assert 40 <= score.skills_alignment <= 70
     assert 20 <= score.interview_probability_min <= 30
+    assert score.years_experience_match_status == "strong"
     assert score.recommendation == "consider"
     assert score.priority == "medium"
     assert any("Experience requirement is above your current profile" in risk for risk in score.risks)
@@ -248,3 +253,15 @@ def test_score_job_can_show_stronger_skills_than_overall_fit_for_stretch_role() 
     assert score.skills_alignment >= 80
     assert 0 <= score.interview_probability_min <= 5
     assert 0 <= score.interview_probability_max <= 10
+    assert score.years_experience_match_status == "stretch"
+
+
+def test_score_job_marks_small_years_gap_as_close_stretch() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", years_experience_required=5.0, seniority="senior")
+
+    score = score_job(job, profile)
+
+    assert score.years_experience_gap == 2.0
+    assert score.years_experience_match_status == "close"
+    assert score.years_experience_match_label == "Close stretch: requires about 5 years, profile is 3 years."

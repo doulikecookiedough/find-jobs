@@ -24,6 +24,11 @@ class EvaluateJobResponse(BaseModel):
     skills_alignment: int
     interview_probability_min: int
     interview_probability_max: int
+    years_experience_required: float | None
+    candidate_years_experience: float | None
+    years_experience_gap: float | None
+    years_experience_match_status: str
+    years_experience_match_label: str
     recommendation: str
     priority: str
     reasons: list[str]
@@ -64,6 +69,11 @@ def _evaluate_job_text(job_text: str) -> EvaluateJobResponse:
         skills_alignment=job_score.skills_alignment,
         interview_probability_min=job_score.interview_probability_min,
         interview_probability_max=job_score.interview_probability_max,
+        years_experience_required=job_score.years_experience_required,
+        candidate_years_experience=job_score.candidate_years_experience,
+        years_experience_gap=job_score.years_experience_gap,
+        years_experience_match_status=job_score.years_experience_match_status,
+        years_experience_match_label=job_score.years_experience_match_label,
         recommendation=job_score.recommendation,
         priority=job_score.priority,
         reasons=job_score.reasons,

@@ -174,6 +174,7 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         skills_alignment,
         job,
     )
+    years_experience_gap, years_experience_match_status, years_experience_match_label = _years_experience_match(job, profile)
     recommendation = _recommendation_for_score(fit_score)
     priority = _priority_for_score(fit_score)
     reasons, risks = _build_reasons_and_risks(job, profile, breakdown)
@@ -183,6 +184,11 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         skills_alignment=skills_alignment,
         interview_probability_min=interview_probability_min,
         interview_probability_max=interview_probability_max,
+        years_experience_required=job.years_experience_required,
+        candidate_years_experience=profile.years_experience,
+        years_experience_gap=years_experience_gap,
+        years_experience_match_status=years_experience_match_status,
+        years_experience_match_label=years_experience_match_label,
         recommendation=recommendation,
         priority=priority,
         reasons=reasons,
@@ -217,6 +223,40 @@ def _candidate_known_technologies(profile: CandidateProfile) -> set[str]:
         *profile.developer_tools,
         *profile.preferred_technologies,
     }
+
+
+def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[float | None, str, str]:
+    if job.years_experience_required is None:
+        return None, "unknown", "Experience requirement unclear"
+
+    years_gap = round(max(job.years_experience_required - profile.years_experience, 0.0), 1)
+    required_years = _format_years(job.years_experience_required)
+    candidate_years = _format_years(profile.years_experience)
+
+    if years_gap <= 1.0:
+        return (
+            years_gap,
+            "strong",
+            f"Strong match: requires about {required_years} years, profile is {candidate_years} years.",
+        )
+    if years_gap <= 3.0:
+        return (
+            years_gap,
+            "close",
+            f"Close stretch: requires about {required_years} years, profile is {candidate_years} years.",
+        )
+
+    return (
+        years_gap,
+        "stretch",
+        f"Far stretch: requires about {required_years} years, profile is {candidate_years} years.",
+    )
+
+
+def _format_years(value: float) -> str:
+    if value.is_integer():
+        return str(int(value))
+    return f"{value:.1f}"
 
 
 def score_skills_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:

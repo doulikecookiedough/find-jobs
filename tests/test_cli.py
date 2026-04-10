@@ -24,6 +24,7 @@ def test_main_evaluate_command_prints_score_summary(capsys) -> None:
     assert "Fit Score:" in captured.out
     assert "Skills Alignment:" in captured.out
     assert "Interview Probability:" in captured.out
+    assert "Years Match:" in captured.out
     assert "Recommendation: apply" in captured.out
     assert "Priority: high" in captured.out
     assert "Reasons:" in captured.out
