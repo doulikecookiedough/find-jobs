@@ -62,6 +62,16 @@ function extractVisibleJobText() {
     return { jobText: "", source: "no document body", characterCount: 0 };
   }
 
+  if (window.location.hostname.includes("wellfound.com")) {
+    const wellfoundJobText = extractWellfoundJobText(root);
+
+    return {
+      jobText: wellfoundJobText,
+      source: "Wellfound job detail cleanup",
+      characterCount: wellfoundJobText.length,
+    };
+  }
+
   const title = textFromSelector("h1") || document.title || "";
   const company = textFromSelector(".job-details-jobs-unified-top-card__company-name, .jobs-unified-top-card__company-name");
   const location = textFromSelector(".job-details-jobs-unified-top-card__primary-description-container, .jobs-unified-top-card__bullet");
@@ -80,6 +90,30 @@ function extractVisibleJobText() {
     source,
     characterCount: jobText.length,
   };
+
+  function extractWellfoundJobText(container) {
+    const fullText = normalizeWhitespace(container.innerText || container.textContent || "");
+    if (!fullText) {
+      return "";
+    }
+
+    let focusedText = fullText;
+    const detailMarker = "Startup Jobs | Wellfound";
+    const detailMarkerIndex = focusedText.lastIndexOf(detailMarker);
+
+    if (detailMarkerIndex !== -1) {
+      focusedText = focusedText.slice(detailMarkerIndex + detailMarker.length);
+    }
+
+    for (const trailingMarker of ["\nAbout the company\n", "\nRecent Jobs\n", "\nApply to "]) {
+      const markerIndex = focusedText.indexOf(trailingMarker);
+      if (markerIndex !== -1) {
+        focusedText = focusedText.slice(0, markerIndex);
+      }
+    }
+
+    return normalizeWhitespace(focusedText);
+  }
 }
 
 function resetExtractedPreview() {

@@ -94,3 +94,19 @@ def test_evaluate_job_text_returns_balanced_midlevel_fit_for_workleap() -> None:
     assert 0 <= job_score.interview_probability_min <= 15
     assert 0 <= job_score.interview_probability_max <= 15
     assert job_score.recommendation == "consider"
+
+
+def test_evaluate_job_text_recovers_wellfound_picovoice_fields() -> None:
+    parsed_job, job_score = evaluate_job_text(
+        load_fixture("picovoice_wellfound.txt"),
+        build_default_candidate_profile(),
+    )
+
+    assert parsed_job.company == "Picovoice"
+    assert parsed_job.location == "Vancouver"
+    assert parsed_job.years_experience_required == 2.0
+    assert parsed_job.role_type is None
+    assert "aws" in parsed_job.technologies
+    assert "python" in parsed_job.technologies
+    assert "years_experience_required" not in job_score.missing_fields
+    assert "role_type" in job_score.missing_fields

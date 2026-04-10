@@ -36,6 +36,10 @@ SALARY_CURRENCY_RANGE_PATTERN = re.compile(
     r"\b(CA|US)\$([\d,]+)\s*-\s*(?:CA\$|US\$|\$)([\d,]+)",
     re.IGNORECASE,
 )
+SALARY_THOUSANDS_RANGE_PATTERN = re.compile(
+    r"\$([\d,]+)k\s*[–-]\s*\$([\d,]+)k\s+(CAD|USD|US|CA)\b",
+    re.IGNORECASE,
+)
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
@@ -95,7 +99,7 @@ TECHNOLOGY_PATTERNS = {
 }
 WORK_STYLE_PATTERNS = {
     "hybrid": re.compile(r"\bhybrid\b", re.IGNORECASE),
-    "on-site": re.compile(r"\bon-site\b", re.IGNORECASE),
+    "on-site": re.compile(r"\bon-site\b|\bonsite\b", re.IGNORECASE),
     "remote": re.compile(r"\bremote\b", re.IGNORECASE),
     "on-call": re.compile(r"\bon-call\b", re.IGNORECASE),
 }
@@ -207,6 +211,15 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
         if not normalized_line:
             continue
 
+        salary_thousands_range_match = SALARY_THOUSANDS_RANGE_PATTERN.search(normalized_line)
+        if salary_thousands_range_match:
+            return (
+                int(salary_thousands_range_match.group(1).replace(",", "")) * 1000,
+                int(salary_thousands_range_match.group(2).replace(",", "")) * 1000,
+                _normalize_currency(salary_thousands_range_match.group(3)),
+                "yearly",
+            )
+
         salary_match = SALARY_PATTERN.search(normalized_line)
         if salary_match:
             return (
@@ -251,7 +264,8 @@ def _extract_years_experience_required(raw_text: str) -> float | None:
         normalized_line = line.strip()
         if not normalized_line:
             continue
-        if "experience" not in normalized_line.lower():
+        lowered = normalized_line.lower()
+        if "experience" not in lowered and "exp" not in lowered:
             continue
 
         years_required = _extract_years_from_line(normalized_line)
@@ -274,7 +288,12 @@ def _extract_years_from_line(line: str) -> float | None:
 
 
 def _extract_location(lines: list[str]) -> str | None:
-    for line in lines[:12]:
+    for index, line in enumerate(lines[:20]):
+        lowered = line.lower()
+        if lowered in {"job location", "location"} and index + 1 < len(lines):
+            candidate = _normalize_location_candidate(lines[index + 1].lstrip("|").strip())
+            if candidate:
+                return candidate
         if line.startswith("Job category:") or line.startswith("Requisition number:"):
             continue
         normalized_line = _normalize_location_candidate(line)
@@ -364,11 +383,30 @@ def _extract_technologies(raw_text: str) -> list[str]:
 
 
 def _extract_work_style_signals(raw_text: str) -> list[str]:
-    return [
-        signal
-        for signal, pattern in WORK_STYLE_PATTERNS.items()
-        if pattern.search(raw_text)
-    ]
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+    detected_signals: list[str] = []
+
+    for index, line in enumerate(lines):
+        if line.lower() == "remote work policy" and index + 1 < len(lines):
+            policy_value = lines[index + 1].strip().lower()
+            if policy_value in {"in office", "in-office", "on-site", "onsite"}:
+                detected_signals.append("on-site")
+            elif "hybrid" in policy_value:
+                detected_signals.append("hybrid")
+            elif "remote" in policy_value:
+                detected_signals.append("remote")
+
+    sanitized_text = re.sub(r"\bRemote Work Policy\b", "", raw_text, flags=re.IGNORECASE)
+
+    for signal, pattern in WORK_STYLE_PATTERNS.items():
+        if pattern.search(sanitized_text):
+            detected_signals.append(signal)
+
+    deduped_signals = list(dict.fromkeys(detected_signals))
+    if "on-site" in deduped_signals and "remote" in deduped_signals:
+        deduped_signals.remove("remote")
+
+    return deduped_signals
 
 
 def _extract_domain_signals(raw_text: str) -> list[str]:
@@ -389,15 +427,24 @@ def _extract_role_type(raw_text: str, title: str | None) -> str | None:
         if pattern.search(title_text):
             return role_type
 
-    search_text = "\n".join(filter(None, [title, raw_text]))
+    search_text = "\n".join(filter(None, [title, _text_for_role_inference(raw_text)]))
 
     for role_type, pattern in ROLE_TYPE_PATTERNS:
-        if role_type == "platform":
+        if role_type in {"platform", "mobile"}:
             continue
         if pattern.search(search_text):
             return role_type
 
     return None
+
+
+def _text_for_role_inference(raw_text: str) -> str:
+    return re.sub(
+        r"\bSkills\b.*?\bAbout the job\b",
+        "About the job",
+        raw_text,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
 
 
 def _extract_seniority(

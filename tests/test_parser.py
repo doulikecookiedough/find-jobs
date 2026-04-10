@@ -184,6 +184,26 @@ def test_parse_job_description_extracts_genista_backend_fields() -> None:
     }
 
 
+def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
+    parsed_job = parse_job_description(load_fixture("picovoice_wellfound.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Software Engineer",
+        "company": "Picovoice",
+        "location": "Vancouver",
+        "years_experience_required": 2.0,
+        "seniority": "mid",
+        "role_type": None,
+        "salary_min": 75000,
+        "salary_max": 150000,
+        "salary_currency": "CAD",
+        "salary_period": "yearly",
+        "technologies": ["aws", "javascript", "python", "react", "typescript"],
+        "domain_signals": [],
+        "work_style_signals": ["on-site"],
+    }
+
+
 def test_parse_job_description_extracts_stripe_backend_fields() -> None:
     parsed_job = parse_job_description(load_fixture("stripe_backend_engineer.txt"))
 

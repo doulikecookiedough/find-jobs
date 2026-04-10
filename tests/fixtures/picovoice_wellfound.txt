@@ -1,0 +1,56 @@
+Avatar for Picovoice
+Picovoice
+Actively Hiring
+Picovoice is the end-to-end platform for adding voice AI and LLMs to anything on your terms
+Top 10% of responders
+Responds within a few days
+B2B
++2
+Share
+Save
+Software Engineer
+$75k – $150k CAD • 0.0% – 0.1%
+|
+Vancouver
+|2 years of exp
+|Full Time
+Reposted: 4 days ago• Recruiter recently active
+Job Location
+Vancouver
+Remote Work Policy
+In office
+
+Visa Sponsorship
+Not Available
+
+Relocation
+Not Allowed
+Skills
+Python
+Javascript
+Android
+iOS
+C
+CUDA
+Deep Learning
+React.js
+AWS
+About the job
+
+A profitable and steadily growing AI startup in Vancouver is seeking Software Engineers. We tackle unsolved problems under real constraints. We value originality, speed, and rigor.
+
+What We’re Looking For
+Experience building complex and extensible software
+Practical understanding of data structures and algorithms
+Code optimization techniques
+Hands-on experience with C
+Hands-on experience with Python
+Hands-on experience with TypeScript
+Nice to Have
+Working knowledge of machine learning and deep learning
+Experience with debugging embedded software running on microcontrollers, DSPs, or NPUs
+Hands-on experience with Android development
+Hands-on experience with iOS development
+Fixed-point computation
+On-device inference experience
+Background in Speech Recognition, Speech Synthesis, and Speaker Recognition
