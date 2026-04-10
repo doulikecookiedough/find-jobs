@@ -168,7 +168,7 @@ function scoreBlock(evaluation) {
   scoreValue.textContent = evaluation.fit_score + " %";
   scoreLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
   meta.className = "meta";
-  meta.textContent = `${evaluation.company ?? "Unknown company"} | ${evaluation.title ?? "Unknown title"}`;
+  meta.textContent = formatResultMeta(evaluation);
   metrics.className = "metrics";
 
   metrics.append(
@@ -194,6 +194,16 @@ function scoreBlock(evaluation) {
   );
   container.append(score, meta, metrics);
   return container;
+}
+
+function formatResultMeta(evaluation) {
+  const parts = [evaluation.company, evaluation.title].filter(Boolean);
+
+  if (parts.length) {
+    return parts.join(" | ");
+  }
+
+  return "Parsed job details";
 }
 
 function metricCard(label, value, tooltip) {
