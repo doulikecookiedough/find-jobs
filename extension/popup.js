@@ -151,7 +151,7 @@ function renderEvaluation(evaluation) {
   resultElement.append(
     scoreBlock(evaluation),
     listBlock("Screening Risks", evaluation.risks),
-    listBlock("Reasons", evaluation.reasons),
+    listBlock("Fit Evaluation", evaluation.reasons),
     listBlock("Parser Warnings", evaluation.parser_warnings),
   );
 }
