@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Evaluate job postings against the local find-jobs FastAPI service.",
   "permissions": ["activeTab", "scripting", "sidePanel"],
-  "host_permissions": ["http://127.0.0.1:8000/*", "https://www.linkedin.com/*"],
+  "host_permissions": ["http://127.0.0.1:8000/*", "https://www.linkedin.com/*", "https://wellfound.com/*"],
   "action": {
     "default_title": "Evaluate job fit"
   },
