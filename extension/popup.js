@@ -158,41 +158,42 @@ function renderEvaluation(evaluation) {
 
 function scoreBlock(evaluation) {
   const container = document.createElement("section");
-  const score = document.createElement("div");
-  const scoreValue = document.createElement("strong");
-  const scoreLabel = document.createElement("span");
+  const interviewHero = document.createElement("div");
+  const interviewValue = document.createElement("strong");
+  const interviewLabel = document.createElement("span");
   const meta = document.createElement("p");
   const metrics = document.createElement("div");
 
-  score.className = "score";
-  scoreValue.textContent = evaluation.fit_score + " %";
-  scoreLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
+  interviewHero.className = "score";
+  interviewValue.className = "score-value score-value-range";
+  interviewValue.textContent = `${evaluation.interview_probability_min}-${evaluation.interview_probability_max}%`;
+  interviewLabel.textContent = `${evaluation.recommendation} / ${evaluation.priority}`;
   meta.className = "meta";
   meta.textContent = formatResultMeta(evaluation);
   metrics.className = "metrics";
 
+  interviewHero.append(
+    interviewValue,
+    labelWithInfo(
+      "Interview",
+      "Cold-application interview likelihood estimate, not your odds of passing once you are already in the interview loop.",
+    ),
+    interviewLabel,
+  );
+
   metrics.append(
+    metricCard(
+      "Fit",
+      `${evaluation.fit_score}%`,
+      "Overall application-priority score. This blends level match, stack overlap, domain fit, role fit, and competition realism.",
+    ),
     metricCard(
       "Skills",
       `${evaluation.skills_alignment}%`,
       "Technical overlap score. This focuses on known stack, strengths, and domain signals rather than level realism.",
     ),
-    metricCard(
-      "Interview",
-      `${evaluation.interview_probability_min}-${evaluation.interview_probability_max}%`,
-      "Cold-application interview likelihood estimate, not your odds of passing once you are already in the interview loop.",
-    ),
   );
-
-  score.append(
-    scoreValue,
-    labelWithInfo(
-      "Fit",
-      "Overall application-priority score. This blends level match, stack overlap, domain fit, role fit, and competition realism.",
-    ),
-    scoreLabel,
-  );
-  container.append(score, meta, metrics);
+  container.append(interviewHero, meta, metrics);
   return container;
 }
 
