@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from find_jobs.evaluation_log import log_incomplete_evaluation
+from find_jobs.evaluation_log import (
+    log_high_interview_evaluation,
+    log_incomplete_evaluation,
+)
 from find_jobs.models import CandidateProfile, JobScore, ParsedJob
 from find_jobs.parser import parse_job_description
 from find_jobs.scoring import score_job
@@ -15,6 +18,7 @@ def evaluate_job_text(raw_text: str, profile: CandidateProfile) -> tuple[ParsedJ
     job_score.missing_fields = _collect_missing_fields(parsed_job)
     job_score.parser_warnings = _build_parser_warnings(parsed_job, job_score.missing_fields)
     log_incomplete_evaluation(parsed_job, job_score)
+    log_high_interview_evaluation(parsed_job, job_score)
     return parsed_job, job_score
 
 
