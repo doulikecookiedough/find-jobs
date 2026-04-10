@@ -1,0 +1,54 @@
+Software Engineer II - DEMS
+Vancouver, British Columbia, Canada
+The Company
+
+Versaterm is a global public safety solutions company helping agencies transform how they serve their communities. Since 1977, we’ve been building an ecosystem of intuitive tools designed for public safety agencies, forensic labs, court systems, schools and other institutions. Through purposeful integrations and a selective growth strategy, we focus on improving workflows to help our customers achieve more efficient operations, better service and more just outcomes.
+
+Our teams are driven by innovation, expertise and an unwavering commitment to customer success. As we continue to grow and expand our ecosystem, you’ll have the opportunity to contribute to solutions that enhance community safety and transform the future of public safety technology. If you’re passionate about making a meaningful difference, we’d love to hear from you.
+
+Versaterm is launching a new standalone Digital Evidence Management System, and we’re assembling a team to build its foundation from the ground up. We’re designing the product direction, architecture, and technology stack while developing shared services that will support secure, compliant, and auditable digital evidence management across agencies and jurisdictions.
+
+This is a unique chance to join a new team early, contribute to key architectural and product decisions, and help establish engineering patterns that will scale across Versaterm’s broader product suite.
+
+The Role
+
+As a Software Engineer II, you will be responsible for designing, developing, and maintaining software applications, working on both backend and frontend systems, and contributing to the overall growth and innovation of our public safety product offerings. You will collaborate with cross-functional teams to deliver high-quality solutions while continuously improving your technical expertise.
+
+What You'll Do
+
+Design, implement, test, and maintain high‑quality software solutions that align with business needs, with a focus on clean, maintainable, and well‑documented code.
+Practice and contribute to Spec‑Driven Development, collaborating with product and design partners to define clear, testable specifications (e.g., APIs, contracts, acceptance criteria) before implementation, and using those specs to guide development, testing, and long‑term maintainability.
+Troubleshoot and resolve software defects, productions issues, and technical problems.
+Contribute to the design and evolution of software applications, ensuring scalability, reliability, and performance.
+Apply company standards, technologies, and best practices to continuously improve development workflows and product quality.
+Provide guidance and support to junior engineers, reviewing code and offering constructive feedback to foster team growth.
+Participate in the team’s development process, including sprint planning, standups, and retrospectives. Communicate effectively with team members and stakeholders.
+
+What You'll Bring
+
+Degree in Computer Science, Engineering, or a related field, or equivalent industry experience and training.
+2-5 years of professional experience in software development, ideally in a modern web or cloud environment.
+Proficiency in one or more modern programming languages (e.g., Python, TypeScript), with the ability to work across a full‑stack codebase.
+Experience building modern web applications across the stack, including front‑end frameworks (e.g., React, Angular) and back‑end services using frameworks such as Flask or Node.js.
+Experience with relational and/or NoSQL databases such as PostgreSQL, Redis, or similar, including writing queries and working with ORMs.
+Proficiency with Git and common branching, pull request, and code review workflows.
+Familiarity with unit and integration testing frameworks (i.e. Jest, Playwright, PyTest) and a solid understanding of testable design.
+Strong analytical and debugging skills with a focus on problem-solving and solution delivery.
+Familiarity with agile development practices, including Scrum or Kanban.
+Excellent communication and collaboration skills, with the ability to work in a team-oriented environment.
+
+Impress Us With
+
+Experience with Next.js, TypeScript, Tailwind CSS, Radix UI, shadcn/ui, TanStack Query, Zustand on the front end, and Flask, SQLAlchemy, Celery, Redis, PostgreSQL, Alembic on the back end.
+Familiarity with AWS services relevant (e.g., S3, RDS, Secrets Manager, Lambda, CloudWatch), plus infrastructure‑as‑code tools like Terraform or cloud simulation tools like LocalStack.
+Hands‑on experience using OpenAPI and type generation tools to keep back‑end APIs and front‑end types aligned.
+Demonstrated use of AI tools in daily development to accelerate coding, tests, or documentation and interest in helping evolve AI‑ready patterns and workflows.
+Experience improving GitHub Actions (or similar) workflows for build/test/scan/deploy, optimizing Docker image builds, or introducing quality gates (linting, formatting, SAST/SCA, container scanning
+
+This position requires security clearances due to the nature of our work with public safety agencies. Candidates must be legally authorized to work in Canada and must successfully obtain and maintain a Reliability security clearance from the Government of Canada. Additionally, candidates must comply with the FBI's Criminal Justice Information Services (CJIS) Security Policy and pass a comprehensive, fingerprint-based background check. Please note that specific customer contracts may impose additional security verification requirements. Obtaining and maintaining all required security clearances is a condition of employment. For more information, please visit Public Services and Procurement Canada for Reliability clearance details and the FBI's CJIS Security Policy Resource Center for CJIS requirements.
+
+Versaterm is committed to fair and equitable compensation that is competitive, consistent, and aligned with the value each role contributes to our organization. The starting salary for this position will be dependent upon many factors, such as the successful candidate’s skills, experience, education, training as well as internal equity, market data, and business needs. In addition to base salary and our comprehensive benefits offering, some roles may also be eligible for variable compensation such as incentive plans or discretionary performance bonuses.
+
+Versaterm does not use AI in the recruitment process. All stages of recruitment decisions are lead by people, including our qualified acquisition team and our experienced hiring managers.
+
+Versaterm is an equal opportunity employer and is committed to equity, diversity, inclusion, and a barrier-free workplace. Accommodations are available upon request throughout all stages of the recruitment process and apply to the terms and conditions of employment. For more information, please contact info@versaterm.com.

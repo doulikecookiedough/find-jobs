@@ -244,6 +244,36 @@ def test_parse_job_description_extracts_surveymonkey_zuora_fields() -> None:
     }
 
 
+def test_parse_job_description_extracts_versaterm_se2_dems_fields() -> None:
+    parsed_job = parse_job_description(load_fixture("versaterm_se2_dems.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Software Engineer II - DEMS",
+        "company": "Versaterm",
+        "location": "Vancouver, British Columbia, Canada",
+        "years_experience_required": 2.0,
+        "seniority": "mid",
+        "role_type": "backend",
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": [
+            "aws",
+            "docker",
+            "git",
+            "github",
+            "postgresql",
+            "python",
+            "react",
+            "terraform",
+            "typescript",
+        ],
+        "domain_signals": ["apis", "backend", "integrations", "security"],
+        "work_style_signals": [],
+    }
+
+
 def test_parse_job_description_extracts_stripe_backend_fields() -> None:
     parsed_job = parse_job_description(load_fixture("stripe_backend_engineer.txt"))
 

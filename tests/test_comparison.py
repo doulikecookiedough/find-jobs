@@ -142,3 +142,20 @@ def test_evaluate_job_text_filters_down_business_systems_roles() -> None:
     assert job_score.fit_score <= 40
     assert job_score.interview_probability_max <= 5
     assert job_score.recommendation == "skip"
+
+
+def test_evaluate_job_text_aligns_with_real_screening_case_for_versaterm() -> None:
+    parsed_job, job_score = evaluate_job_text(
+        load_fixture("versaterm_se2_dems.txt"),
+        build_default_candidate_profile(),
+    )
+
+    assert parsed_job.title == "Software Engineer II - DEMS"
+    assert parsed_job.company == "Versaterm"
+    assert parsed_job.years_experience_required == 2.0
+    assert parsed_job.role_type == "backend"
+    assert job_score.fit_score >= 80
+    assert job_score.skills_alignment >= 75
+    assert 14 <= job_score.interview_probability_min <= 20
+    assert 14 <= job_score.interview_probability_max <= 20
+    assert job_score.recommendation in {"consider", "apply"}
