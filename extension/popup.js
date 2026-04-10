@@ -306,11 +306,11 @@ function yearsExperienceBlock(evaluation) {
 function yearsMatchStatusLabel(status) {
   switch (status) {
     case "strong":
-      return "Strong match.";
+      return "Strong match:";
     case "close":
-      return "Close stretch.";
+      return "Close stretch:";
     case "stretch":
-      return "Far stretch.";
+      return "Far stretch:";
     default:
       return "Unknown.";
   }
