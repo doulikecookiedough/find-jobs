@@ -160,6 +160,38 @@ button:disabled {
   letter-spacing: -0.03em;
 }
 
+.years-match-status {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-right: 6px;
+  color: #6a7b71;
+}
+
+.years-match-item {
+  line-height: 1.4;
+}
+
+.years-match-comment {
+  color: #31443a;
+}
+
+.years-match-status-strong {
+  color: #1f7a45;
+}
+
+.years-match-status-close {
+  color: #2f6fa6;
+}
+
+.years-match-status-stretch {
+  color: #b5443c;
+}
+
+.years-match-status-unknown {
+  color: #6a7b71;
+}
+
 .info-badge {
   display: inline-flex;
   align-items: center;

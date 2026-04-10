@@ -150,8 +150,9 @@ function renderEvaluation(evaluation) {
   resultElement.hidden = false;
   resultElement.append(
     scoreBlock(evaluation),
-    listBlock("Screening Risks", evaluation.risks),
     listBlock("Fit Evaluation", evaluation.reasons),
+    yearsExperienceBlock(evaluation),
+    listBlock("Screening Risks", evaluation.risks),
     listBlock("Parser Warnings", evaluation.parser_warnings),
   );
 }
@@ -274,6 +275,70 @@ function listBlock(title, items) {
 
   section.append(list);
   return section;
+}
+
+function yearsExperienceBlock(evaluation) {
+  const section = document.createElement("section");
+  const list = document.createElement("ul");
+  const item = document.createElement("li");
+  const status = document.createElement("strong");
+  const comment = document.createElement("span");
+
+  section.append(
+    sectionHeading(
+      "Years of Experience Match",
+      "Compares the parsed job years requirement against the active candidate profile. This is a direct level signal, separate from stack or domain fit.",
+    ),
+  );
+
+  item.className = "years-match-item";
+  status.className = `years-match-status years-match-status-${evaluation.years_experience_match_status}`;
+  status.textContent = yearsMatchStatusLabel(evaluation.years_experience_match_status);
+  comment.className = "years-match-comment";
+  comment.textContent = yearsMatchComment(evaluation.years_experience_match_label, evaluation.years_experience_match_status);
+
+  item.append(status, comment);
+  list.append(item);
+  section.append(list);
+  return section;
+}
+
+function yearsMatchStatusLabel(status) {
+  switch (status) {
+    case "strong":
+      return "Strong match.";
+    case "close":
+      return "Close stretch.";
+    case "stretch":
+      return "Far stretch.";
+    default:
+      return "Unknown.";
+  }
+}
+
+function yearsMatchComment(label, status) {
+  if (!label) {
+    return "";
+  }
+
+  const prefixes = {
+    strong: "Strong match:",
+    close: "Close stretch:",
+    stretch: "Far stretch:",
+    unknown: "Experience requirement unclear",
+  };
+
+  const prefix = prefixes[status];
+  if (!prefix) {
+    return label;
+  }
+
+  const trimmedLabel = label.trim();
+  if (trimmedLabel.startsWith(prefix)) {
+    return trimmedLabel.slice(prefix.length).trimStart();
+  }
+
+  return trimmedLabel;
 }
 
 function sectionHeading(title, tooltip) {
