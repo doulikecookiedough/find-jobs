@@ -40,6 +40,10 @@ SALARY_THOUSANDS_RANGE_PATTERN = re.compile(
     r"\$([\d,]+)k\s*[–-]\s*\$([\d,]+)k\s+(CAD|USD|US|CA)\b",
     re.IGNORECASE,
 )
+SALARY_BARE_THOUSANDS_RANGE_PATTERN = re.compile(
+    r"\$([\d,]+)k\s*[–-]\s*\$([\d,]+)k\b",
+    re.IGNORECASE,
+)
 LOCATION_PATTERN = re.compile(
     r"^[A-Z][A-Za-z .'-]+,\s*[A-Z]{2}(?:\s+[A-Z]\d[A-Z]\d[A-Z]\d,\s*[A-Z]{3})?$"
 )
@@ -49,7 +53,7 @@ REMOTE_ONLY_LOCATION_PATTERN = re.compile(r"^Remote$", re.IGNORECASE)
 REMOTE_POSITION_PATTERN = re.compile(r"^This is a remote position\.?$", re.IGNORECASE)
 LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
 TITLE_PATTERN = re.compile(
-    r"^(?=.*\b(?:engineer|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|platform|data|zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead)\b).+$",
+    r"^(?=.*\b(?:engineer|engineering|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|full stack|platform|data|zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead)\b).+$",
     re.IGNORECASE,
 )
 TITLE_PHRASE_PATTERN = re.compile(
@@ -212,14 +216,20 @@ def _extract_company(raw_text: str, opening_text: str, title: str | None = None)
 
 def _extract_company_from_header(raw_text: str) -> str | None:
     lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
-    if len(lines) < 2:
+    if not lines:
         return None
 
     if lines[0].lower().endswith(" logo"):
+        if len(lines) < 2:
+            return None
         candidate = lines[1]
         lowered = candidate.lower()
         if lowered not in {"share", "show more options"} and " · " not in candidate:
             return candidate
+
+    candidate = lines[0]
+    if _is_probable_company_name(candidate):
+        return candidate
 
     return None
 
@@ -240,6 +250,8 @@ def _extract_company_after_title(raw_text: str, title: str | None) -> str | None
     candidate = lines[title_index + 1]
     lowered = candidate.lower()
     if " · " in candidate:
+        return None
+    if _looks_like_salary_line(candidate):
         return None
     if lowered.startswith(("job category:", "requisition number:", "location:", "remote work policy")):
         return None
@@ -275,6 +287,15 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
                 int(salary_thousands_range_match.group(1).replace(",", "")) * 1000,
                 int(salary_thousands_range_match.group(2).replace(",", "")) * 1000,
                 _normalize_currency(salary_thousands_range_match.group(3)),
+                "yearly",
+            )
+
+        salary_bare_thousands_range_match = SALARY_BARE_THOUSANDS_RANGE_PATTERN.search(normalized_line)
+        if salary_bare_thousands_range_match:
+            return (
+                int(salary_bare_thousands_range_match.group(1).replace(",", "")) * 1000,
+                int(salary_bare_thousands_range_match.group(2).replace(",", "")) * 1000,
+                None,
                 "yearly",
             )
 
@@ -384,11 +405,13 @@ def _extract_title(lines: list[str]) -> str | None:
     )
 
     for line in lines[:20]:
-        normalized_line = line.strip()
+        normalized_line = re.sub(r"\s+\|\s+LinkedIn$", "", line.strip(), flags=re.IGNORECASE)
         if not normalized_line:
             continue
 
         lowered = normalized_line.lower()
+        if _looks_like_salary_line(normalized_line):
+            continue
         if lowered.endswith(" logo"):
             continue
         if lowered.startswith(ignored_prefixes):
@@ -404,6 +427,76 @@ def _extract_title(lines: list[str]) -> str | None:
             return phrase_match.group(0)
 
     return None
+
+
+def _looks_like_salary_line(line: str) -> bool:
+    normalized_line = line.replace("—", "-").replace("–", "-")
+    if re.search(r"\$\s*[\d,]+k\s*-\s*\$\s*[\d,]+k\b", normalized_line, re.IGNORECASE):
+        return True
+    if re.search(r"\$\s*[\d,]+\s*-\s*\$\s*[\d,]+\b", normalized_line, re.IGNORECASE):
+        return True
+    return any(
+        pattern.search(normalized_line)
+        for pattern in (
+            SALARY_THOUSANDS_RANGE_PATTERN,
+            SALARY_PATTERN,
+            SALARY_RANGE_PATTERN,
+            SALARY_BETWEEN_PATTERN,
+            SALARY_CURRENCY_RANGE_PATTERN,
+        )
+    )
+
+
+def _is_probable_company_name(line: str) -> bool:
+    lowered = line.strip().lower()
+    if not line.strip():
+        return False
+    if line.strip().endswith("."):
+        return False
+    if "|" in line:
+        return False
+    if _looks_like_salary_line(line):
+        return False
+    if len(line.strip().split()) > 6:
+        return False
+    if lowered in {
+        "share",
+        "save",
+        "about the job",
+        "show more options",
+        "actively hiring",
+        "job location",
+        "remote work policy",
+        "visa sponsorship",
+        "relocation",
+        "skills",
+    }:
+        return False
+    if lowered.startswith(
+        (
+            "posted:",
+            "reposted:",
+            "top job picks",
+            "avatar for ",
+            "help people and businesses",
+            "job category:",
+            "requisition number:",
+        ),
+    ):
+        return False
+    if TITLE_PATTERN.search(line):
+        return False
+    if (
+        LOCATION_PATTERN.match(line)
+        or COUNTRY_LOCATION_PATTERN.match(line)
+        or REMOTE_LOCATION_PATTERN.match(line)
+        or REMOTE_ONLY_LOCATION_PATTERN.match(line)
+        or REMOTE_POSITION_PATTERN.match(line)
+        or LONG_LOCATION_PATTERN.match(line)
+    ):
+        return False
+
+    return True
 
 
 def _is_ignored_opening_line(line: str) -> bool:

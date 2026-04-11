@@ -360,3 +360,50 @@ def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> N
         "domain_signals": ["apis", "distributed-systems", "integrations"],
         "work_style_signals": ["remote"],
     }
+
+
+def test_parse_job_description_extracts_company_from_banner_header() -> None:
+    parsed_job = parse_job_description(
+        (
+            "Microsoft\n"
+            "Actively Hiring\n"
+            "Help People and Businesses Throughout the World Realize Their Full Potential\n"
+            "Share\n"
+            "Save\n"
+            "Software Engineering II- Full stack\n"
+            "$85k – $166k\n"
+            "|\n"
+            "Vancouver\n"
+            "|3 years of exp\n"
+            "About the job\n"
+            "Build modern React and Python experiences.\n"
+        ),
+    )
+
+    assert parsed_job.title == "Software Engineering II- Full stack"
+    assert parsed_job.company == "Microsoft"
+    assert parsed_job.salary_min == 85000
+    assert parsed_job.salary_max == 166000
+
+
+def test_parse_job_description_does_not_treat_salary_as_company() -> None:
+    parsed_job = parse_job_description(
+        (
+            "Amazon Web Services\n"
+            "Actively Hiring\n"
+            "Share\n"
+            "Save\n"
+            "Software Development Engineer II, AWS Eventbridge\n"
+            "$114k – $191k\n"
+            "|\n"
+            "Vancouver\n"
+            "|3 years of exp\n"
+            "About the job\n"
+            "Develop large scale distributed systems on AWS.\n"
+        ),
+    )
+
+    assert parsed_job.title == "Software Development Engineer II, AWS Eventbridge"
+    assert parsed_job.company == "Amazon Web Services"
+    assert parsed_job.salary_min == 114000
+    assert parsed_job.salary_max == 191000
