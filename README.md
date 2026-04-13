@@ -112,7 +112,11 @@ The Python package is organized by responsibility:
 - `src/find_jobs/parser.py`: job description parsing
 - `src/find_jobs/profile.py`: candidate profile handling
 - `src/find_jobs/comparison.py`: profile-to-job comparison logic
-- `src/find_jobs/scoring.py`: scoring and recommendation logic
+- `src/find_jobs/scoring/engine.py`: scoring orchestration and final `JobScore` assembly
+- `src/find_jobs/scoring/fit/`: fit scoring helpers split by concern
+- `src/find_jobs/scoring/skills/`: skills scoring helpers split by concern
+- `src/find_jobs/scoring/interview.py`: interview probability scoring
+- `src/find_jobs/scoring/shared.py`: shared scoring utilities
 - `src/find_jobs/models.py`: shared domain models
 
 Each module has a corresponding pytest file under `tests/`.
@@ -221,6 +225,13 @@ The current weighted score uses:
 - role type alignment
 - competition realism
 
+The scoring implementation is now intentionally split into dedicated modules for:
+
+- fit scoring
+- skills scoring
+- interview probability
+- final score orchestration
+
 The implementation is still heuristic and intentionally transparent. The score is meant to support triage, not replace judgment.
 
 ## Reviewer notes
@@ -233,7 +244,7 @@ If you want to try the project locally:
 - run `uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload`
 - call `GET /health`, `POST /evaluate`, or `POST /evaluate-text` against the local API
 - open `http://127.0.0.1:8000/docs` for interactive API testing
-- inspect `src/find_jobs/parser.py`, `src/find_jobs/scoring.py`, and the corresponding tests
+- inspect `src/find_jobs/parser.py`, `src/find_jobs/scoring/engine.py`, `src/find_jobs/scoring/`, and the corresponding tests
 - inspect `src/find_jobs/api.py` and `tests/test_api.py` for the local service boundary
 - review `tests/fixtures/` to see the posting styles shaping the parser
 
