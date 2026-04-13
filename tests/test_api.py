@@ -74,7 +74,9 @@ def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
 
 
 def test_evaluate_text_returns_validation_error_for_missing_plain_text_body() -> None:
-    response = client.post("/evaluate-text", content="", headers={"Content-Type": "text/plain"})
+    response = client.post(
+        "/evaluate-text", content="", headers={"Content-Type": "text/plain"}
+    )
 
     assert response.status_code == 422
 
@@ -101,7 +103,11 @@ def test_evaluate_returns_validation_error_for_wrong_job_text_type() -> None:
 def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
     response = client.post(
         "/evaluate",
-        json={"job_text": (FIXTURES_DIR / "berkeley_payments_senior_backend.txt").read_text()},
+        json={
+            "job_text": (
+                FIXTURES_DIR / "berkeley_payments_senior_backend.txt"
+            ).read_text()
+        },
     )
 
     assert response.status_code == 200
@@ -116,7 +122,10 @@ def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
     assert payload["years_experience_match_status"] == "close"
     assert payload["recommendation"] == "consider"
     assert payload["priority"] == "medium"
-    assert any("Role type aligns well with your target focus (backend)." == reason for reason in payload["reasons"])
+    assert any(
+        "Role type aligns well with your target focus (backend)." == reason
+        for reason in payload["reasons"]
+    )
     assert any("Role is explicitly senior-level." == risk for risk in payload["risks"])
     assert payload["missing_fields"] == []
     assert payload["parser_warnings"] == []

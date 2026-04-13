@@ -205,7 +205,9 @@ def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
 
 
 def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None:
-    parsed_job = parse_job_description(load_fixture("coalition_data_engineer_security.txt"))
+    parsed_job = parse_job_description(
+        load_fixture("coalition_data_engineer_security.txt")
+    )
 
     assert parsed_job_snapshot(parsed_job) == {
         "title": "Data Engineer, Security",
@@ -238,7 +240,14 @@ def test_parse_job_description_extracts_surveymonkey_zuora_fields() -> None:
         "salary_max": None,
         "salary_currency": None,
         "salary_period": None,
-        "technologies": ["cpq", "mulesoft", "netsuite", "revpro", "salesforce", "zuora"],
+        "technologies": [
+            "cpq",
+            "mulesoft",
+            "netsuite",
+            "revpro",
+            "salesforce",
+            "zuora",
+        ],
         "domain_signals": ["apis", "business-systems", "integrations"],
         "work_style_signals": [],
     }
@@ -302,7 +311,9 @@ def test_parse_job_description_extracts_stripe_backend_fields() -> None:
 
 
 def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> None:
-    parsed_job = parse_job_description(load_fixture("berkeley_payments_senior_backend.txt"))
+    parsed_job = parse_job_description(
+        load_fixture("berkeley_payments_senior_backend.txt")
+    )
 
     assert parsed_job_snapshot(parsed_job) == {
         "title": "Senior Software Engineer",

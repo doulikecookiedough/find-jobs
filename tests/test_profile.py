@@ -69,5 +69,11 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
         "rest-apis",
         "docker",
     ]
-    assert profile.avoid_domains == ["mobile", "frontend", "networking", "low-level-systems", "business-systems"]
+    assert profile.avoid_domains == [
+        "mobile",
+        "frontend",
+        "networking",
+        "low-level-systems",
+        "business-systems",
+    ]
     assert profile.avoid_roles == ["frontend", "mobile", "business-systems"]

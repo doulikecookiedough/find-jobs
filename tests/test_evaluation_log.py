@@ -11,7 +11,9 @@ def test_incomplete_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("FIND_JOBS_INCOMPLETE_LOG_PATH", str(log_path))
 
     profile = CandidateProfile(years_experience=3.0)
-    parsed_job, job_score = evaluate_job_text("Wearables role with no clear company or stack.", profile)
+    parsed_job, job_score = evaluate_job_text(
+        "Wearables role with no clear company or stack.", profile
+    )
 
     assert parsed_job.company is None
     assert log_path.exists()
@@ -46,8 +48,10 @@ def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     log_path = tmp_path / "high_interview.jsonl"
     monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
 
-    raw_text = Path("tests/fixtures/versaterm_se2_dems.txt").read_text()
-    parsed_job, job_score = evaluate_job_text(raw_text, build_default_candidate_profile())
+    raw_text = Path("tests/fixtures/versaterm_se2_dems.txt").read_text(encoding="utf8")
+    parsed_job, job_score = evaluate_job_text(
+        raw_text, build_default_candidate_profile()
+    )
 
     assert parsed_job.company == "Versaterm"
     assert job_score.interview_probability_max >= 20
@@ -60,7 +64,9 @@ def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     assert payload["raw_text"].startswith("Software Engineer II - DEMS")
 
 
-def test_below_threshold_interview_evaluation_is_not_logged(monkeypatch, tmp_path) -> None:
+def test_below_threshold_interview_evaluation_is_not_logged(
+    monkeypatch, tmp_path
+) -> None:
     log_path = tmp_path / "high_interview.jsonl"
     monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
 

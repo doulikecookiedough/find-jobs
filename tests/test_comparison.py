@@ -22,8 +22,8 @@ def test_evaluate_job_text_returns_parsed_job_and_score_for_affirm() -> None:
     assert job_score.fit_score >= 80
     assert job_score.recommendation == "apply"
     assert job_score.priority == "high"
-    assert job_score.missing_fields == []
-    assert job_score.parser_warnings == []
+    assert not job_score.missing_fields
+    assert not job_score.parser_warnings
 
 
 def test_evaluate_job_text_returns_mixed_fit_for_zepp() -> None:
@@ -45,8 +45,8 @@ def test_evaluate_job_text_surfaces_missing_field_diagnostics() -> None:
     )
 
     assert parsed_job.title == "Senior Software Engineer"
-    assert job_score.missing_fields == []
-    assert job_score.parser_warnings == []
+    assert not job_score.missing_fields
+    assert not job_score.parser_warnings
 
 
 def test_evaluate_job_text_returns_apply_for_stripe_with_strength_alignment() -> None:
