@@ -1,162 +1,25 @@
-"""Scoring logic built on comparison results."""
+"""Scoring package entrypoint.
+
+This module keeps the public scoring API stable while the underlying concerns
+are split into smaller, reviewable modules.
+"""
 
 from __future__ import annotations
 
-import re
-
 from find_jobs.models import CandidateProfile, JobScore, ParsedJob, ScoreBreakdown
-
-
-STRENGTH_PATTERNS = {
-    "backend": re.compile(r"\bbackend(?: systems?| services?| infrastructure)?\b", re.IGNORECASE),
-    "full-stack": re.compile(r"\bfull[ -]?stack\b|\bfront-end to back-end\b|\bacross the stack\b", re.IGNORECASE),
-    "product-engineering": re.compile(
-        r"\bproduct decisions?\b|\bcustomer value\b|\bproduct development\b|\bproduct-oriented\b",
-        re.IGNORECASE,
-    ),
-    "data-platforms": re.compile(r"\bdata platforms?\b|\bdata pipelines?\b|\bdata lake\b", re.IGNORECASE),
-    "distributed-systems": re.compile(r"\bdistributed systems?\b|\bsystems? that scale\b|\bscalable\b", re.IGNORECASE),
-    "data-integrity": re.compile(r"\bdata integrity\b|\bconsistency\b|\bcorrectness\b", re.IGNORECASE),
-    "concurrency": re.compile(r"\bconcurr(?:ent|ency)\b|\basynchronous\b|\basync\b", re.IGNORECASE),
-    "schema-migrations": re.compile(r"\bschema migrations?\b|\bdatabase migrations?\b|\bdata backfill\b", re.IGNORECASE),
-    "apis": re.compile(r"\bapi\b|\bapis\b|\brest apis?\b|\brestful apis?\b", re.IGNORECASE),
-    "integrations": re.compile(r"\bintegrations?\b|\bintegration platform\b", re.IGNORECASE),
-    "reliability": re.compile(r"\breliability\b|\breliable\b|\bproduction systems?\b|\bon-call\b", re.IGNORECASE),
-    "etl": re.compile(r"\betl\b|\bdata ingestion\b|\bdata pipelines?\b", re.IGNORECASE),
-    "observability": re.compile(r"\bobservability\b|\bmetrics\b|\blogging\b|\btracing\b", re.IGNORECASE),
-    "testing": re.compile(r"\btesting\b|\bunit tests?\b|\bintegration tests?\b|\btestable design\b", re.IGNORECASE),
-    "documentation": re.compile(r"\bwell-documented\b|\bdocumentation\b|\bspecifications?\b|\bacceptance criteria\b", re.IGNORECASE),
-}
-
-
-def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score how well the job level matches the candidate's experience."""
-    if job.seniority in {"staff", "principal"}:
-        return 0.0
-
-    if job.years_experience_required is None:
-        if job.seniority == "senior":
-            return 0.35
-        if job.seniority == "mid":
-            return 0.85
-        if job.seniority == "junior":
-            return 1.0
-        return 0.5
-
-    years_gap = job.years_experience_required - profile.years_experience
-
-    if job.years_experience_required >= 7.0:
-        return 0.0
-    if years_gap <= 0:
-        return 1.0
-    if years_gap <= 1.0:
-        return 0.85
-    if years_gap <= 2.0:
-        return 0.65
-    if years_gap <= 3.0:
-        return 0.35
-    return 0.0
-
-
-def score_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score technology overlap between a job and the candidate profile."""
-    if not job.technologies:
-        return 0.5
-
-    preferred_technologies = set(profile.preferred_technologies)
-    if not preferred_technologies:
-        return 0.0
-
-    matched_technologies = preferred_technologies.intersection(job.technologies)
-    return len(matched_technologies) / len(set(job.technologies))
-
-
-def score_domain_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score how well a job's domain signals align with the candidate profile."""
-    if not job.domain_signals:
-        return 0.5
-
-    job_domains = set(job.domain_signals)
-    preferred_domains = set(profile.preferred_domains)
-    avoid_domains = set(profile.avoid_domains)
-
-    positive_matches = len(job_domains.intersection(preferred_domains))
-    negative_matches = len(job_domains.intersection(avoid_domains))
-
-    if positive_matches == 0 and negative_matches == 0:
-        return 0.5
-    if negative_matches:
-        return max(0.0, (positive_matches - negative_matches) / len(job_domains))
-    return positive_matches / len(job_domains)
-
-
-def score_strength_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score how well the raw job text matches the candidate's strongest areas."""
-    if not profile.strengths:
-        return 0.0
-
-    matched_strengths = 0
-    for strength in set(profile.strengths):
-        pattern = STRENGTH_PATTERNS.get(strength)
-        if pattern and pattern.search(job.raw_text):
-            matched_strengths += 1
-
-    if matched_strengths == 0:
-        return 0.5
-    if matched_strengths == 1:
-        return 0.7
-    if matched_strengths == 2:
-        return 0.85
-    return 1.0
-
-
-def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score how well a job's role type aligns with the candidate profile."""
-    if not job.role_type:
-        return 0.5
-
-    if job.role_type in profile.avoid_roles:
-        return 0.0
-    if job.role_type in profile.preferred_roles:
-        return 1.0
-    if job.role_type == "data":
-        return 0.25
-    if job.role_type == "business-systems":
-        return 0.15
-    return 0.5
-
-
-def score_competition_realism(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score whether a job seems realistically worth pursuing."""
-    if job.seniority in {"staff", "principal"}:
-        return 0.0
-    if job.role_type in profile.avoid_roles:
-        return 0.0
-
-    if job.years_experience_required is None:
-        if job.seniority == "senior":
-            return 0.25
-        if job.role_type == "data":
-            return 0.3
-        if job.role_type == "business-systems":
-            return 0.25
-        return 0.45
-
-    years_gap = job.years_experience_required - profile.years_experience
-
-    if job.years_experience_required >= 7.0:
-        return 0.0
-    if years_gap <= 0:
-        return 1.0
-    if years_gap <= 1.0:
-        return 0.8
-    if years_gap <= 2.0:
-        return 0.55
-    return 0.25
+from find_jobs.scoring.fit import (
+    score_competition_realism,
+    score_domain_alignment,
+    score_level_match,
+    score_role_type_alignment,
+    score_stack_alignment,
+    score_strength_alignment,
+)
+from find_jobs.scoring.shared import candidate_known_technologies, format_years
 
 
 def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
-    """Calculate a weighted fit score and recommendation for a job."""
+    """Calculate the aggregate fit score and supporting recommendation fields."""
     breakdown = ScoreBreakdown(
         level_match=score_level_match(job, profile),
         stack_alignment=score_stack_alignment(job, profile),
@@ -219,27 +82,13 @@ def _skills_alignment_for_breakdown(
     return round(weighted_score * 100)
 
 
-def _candidate_known_technologies(profile: CandidateProfile) -> set[str]:
-    """Return the candidate's broader known technology set."""
-    return {
-        *profile.primary_languages,
-        *profile.secondary_languages,
-        *profile.frameworks,
-        *profile.cloud_platforms,
-        *profile.databases,
-        *profile.infrastructure_tools,
-        *profile.developer_tools,
-        *profile.preferred_technologies,
-    }
-
-
 def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[float | None, str, str]:
     if job.years_experience_required is None:
         return None, "unknown", "Experience requirement unclear"
 
     years_gap = round(max(job.years_experience_required - profile.years_experience, 0.0), 1)
-    required_years = _format_years(job.years_experience_required)
-    candidate_years = _format_years(profile.years_experience)
+    required_years = format_years(job.years_experience_required)
+    candidate_years = format_years(profile.years_experience)
 
     if years_gap <= 1.0:
         return (
@@ -261,18 +110,12 @@ def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[
     )
 
 
-def _format_years(value: float) -> str:
-    if value.is_integer():
-        return str(int(value))
-    return f"{value:.1f}"
-
-
 def score_skills_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
     """Score stack overlap using the candidate's broader known technologies."""
     if not job.technologies:
         return 0.5
 
-    known_technologies = _candidate_known_technologies(profile)
+    known_technologies = candidate_known_technologies(profile)
     if not known_technologies:
         return 0.0
 
@@ -288,18 +131,13 @@ def _interview_probability_for_breakdown(
 ) -> tuple[int, int]:
     """Estimate interview probability with a deliberately conservative bias.
 
-    Philosophy:
-    - Interview odds are about passing screening, not just being capable of the job.
-    - Missing core stack requirements should sharply reduce both the center and ceiling.
-    - Weak proof of required skills matters more than general transferable fit.
-    - Multiple medium mismatches compound harshly.
-    - The upper bound is intentionally restrained to temper expectations.
+    The output is intended to reflect screening odds, not eventual interview
+    performance once a candidate is already in process.
     """
 
     def clamp(value: float, lower: float = 0.0, upper: float = 100.0) -> float:
         return max(lower, min(upper, value))
 
-    # Conservative base: general fit helps, but not too much.
     base_probability = (
         fit_score * 0.22
         + skills_alignment * 0.10
@@ -310,16 +148,12 @@ def _interview_probability_for_breakdown(
 
     multiplier = 1.0
     upper_cap = 100
-
-    # Optional evidence field: how well the resume proves the required stack.
-    # Defaults to stack_alignment if not explicitly available.
     required_stack_proof = getattr(
         breakdown,
         "required_stack_proof",
         breakdown.stack_alignment,
     )
 
-    # Stack alignment penalties
     if breakdown.stack_alignment < 0.30:
         base_probability -= 28
         multiplier *= 0.42
@@ -330,7 +164,6 @@ def _interview_probability_for_breakdown(
         base_probability -= 10
         multiplier *= 0.82
 
-    # Required stack proof penalties
     if required_stack_proof < 0.25:
         base_probability -= 20
         multiplier *= 0.45
@@ -344,7 +177,6 @@ def _interview_probability_for_breakdown(
         multiplier *= 0.86
         upper_cap = min(upper_cap, 28)
 
-    # Role type mismatch
     if breakdown.role_type_alignment < 0.50:
         base_probability -= 16
         multiplier *= 0.68
@@ -352,7 +184,6 @@ def _interview_probability_for_breakdown(
         base_probability -= 8
         multiplier *= 0.86
 
-    # Level mismatch
     if breakdown.level_match < 0.50:
         base_probability -= 20
         multiplier *= 0.62
@@ -360,7 +191,6 @@ def _interview_probability_for_breakdown(
         base_probability -= 10
         multiplier *= 0.82
 
-    # Competition harshness
     if breakdown.competition_realism < 0.30:
         multiplier *= 0.58
     elif breakdown.competition_realism < 0.50:
@@ -368,7 +198,6 @@ def _interview_probability_for_breakdown(
     elif breakdown.competition_realism < 0.70:
         multiplier *= 0.88
 
-    # Seniority penalties
     if job.seniority == "senior":
         base_probability -= 15
         multiplier *= 0.80
@@ -377,7 +206,6 @@ def _interview_probability_for_breakdown(
         multiplier *= 0.52
         upper_cap = min(upper_cap, 18)
 
-    # Years of experience penalties
     if job.years_experience_required is not None:
         years_required = job.years_experience_required
         if years_required >= 10:
@@ -403,24 +231,20 @@ def _interview_probability_for_breakdown(
         multiplier *= 0.58
         upper_cap = min(upper_cap, 8)
 
-    # Hard screen for core stack miss
     if getattr(job, "core_stack_mismatch", False):
         base_probability -= 22
         multiplier *= 0.35
         upper_cap = min(upper_cap, 15)
 
-    # Even harsher if more than one core technology is missing
     if getattr(job, "multiple_core_stack_misses", False):
         base_probability -= 10
         multiplier *= 0.72
         upper_cap = min(upper_cap, 12)
 
-    # Optional stretch-role flag
     if getattr(job, "is_stretch_role", False):
         multiplier *= 0.78
         upper_cap = min(upper_cap, 18)
 
-    # Compound mismatch penalty
     medium_mismatches = 0
     if breakdown.stack_alignment < 0.65:
         medium_mismatches += 1
@@ -440,12 +264,9 @@ def _interview_probability_for_breakdown(
     elif medium_mismatches == 2:
         multiplier *= 0.90
 
-    # Final pessimism discount: real hiring is usually harsher than rubrics.
     final_probability = base_probability * multiplier * 0.85
-
     center = round(clamp(final_probability, 0, upper_cap))
 
-    # Asymmetric range to keep optimism in check.
     if center >= 30:
         lower_spread = 7
         upper_spread = 4
@@ -459,6 +280,7 @@ def _interview_probability_for_breakdown(
     lower_bound = max(0, center - lower_spread)
     upper_bound = min(upper_cap, center + upper_spread)
     return lower_bound, upper_bound
+
 
 def _recommendation_for_score(fit_score: int) -> str:
     if fit_score >= 80:
