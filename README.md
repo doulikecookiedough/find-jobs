@@ -198,6 +198,10 @@ When an evaluation is missing important parsed fields, the project writes a stru
 
 - `logs/incomplete_evaluations.jsonl`
 
+When an evaluation clears the configured interview threshold, the project also writes a calibration review record to:
+
+- `logs/high_interview_evaluations.jsonl`
+
 This file is intended to help improve the parser and scorer over time. Each line stores:
 
 - parsed metadata
@@ -212,6 +216,13 @@ You can override the default path with:
 
 ```bash
 FIND_JOBS_INCOMPLETE_LOG_PATH=/custom/path/incomplete.jsonl
+```
+
+You can also override the high-interview review queue and threshold with:
+
+```bash
+FIND_JOBS_HIGH_INTERVIEW_LOG_PATH=/custom/path/high-interview.jsonl
+FIND_JOBS_HIGH_INTERVIEW_THRESHOLD=20
 ```
 
 ## Scoring model
@@ -231,6 +242,8 @@ The scoring implementation is now intentionally split into dedicated modules for
 - skills scoring
 - interview probability
 - final score orchestration
+
+Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile rather than fixed job-year thresholds alone.
 
 The implementation is still heuristic and intentionally transparent. The score is meant to support triage, not replace judgment.
 
