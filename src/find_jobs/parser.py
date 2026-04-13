@@ -272,8 +272,6 @@ def _extract_company_after_title(raw_text: str, title: str | None) -> str | None
         return None
     return candidate
 
-    return None
-
 
 def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | None, str | None]:
     for line in lines:
