@@ -33,6 +33,7 @@ def make_candidate_profile() -> CandidateProfile:
 
 
 def test_score_level_match_is_high_for_matching_experience() -> None:
+    """Scores a perfect level match when required years equal the profile."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid")
 
@@ -40,6 +41,7 @@ def test_score_level_match_is_high_for_matching_experience() -> None:
 
 
 def test_score_level_match_drops_for_small_experience_gap() -> None:
+    """Reduces level match for a small but manageable experience gap."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=4.0, seniority="mid")
 
@@ -47,6 +49,7 @@ def test_score_level_match_drops_for_small_experience_gap() -> None:
 
 
 def test_score_level_match_is_zero_for_strong_level_mismatch() -> None:
+    """Returns zero level match for clearly overleveled roles."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=7.0, seniority="senior")
 
@@ -54,6 +57,7 @@ def test_score_level_match_is_zero_for_strong_level_mismatch() -> None:
 
 
 def test_score_level_match_uses_seniority_when_years_are_missing() -> None:
+    """Falls back to seniority when no explicit years requirement is present."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", seniority="senior")
 
@@ -61,6 +65,7 @@ def test_score_level_match_uses_seniority_when_years_are_missing() -> None:
 
 
 def test_score_stack_alignment_is_high_for_strong_overlap() -> None:
+    """Gives full stack alignment when all job technologies are preferred."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", technologies=["python", "aws", "postgresql"])
 
@@ -68,6 +73,7 @@ def test_score_stack_alignment_is_high_for_strong_overlap() -> None:
 
 
 def test_score_stack_alignment_is_partial_for_mixed_stack() -> None:
+    """Returns a partial stack score when only some technologies overlap."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", technologies=["python", "ruby", "mysql", "aws"])
 
@@ -75,6 +81,7 @@ def test_score_stack_alignment_is_partial_for_mixed_stack() -> None:
 
 
 def test_score_stack_alignment_returns_neutral_when_job_stack_is_missing() -> None:
+    """Uses a neutral stack score when the parser found no technologies."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job")
 
@@ -82,6 +89,7 @@ def test_score_stack_alignment_returns_neutral_when_job_stack_is_missing() -> No
 
 
 def test_score_domain_alignment_is_high_for_preferred_domains() -> None:
+    """Rewards jobs whose domain signals stay inside preferred areas."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", domain_signals=["backend", "apis", "distributed-systems"])
 
@@ -89,6 +97,7 @@ def test_score_domain_alignment_is_high_for_preferred_domains() -> None:
 
 
 def test_score_domain_alignment_returns_neutral_for_unknown_domains() -> None:
+    """Keeps domain alignment neutral when signals are neither preferred nor avoided."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", domain_signals=["wearables"])
 
@@ -96,6 +105,7 @@ def test_score_domain_alignment_returns_neutral_for_unknown_domains() -> None:
 
 
 def test_score_domain_alignment_drops_for_avoid_domains() -> None:
+    """Suppresses domain alignment when the job lands in avoided areas."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", domain_signals=["mobile", "frontend"])
 
@@ -103,6 +113,7 @@ def test_score_domain_alignment_drops_for_avoid_domains() -> None:
 
 
 def test_score_strength_alignment_is_high_for_multiple_matching_strengths() -> None:
+    """Scores strength alignment highly when the raw text hits several strengths."""
     profile = make_candidate_profile()
     job = ParsedJob(
         raw_text=(
@@ -115,6 +126,7 @@ def test_score_strength_alignment_is_high_for_multiple_matching_strengths() -> N
 
 
 def test_score_strength_alignment_returns_neutral_without_matching_strengths() -> None:
+    """Falls back to a neutral strength score when no patterns match."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="Work on wearables partnerships and customer engagement tools.")
 
@@ -122,6 +134,7 @@ def test_score_strength_alignment_returns_neutral_without_matching_strengths() -
 
 
 def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
+    """Gives a perfect role-type score for explicitly preferred roles."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", role_type="backend")
 
@@ -129,6 +142,7 @@ def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
 
 
 def test_score_role_type_alignment_is_neutral_for_unknown_role() -> None:
+    """Keeps adjacent but non-preferred roles below a strong match."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", role_type="data")
 
@@ -136,6 +150,7 @@ def test_score_role_type_alignment_is_neutral_for_unknown_role() -> None:
 
 
 def test_score_role_type_alignment_is_zero_for_business_systems_avoid_role() -> None:
+    """Zeroes role alignment for business-systems roles in the avoid lane."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", role_type="business-systems")
 
@@ -143,6 +158,7 @@ def test_score_role_type_alignment_is_zero_for_business_systems_avoid_role() -> 
 
 
 def test_score_role_type_alignment_is_zero_for_avoid_role() -> None:
+    """Returns zero role alignment for other explicitly avoided roles."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", role_type="frontend")
 
@@ -150,6 +166,7 @@ def test_score_role_type_alignment_is_zero_for_avoid_role() -> None:
 
 
 def test_score_competition_realism_is_high_for_reachable_role() -> None:
+    """Treats reachable mid-level backend roles as highly realistic."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid", role_type="backend")
 
@@ -157,6 +174,7 @@ def test_score_competition_realism_is_high_for_reachable_role() -> None:
 
 
 def test_score_competition_realism_drops_for_stretch_role() -> None:
+    """Reduces competition realism when the role is a moderate stretch."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=5.0, seniority="senior", role_type="backend")
 
@@ -164,6 +182,7 @@ def test_score_competition_realism_drops_for_stretch_role() -> None:
 
 
 def test_score_competition_realism_is_zero_for_avoid_role() -> None:
+    """Returns zero competition realism for avoided role tracks."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid", role_type="frontend")
 
@@ -171,6 +190,7 @@ def test_score_competition_realism_is_zero_for_avoid_role() -> None:
 
 
 def test_scoring_package_exports_support_cross_module_calls() -> None:
+    """Confirms package exports still compose correctly across split modules."""
     profile = make_candidate_profile()
     job = ParsedJob(
         raw_text="Build backend APIs on Python and AWS.",
@@ -192,6 +212,7 @@ def test_scoring_package_exports_support_cross_module_calls() -> None:
 
 
 def test_score_job_returns_apply_for_strong_fit() -> None:
+    """Produces an apply recommendation for a role with strong alignment everywhere."""
     profile = make_candidate_profile()
     job = ParsedJob(
         raw_text="Build reliable backend APIs and distributed systems integrations.",
@@ -220,6 +241,7 @@ def test_score_job_returns_apply_for_strong_fit() -> None:
 
 
 def test_score_job_returns_skip_for_clear_mismatch() -> None:
+    """Produces a skip recommendation for an obviously mismatched role."""
     profile = make_candidate_profile()
     job = ParsedJob(
         raw_text="job",
@@ -242,6 +264,7 @@ def test_score_job_returns_skip_for_clear_mismatch() -> None:
 
 
 def test_score_job_returns_consider_for_mixed_fit() -> None:
+    """Produces a consider recommendation for a mixed but plausible match."""
     profile = make_candidate_profile()
     job = ParsedJob(
         raw_text="job",
@@ -265,6 +288,7 @@ def test_score_job_returns_consider_for_mixed_fit() -> None:
 
 
 def test_score_job_can_show_stronger_skills_than_overall_fit_for_stretch_role() -> None:
+    """Allows strong technical overlap even when overall fit stays weak."""
     profile = make_candidate_profile()
     job = ParsedJob(
         raw_text=(
@@ -288,6 +312,7 @@ def test_score_job_can_show_stronger_skills_than_overall_fit_for_stretch_role() 
 
 
 def test_score_job_marks_small_years_gap_as_close_stretch() -> None:
+    """Labels a small experience shortfall as a close stretch."""
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", years_experience_required=5.0, seniority="senior")
 
