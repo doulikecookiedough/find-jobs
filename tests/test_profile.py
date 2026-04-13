@@ -1,5 +1,7 @@
 """Profile tests for the default candidate configuration."""
 
+# pylint: disable=duplicate-code
+
 from find_jobs.profile import build_default_candidate_profile
 
 

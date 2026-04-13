@@ -4,6 +4,8 @@ These functions score whether the role's seniority and years requirements are
 plausible relative to the candidate profile.
 """
 
+# pylint: disable=duplicate-code
+
 from __future__ import annotations
 
 from find_jobs.models import CandidateProfile, ParsedJob

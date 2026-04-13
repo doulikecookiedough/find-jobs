@@ -4,6 +4,8 @@ These functions estimate whether a role looks realistic to pursue before adding
 stack or domain detail.
 """
 
+# pylint: disable=duplicate-code
+
 from __future__ import annotations
 
 from find_jobs.models import CandidateProfile, ParsedJob
