@@ -199,9 +199,28 @@ def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
         "salary_currency": "CAD",
         "salary_period": "yearly",
         "technologies": ["aws", "javascript", "python", "react", "typescript"],
-        "domain_signals": [],
+        "domain_signals": ["ai-ml"],
         "work_style_signals": ["on-site"],
     }
+
+
+def test_parse_job_description_does_not_treat_bonus_ai_language_as_specialized_domain() -> None:
+    """Leaves bonus AI language out of specialized domains when it is not a core requirement."""
+    parsed_job = parse_job_description(
+        (
+            "Software Engineer, Backend\n"
+            "Zip\n"
+            "Canada\n"
+            "3+ years of experience.\n"
+            "Build APIs and backend systems in Python, Javascript, React, and GraphQL.\n"
+            "Experience with Kubernetes, Spinnaker, and Jenkins.\n"
+            "Exposure to AI-driven automation or interest in AI features is a bonus, not required.\n"
+        )
+    )
+
+    assert "ai-ml" not in parsed_job.domain_signals
+    assert "model-inference" not in parsed_job.domain_signals
+    assert sorted(parsed_job.domain_signals) == ["apis", "backend"]
 
 
 def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None:
