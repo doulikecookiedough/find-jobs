@@ -124,6 +124,14 @@ def test_score_domain_alignment_drops_for_avoid_domains() -> None:
     assert score_domain_alignment(job, profile) == 0.0
 
 
+def test_score_domain_alignment_caps_specialized_domains_without_profile_proof() -> None:
+    """Caps domain alignment for specialized AI/video roles without matching proof."""
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", domain_signals=["backend", "integrations", "ai-ml", "video-processing"])
+
+    assert score_domain_alignment(job, profile) == 0.35
+
+
 def test_score_strength_alignment_is_high_for_multiple_matching_strengths() -> None:
     """Scores strength alignment highly when the raw text hits several strengths."""
     profile = make_candidate_profile()
