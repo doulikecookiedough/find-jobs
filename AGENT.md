@@ -21,7 +21,11 @@ Main Python modules:
 - `src/find_jobs/parser.py`: extract structured job signals from raw job text
 - `src/find_jobs/profile.py`: candidate profile defaults and profile helpers
 - `src/find_jobs/comparison.py`: compare parsed jobs against the candidate profile
-- `src/find_jobs/scoring.py`: produce fit, recommendation, and risk outputs
+- `src/find_jobs/scoring/engine.py`: orchestrate final scoring outputs
+- `src/find_jobs/scoring/fit/`: fit scoring helpers split by concern
+- `src/find_jobs/scoring/skills/`: skills scoring helpers split by concern
+- `src/find_jobs/scoring/interview.py`: interview probability scoring
+- `src/find_jobs/scoring/shared.py`: shared scoring helpers
 - `src/find_jobs/models.py`: shared domain models
 - `src/find_jobs/api.py`: FastAPI wrapper around evaluation
 - `src/find_jobs/cli.py`: CLI entrypoint
@@ -40,6 +44,9 @@ Supporting surfaces:
 - Avoid speculative abstractions. This repo is intentionally small.
 - Do not move responsibilities across modules without a clear reason.
 - Preserve the current boundary: parsing, comparison, scoring, and presentation should stay separable.
+- Keep public import paths stable when refactoring internals unless the user explicitly wants a contract change.
+- Prefer concise 1-2 sentence docstrings for public scoring helpers and focused tests when behavior needs quick reviewer context.
+- When a scoring refactor is requested, prefer incremental commits that separate structure, tests, and docs.
 
 ## Token Discipline
 
@@ -76,6 +83,8 @@ Good default sequence:
 - Inspect `tests/test_scoring.py`, `tests/test_comparison.py`, and the scoring/comparison modules together.
 - Keep scoring explainable. A future reader should be able to explain why a job got its score.
 - Preserve reason and risk output quality; these are product behavior, not debug noise.
+- Treat `src/find_jobs/scoring/engine.py` as the stable orchestration entrypoint and keep lower-level scoring rules in the dedicated `fit`, `skills`, or `interview` modules.
+- If a scoring module starts to feel crowded, split by concern inside the scoring package rather than rebuilding the scoring flow wholesale.
 
 ### API or CLI changes
 
