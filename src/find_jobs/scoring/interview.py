@@ -9,6 +9,16 @@ from __future__ import annotations
 from find_jobs.models import ParsedJob, ScoreBreakdown
 
 
+HARD_BACKEND_TECHNOLOGIES = {
+    "java",
+    "kafka",
+    "cassandra",
+    "solr",
+    "scala",
+    "spring-boot",
+}
+
+
 def score_interview_probability(
     breakdown: ScoreBreakdown,
     fit_score: int,
@@ -117,6 +127,11 @@ def score_interview_probability(
         multiplier *= 0.58
         upper_cap = min(upper_cap, 8)
 
+    if _has_partial_hard_backend_stack(job, breakdown, required_stack_proof):
+        base_probability -= 10
+        multiplier *= 0.72
+        upper_cap = min(upper_cap, 20)
+
     if getattr(job, "core_stack_mismatch", False):
         base_probability -= 22
         multiplier *= 0.35
@@ -166,3 +181,22 @@ def score_interview_probability(
     lower_bound = max(0, center - lower_spread)
     upper_bound = min(upper_cap, center + upper_spread)
     return lower_bound, upper_bound
+
+
+def _has_partial_hard_backend_stack(
+    job: ParsedJob,
+    breakdown: ScoreBreakdown,
+    required_stack_proof: float,
+) -> bool:
+    """Detect backend roles that lean on harder stack evidence than the profile clearly proves.
+
+    These roles should screen harsher than generic backend matches when the stack
+    overlap is only partial but the technologies point to a stronger Java/eventing ecosystem.
+    """
+    if job.role_type != "backend":
+        return False
+    if breakdown.stack_alignment >= 0.65 or required_stack_proof >= 0.70:
+        return False
+
+    technologies = set(job.technologies)
+    return bool(technologies.intersection(HARD_BACKEND_TECHNOLOGIES))

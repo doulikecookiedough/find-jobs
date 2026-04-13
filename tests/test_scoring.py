@@ -364,6 +364,35 @@ def test_score_job_can_show_stronger_skills_than_overall_fit_for_stretch_role() 
     assert score.years_experience_match_status == "stretch"
 
 
+def test_score_job_reduces_interview_odds_for_partial_hard_backend_stack() -> None:
+    """Reduces interview odds when a backend role relies on a harder Java/eventing stack."""
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text=(
+            "Backend Java Engineer building scalable APIs, distributed systems, "
+            "microservices, and event-streaming services with Kafka."
+        ),
+        years_experience_required=4.0,
+        role_type="backend",
+        technologies=["java", "kafka"],
+        domain_signals=[
+            "distributed-systems",
+            "backend",
+            "integrations",
+            "apis",
+            "microservices",
+            "event-streaming",
+            "ci-cd",
+        ],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.fit_score >= 70
+    assert score.interview_probability_min <= 14
+    assert score.interview_probability_max <= 20
+
+
 def test_score_job_marks_small_years_gap_as_close_stretch() -> None:
     """Labels a small experience shortfall as a close stretch."""
     profile = make_candidate_profile()
