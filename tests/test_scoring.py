@@ -3,8 +3,11 @@ from find_jobs.scoring import (
     score_job,
     score_competition_realism,
     score_domain_alignment,
+    score_interview_probability,
     score_level_match,
     score_role_type_alignment,
+    score_skills_alignment,
+    score_skills_stack_alignment,
     score_stack_alignment,
     score_strength_alignment,
 )
@@ -165,6 +168,27 @@ def test_score_competition_realism_is_zero_for_avoid_role() -> None:
     job = ParsedJob(raw_text="job", years_experience_required=3.0, seniority="mid", role_type="frontend")
 
     assert score_competition_realism(job, profile) == 0.0
+
+
+def test_scoring_package_exports_support_cross_module_calls() -> None:
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text="Build backend APIs on Python and AWS.",
+        years_experience_required=3.0,
+        seniority="mid",
+        role_type="backend",
+        technologies=["python", "aws"],
+        domain_signals=["backend", "apis"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score_skills_stack_alignment(job, profile) == 1.0
+    assert score_skills_alignment(job, profile, score.score_breakdown) >= 80
+    assert score_interview_probability(score.score_breakdown, score.fit_score, score.skills_alignment, job) == (
+        score.interview_probability_min,
+        score.interview_probability_max,
+    )
 
 
 def test_score_job_returns_apply_for_strong_fit() -> None:
