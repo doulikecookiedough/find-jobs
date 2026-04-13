@@ -142,18 +142,19 @@ To test the extension locally:
 ## Example output
 
 ```text
-Title: Software Engineer II, Backend (Consumer Authentication)
-Company: Affirm
-Fit Score: 85
-Skills Alignment: 78
-Interview Probability: 83-93%
+Title: Software Engineer
+Company: PathPilot
+Fit Score: 84
+Skills Alignment: 79
+Interview Probability: 14-20%
+Years Match: Strong match: requires about 3 years, profile is 3 years.
 Recommendation: apply
 Priority: high
 Reasons:
 - Role type aligns well with your target focus (backend).
 - Job content matches several of your strongest backend and systems skills.
-- Relevant stack overlap found: aws, kubernetes, python.
-- Work style includes remote flexibility.
+- Domain signals overlap well with your preferred backend and integration work.
+- Relevant stack overlap found: aws, python, rest-apis.
 ```
 
 ## Status
