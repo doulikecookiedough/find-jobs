@@ -6,7 +6,25 @@ clear evidence over optimistic fit averages.
 
 from __future__ import annotations
 
-from find_jobs.models import ParsedJob, ScoreBreakdown
+from find_jobs.models import CandidateProfile, ParsedJob, ScoreBreakdown
+from find_jobs.scoring.shared import candidate_known_technologies
+
+
+SPECIALIZED_DOMAINS = {
+    "ai-ml",
+    "computer-vision",
+    "video-processing",
+    "model-inference",
+}
+SPECIALIZED_TECHNOLOGIES = {
+    "pytorch",
+    "tensorflow",
+    "keras",
+    "cuda",
+    "opencv",
+    "ffmpeg",
+    "gstreamer",
+}
 
 
 def score_interview_probability(
@@ -14,6 +32,7 @@ def score_interview_probability(
     fit_score: int,
     skills_alignment: int,
     job: ParsedJob,
+    profile: CandidateProfile,
 ) -> tuple[int, int]:
     """Estimate an interview probability range from fit, skills, and penalties.
 
@@ -131,6 +150,11 @@ def score_interview_probability(
         multiplier *= 0.78
         upper_cap = min(upper_cap, 18)
 
+    if _has_unproven_specialized_domain(job, profile):
+        base_probability -= 18
+        multiplier *= 0.45
+        upper_cap = min(upper_cap, 12)
+
     medium_mismatches = 0
     if breakdown.stack_alignment < 0.65:
         medium_mismatches += 1
@@ -166,3 +190,28 @@ def score_interview_probability(
     lower_bound = max(0, center - lower_spread)
     upper_bound = min(upper_cap, center + upper_spread)
     return lower_bound, upper_bound
+
+
+def _has_unproven_specialized_domain(job: ParsedJob, profile: CandidateProfile) -> bool:
+    """Detect specialized domains that the current profile does not credibly cover.
+
+    Screening odds should drop sharply when a role is specialized in AI, CV, or
+    video inference but the profile lacks matching domain or tool evidence.
+    """
+    specialized_domains = set(job.domain_signals).intersection(SPECIALIZED_DOMAINS)
+    if not specialized_domains:
+        return False
+
+    profile_domains = set(profile.preferred_domains)
+    if specialized_domains.intersection(profile_domains):
+        return False
+
+    profile_strengths = set(profile.strengths)
+    if specialized_domains.intersection(profile_strengths):
+        return False
+
+    known_technologies = candidate_known_technologies(profile)
+    if known_technologies.intersection(SPECIALIZED_TECHNOLOGIES):
+        return False
+
+    return True
