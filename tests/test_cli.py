@@ -1,3 +1,5 @@
+"""CLI tests for end-to-end command output."""
+
 from pathlib import Path
 
 from find_jobs.cli import main
@@ -7,6 +9,8 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def test_main_returns_error_without_command(capsys) -> None:
+    """Returns a usage error when no subcommand is provided."""
+
     assert main([]) == 1
 
     captured = capsys.readouterr()
@@ -14,6 +18,8 @@ def test_main_returns_error_without_command(capsys) -> None:
 
 
 def test_main_evaluate_command_prints_score_summary(capsys) -> None:
+    """Prints the expected score summary for a valid fixture input."""
+
     result = main(["evaluate", str(FIXTURES_DIR / "affirm_backend_engineer.txt")])
 
     assert result == 0

@@ -1,3 +1,5 @@
+"""Extension manifest tests for required files and permissions."""
+
 import json
 from pathlib import Path
 
@@ -6,6 +8,8 @@ EXTENSION_DIR = Path(__file__).parent.parent / "extension"
 
 
 def test_extension_manifest_references_existing_files() -> None:
+    """References the expected extension files from the manifest."""
+
     manifest = json.loads((EXTENSION_DIR / "manifest.json").read_text())
 
     background_path = EXTENSION_DIR / manifest["background"]["service_worker"]
@@ -19,6 +23,8 @@ def test_extension_manifest_references_existing_files() -> None:
 
 
 def test_extension_manifest_can_call_local_api() -> None:
+    """Includes the permissions needed to call the local evaluation API."""
+
     manifest = json.loads((EXTENSION_DIR / "manifest.json").read_text())
 
     assert "http://127.0.0.1:8000/*" in manifest["host_permissions"]
@@ -28,6 +34,8 @@ def test_extension_manifest_can_call_local_api() -> None:
 
 
 def test_extension_manifest_can_read_linkedin_pages() -> None:
+    """Includes host permissions for LinkedIn job pages."""
+
     manifest = json.loads((EXTENSION_DIR / "manifest.json").read_text())
 
     assert "https://www.linkedin.com/*" in manifest["host_permissions"]

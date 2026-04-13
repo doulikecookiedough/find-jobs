@@ -1,3 +1,5 @@
+"""API tests for the FastAPI evaluation endpoints."""
+
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -10,6 +12,8 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def test_health_returns_ok() -> None:
+    """Returns a healthy status payload from the health endpoint."""
+
     response = client.get("/health")
 
     assert response.status_code == 200
@@ -17,6 +21,8 @@ def test_health_returns_ok() -> None:
 
 
 def test_evaluate_returns_scored_job_summary() -> None:
+    """Returns the full scored payload for a valid JSON evaluation request."""
+
     response = client.post(
         "/evaluate",
         json={"job_text": (FIXTURES_DIR / "affirm_backend_engineer.txt").read_text()},
@@ -51,6 +57,8 @@ def test_evaluate_returns_scored_job_summary() -> None:
 
 
 def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
+    """Returns the scored payload for a plain-text evaluation request."""
+
     response = client.post(
         "/evaluate-text",
         content=(FIXTURES_DIR / "affirm_backend_engineer.txt").read_text(),
@@ -74,6 +82,8 @@ def test_evaluate_text_returns_scored_job_summary_for_plain_text_body() -> None:
 
 
 def test_evaluate_text_returns_validation_error_for_missing_plain_text_body() -> None:
+    """Rejects empty plain-text requests with a validation error."""
+
     response = client.post(
         "/evaluate-text", content="", headers={"Content-Type": "text/plain"}
     )
@@ -82,6 +92,8 @@ def test_evaluate_text_returns_validation_error_for_missing_plain_text_body() ->
 
 
 def test_evaluate_returns_validation_error_when_job_text_is_missing() -> None:
+    """Rejects JSON requests that omit the required job text field."""
+
     response = client.post("/evaluate", json={})
 
     assert response.status_code == 422
@@ -92,6 +104,8 @@ def test_evaluate_returns_validation_error_when_job_text_is_missing() -> None:
 
 
 def test_evaluate_returns_validation_error_for_wrong_job_text_type() -> None:
+    """Rejects JSON requests whose job text is not a string."""
+
     response = client.post("/evaluate", json={"job_text": 123})
 
     assert response.status_code == 422
@@ -101,6 +115,8 @@ def test_evaluate_returns_validation_error_for_wrong_job_text_type() -> None:
 
 
 def test_evaluate_returns_consider_case_with_reasons_and_risks() -> None:
+    """Returns a mixed-fit payload with both reasons and risks populated."""
+
     response = client.post(
         "/evaluate",
         json={

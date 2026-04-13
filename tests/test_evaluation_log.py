@@ -1,3 +1,5 @@
+"""Logging tests for incomplete and high-interview evaluation files."""
+
 import json
 from pathlib import Path
 
@@ -7,6 +9,8 @@ from find_jobs.profile import build_default_candidate_profile
 
 
 def test_incomplete_evaluation_is_logged(monkeypatch, tmp_path) -> None:
+    """Writes incomplete evaluations to the configured incomplete log."""
+
     log_path = tmp_path / "incomplete.jsonl"
     monkeypatch.setenv("FIND_JOBS_INCOMPLETE_LOG_PATH", str(log_path))
 
@@ -26,6 +30,8 @@ def test_incomplete_evaluation_is_logged(monkeypatch, tmp_path) -> None:
 
 
 def test_complete_evaluation_is_not_logged(monkeypatch, tmp_path) -> None:
+    """Skips the incomplete log when the parsed evaluation is complete."""
+
     log_path = tmp_path / "incomplete.jsonl"
     monkeypatch.setenv("FIND_JOBS_INCOMPLETE_LOG_PATH", str(log_path))
 
@@ -45,6 +51,8 @@ def test_complete_evaluation_is_not_logged(monkeypatch, tmp_path) -> None:
 
 
 def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
+    """Writes high-interview evaluations to the configured review log."""
+
     log_path = tmp_path / "high_interview.jsonl"
     monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
 
@@ -67,6 +75,8 @@ def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
 def test_below_threshold_interview_evaluation_is_not_logged(
     monkeypatch, tmp_path
 ) -> None:
+    """Skips the review log when interview odds stay below the threshold."""
+
     log_path = tmp_path / "high_interview.jsonl"
     monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
 

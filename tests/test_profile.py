@@ -1,7 +1,11 @@
+"""Profile tests for the default candidate configuration."""
+
 from find_jobs.profile import build_default_candidate_profile
 
 
 def test_build_default_candidate_profile_returns_expected_defaults() -> None:
+    """Builds the expected default candidate profile used across the app."""
+
     profile = build_default_candidate_profile()
 
     assert profile.years_experience == 3.0

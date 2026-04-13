@@ -1,7 +1,11 @@
+"""Model tests for dataclass defaults and score containers."""
+
 from find_jobs.models import CandidateProfile, JobScore, ParsedJob, ScoreBreakdown
 
 
 def test_parsed_job_defaults() -> None:
+    """Initializes parsed jobs with optional fields left empty."""
+
     parsed_job = ParsedJob(raw_text="Job text")
 
     assert parsed_job.raw_text == "Job text"
@@ -13,6 +17,8 @@ def test_parsed_job_defaults() -> None:
 
 
 def test_candidate_profile_defaults() -> None:
+    """Initializes candidate profiles with empty optional collections."""
+
     profile = CandidateProfile(years_experience=3.0)
 
     assert profile.years_experience == 3.0
@@ -23,6 +29,8 @@ def test_candidate_profile_defaults() -> None:
 
 
 def test_job_score_defaults() -> None:
+    """Initializes job scores with empty review metadata by default."""
+
     score = JobScore(fit_score=72, recommendation="consider", priority="medium")
 
     assert score.fit_score == 72
