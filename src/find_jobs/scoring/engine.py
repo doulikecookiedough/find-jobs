@@ -52,7 +52,11 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         job,
         profile,
     )
-    years_experience_gap, years_experience_match_status, years_experience_match_label = _years_experience_match(job, profile)
+    (
+        years_experience_gap,
+        years_experience_match_status,
+        years_experience_match_label,
+    ) = _years_experience_match(job, profile)
     recommendation = _recommendation_for_score(fit_score)
     priority = _priority_for_score(fit_score)
     reasons, risks = _build_reasons_and_risks(job, profile, breakdown)
@@ -75,7 +79,9 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
 
 
-def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[float | None, str, str]:
+def _years_experience_match(
+    job: ParsedJob, profile: CandidateProfile
+) -> tuple[float | None, str, str]:
     """Summarize how closely the experience requirement matches the profile.
 
     The label is user-facing, so it stays descriptive rather than exposing raw
@@ -92,19 +98,28 @@ def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[
         return (
             years_gap,
             "strong",
-            f"Strong match: requires about {required_years} years, profile is {candidate_years} years.",
+            (
+                f"Strong match: requires about {required_years} years, "
+                f"profile is {candidate_years} years."
+            ),
         )
     if years_gap <= 3.0:
         return (
             years_gap,
             "close",
-            f"Close stretch: requires about {required_years} years, profile is {candidate_years} years.",
+            (
+                f"Close stretch: requires about {required_years} years, "
+                f"profile is {candidate_years} years."
+            ),
         )
 
     return (
         years_gap,
         "stretch",
-        f"Far stretch: requires about {required_years} years, profile is {candidate_years} years.",
+        (
+            f"Far stretch: requires about {required_years} years, "
+            f"profile is {candidate_years} years."
+        ),
     )
 
 
@@ -145,18 +160,29 @@ def _build_reasons_and_risks(
         reasons.append("Job content matches several of your strongest backend and systems skills.")
 
     if breakdown.domain_alignment >= 0.75 and job.domain_signals:
-        reasons.append("Domain signals overlap well with your preferred backend and integration work.")
+        reasons.append(
+            "Domain signals overlap well with your preferred backend and integration work."
+        )
 
-    matched_technologies = sorted(set(job.technologies).intersection(profile.preferred_technologies))
+    matched_technologies = sorted(
+        set(job.technologies).intersection(profile.preferred_technologies)
+    )
     if matched_technologies:
         reasons.append(f"Relevant stack overlap found: {', '.join(matched_technologies[:4])}.")
 
     if job.work_style_signals and "remote" in job.work_style_signals:
         reasons.append("Work style includes remote flexibility.")
 
-    if job.years_experience_required is not None and job.years_experience_required > profile.years_experience:
+    if (
+        job.years_experience_required is not None
+        and job.years_experience_required > profile.years_experience
+    ):
         risks.append(
-            f"Experience requirement is above your current profile ({job.years_experience_required:g}+ years vs {profile.years_experience:g})."
+            (
+                "Experience requirement is above your current profile "
+                f"({job.years_experience_required:g}+ years vs "
+                f"{profile.years_experience:g})."
+            )
         )
 
     if job.seniority == "senior":

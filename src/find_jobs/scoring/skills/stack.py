@@ -23,5 +23,7 @@ def score_skills_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> f
     if not known_technologies:
         return 0.0
 
-    matched_known = len(set(job.technologies).intersection(known_technologies)) / len(set(job.technologies))
+    matched_known = len(set(job.technologies).intersection(known_technologies)) / len(
+        set(job.technologies)
+    )
     return min(1.0, matched_known)

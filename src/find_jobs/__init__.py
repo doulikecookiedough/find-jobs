@@ -1,2 +1,1 @@
 """find-jobs package."""
-

@@ -5,8 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 
+# pylint: disable=too-many-instance-attributes
+
+
 @dataclass(slots=True)
 class ParsedJob:
+    """Parsed representation of a raw job description."""
+
     raw_text: str
     title: str | None = None
     company: str | None = None
@@ -25,6 +30,8 @@ class ParsedJob:
 
 @dataclass(slots=True)
 class CandidateProfile:
+    """Candidate attributes used by parsing and scoring."""
+
     years_experience: float
     headline: str | None = None
     target_focus: str | None = None
@@ -45,6 +52,8 @@ class CandidateProfile:
 
 @dataclass(slots=True)
 class ScoreBreakdown:
+    """Normalized component scores used to assemble the final result."""
+
     level_match: float = 0.0
     stack_alignment: float = 0.0
     domain_alignment: float = 0.0
@@ -55,6 +64,8 @@ class ScoreBreakdown:
 
 @dataclass(slots=True)
 class JobScore:
+    """Final job evaluation returned by the scoring engine."""
+
     fit_score: int
     recommendation: str
     priority: str

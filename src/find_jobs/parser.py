@@ -51,13 +51,23 @@ COUNTRY_LOCATION_PATTERN = re.compile(r"^(Canada|United States|USA|US)$", re.IGN
 REMOTE_LOCATION_PATTERN = re.compile(r"^Remote\s+(Canada|United States|USA|US)$", re.IGNORECASE)
 REMOTE_ONLY_LOCATION_PATTERN = re.compile(r"^Remote$", re.IGNORECASE)
 REMOTE_POSITION_PATTERN = re.compile(r"^This is a remote position\.?$", re.IGNORECASE)
-LONG_LOCATION_PATTERN = re.compile(r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$")
+LONG_LOCATION_PATTERN = re.compile(
+    r"^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$"
+)
 TITLE_PATTERN = re.compile(
-    r"^(?=.*\b(?:engineer|engineering|developer)\b)(?=.*\b(?:software|backend|frontend|full-stack|full stack|platform|data|zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead)\b).+$",
+    (
+        r"^(?=.*\b(?:engineer|engineering|developer)\b)"
+        r"(?=.*\b(?:software|backend|frontend|full-stack|full stack|platform|data|"
+        r"zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead)\b).+$"
+    ),
     re.IGNORECASE,
 )
 TITLE_PHRASE_PATTERN = re.compile(
-    r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|Platform|Data|Zuora|Salesforce)\s+(?:Engineer|Developer)\b",
+    (
+        r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?"
+        r"(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|"
+        r"Platform|Data|Zuora|Salesforce)\s+(?:Engineer|Developer)\b"
+    ),
     re.IGNORECASE,
 )
 TECHNOLOGY_PATTERNS = {
@@ -125,19 +135,31 @@ DOMAIN_SIGNAL_PATTERNS = {
     "account-management": re.compile(r"\baccount management\b", re.IGNORECASE),
     "integrations": re.compile(r"\bintegrations?\b|\bintegration platform\b", re.IGNORECASE),
     "business-systems": re.compile(
-        r"\bzuora\b|\bsalesforce\b|\bcpq\b|\bnetsuite\b|\brevpro\b|\bmulesoft\b|\bquote-to-cash\b|\border-to-revenue\b",
+        (
+            r"\bzuora\b|\bsalesforce\b|\bcpq\b|\bnetsuite\b|\brevpro\b|"
+            r"\bmulesoft\b|\bquote-to-cash\b|\border-to-revenue\b"
+        ),
         re.IGNORECASE,
     ),
     "apis": re.compile(r"\bapi\b|\bapis\b|\bapi gateways\b|\bapi development\b", re.IGNORECASE),
     "microservices": re.compile(r"\bmicroservices architecture\b|\bmicroservices\b", re.IGNORECASE),
-    "event-streaming": re.compile(r"\bevent streaming\b|\bmessage queues\b|\bservice bus\b|\bkafka\b", re.IGNORECASE),
+    "event-streaming": re.compile(
+        r"\bevent streaming\b|\bmessage queues\b|\bservice bus\b|\bkafka\b", re.IGNORECASE
+    ),
     "iam": re.compile(r"\biam\b|\bidentity and access management\b", re.IGNORECASE),
     "developer-platform": re.compile(
-        r"\bdeveloper platform\b|\bdeveloper ecosystems?\b|\bproduct platform\b|\bdeveloper experience\b",
+        (
+            r"\bdeveloper platform\b|\bdeveloper ecosystems?\b|"
+            r"\bproduct platform\b|\bdeveloper experience\b"
+        ),
         re.IGNORECASE,
     ),
-    "developer-productivity": re.compile(r"\bdeveloper productivity\b|\bworkflow engine\b|\bdevelopment workflow\b", re.IGNORECASE),
-    "event-driven": re.compile(r"\bevent-driven architectures?\b|\basynchronous messaging systems?\b", re.IGNORECASE),
+    "developer-productivity": re.compile(
+        r"\bdeveloper productivity\b|\bworkflow engine\b|\bdevelopment workflow\b", re.IGNORECASE
+    ),
+    "event-driven": re.compile(
+        r"\bevent-driven architectures?\b|\basynchronous messaging systems?\b", re.IGNORECASE
+    ),
     "observability": re.compile(r"\bobservability\b|\blogging\b|\btracing\b", re.IGNORECASE),
     "ci-cd": re.compile(r"\bci/cd\b|\bbuild systems?\b|\bdeveloper workflows\b", re.IGNORECASE),
 }
@@ -145,12 +167,28 @@ ROLE_TYPE_PATTERNS = (
     ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),
     ("full-stack", re.compile(r"\bfull[ -]?stack\b", re.IGNORECASE)),
     ("platform", re.compile(r"\bplatform\b", re.IGNORECASE)),
-    ("data", re.compile(r"\bdata engineer(?:ing)?\b|\bdata platform\b|\bdata pipelines?\b", re.IGNORECASE)),
-    ("business-systems", re.compile(r"\bzuora developer\b|\bzuora\b|\bsalesforce\b|\bcpq\b|\bnetsuite\b|\brevpro\b|\bmulesoft\b", re.IGNORECASE)),
+    (
+        "data",
+        re.compile(
+            r"\bdata engineer(?:ing)?\b|\bdata platform\b|\bdata pipelines?\b", re.IGNORECASE
+        ),
+    ),
+    (
+        "business-systems",
+        re.compile(
+            (
+                r"\bzuora developer\b|\bzuora\b|\bsalesforce\b|\bcpq\b|"
+                r"\bnetsuite\b|\brevpro\b|\bmulesoft\b"
+            ),
+            re.IGNORECASE,
+        ),
+    ),
     ("frontend", re.compile(r"\bfront[ -]?end\b", re.IGNORECASE)),
     ("mobile", re.compile(r"\bmobile\b|\bios\b|\bandroid\b", re.IGNORECASE)),
 )
-MID_LEVEL_PATTERN = re.compile(r"\b(engineer ii|software engineer ii|mid(?:-level)?|intermediate)\b", re.IGNORECASE)
+MID_LEVEL_PATTERN = re.compile(
+    r"\b(engineer ii|software engineer ii|mid(?:-level)?|intermediate)\b", re.IGNORECASE
+)
 SENIOR_LEVEL_PATTERN = re.compile(r"\b(senior|sr\.?|staff|principal|lead)\b", re.IGNORECASE)
 JUNIOR_LEVEL_PATTERN = re.compile(r"\b(junior|entry[ -]?level|new grad|intern)\b", re.IGNORECASE)
 
@@ -235,6 +273,8 @@ def _extract_company_from_header(raw_text: str) -> str | None:
 
 
 def _extract_company_after_title(raw_text: str, title: str | None) -> str | None:
+    """Read the line after the title when it looks like a company name."""
+
     if not title:
         return None
 
@@ -253,7 +293,9 @@ def _extract_company_after_title(raw_text: str, title: str | None) -> str | None
         return None
     if _looks_like_salary_line(candidate):
         return None
-    if lowered.startswith(("job category:", "requisition number:", "location:", "remote work policy")):
+    if lowered.startswith(
+        ("job category:", "requisition number:", "location:", "remote work policy")
+    ):
         return None
     if lowered in {"about the job", "apply", "save", "share", "show more options"}:
         return None
@@ -261,14 +303,7 @@ def _extract_company_after_title(raw_text: str, title: str | None) -> str | None
         return None
     if TITLE_PATTERN.search(candidate):
         return None
-    if (
-        LOCATION_PATTERN.match(candidate)
-        or COUNTRY_LOCATION_PATTERN.match(candidate)
-        or REMOTE_LOCATION_PATTERN.match(candidate)
-        or REMOTE_ONLY_LOCATION_PATTERN.match(candidate)
-        or REMOTE_POSITION_PATTERN.match(candidate)
-        or LONG_LOCATION_PATTERN.match(candidate)
-    ):
+    if _looks_like_location(candidate):
         return None
     return candidate
 
@@ -288,7 +323,9 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
                 "yearly",
             )
 
-        salary_bare_thousands_range_match = SALARY_BARE_THOUSANDS_RANGE_PATTERN.search(normalized_line)
+        salary_bare_thousands_range_match = SALARY_BARE_THOUSANDS_RANGE_PATTERN.search(
+            normalized_line
+        )
         if salary_bare_thousands_range_match:
             return (
                 int(salary_bare_thousands_range_match.group(1).replace(",", "")) * 1000,
@@ -365,6 +402,8 @@ def _extract_years_from_line(line: str) -> float | None:
 
 
 def _extract_location(lines: list[str]) -> str | None:
+    """Extract the first plausible location string from the opening lines."""
+
     for index, line in enumerate(lines[:20]):
         lowered = line.lower()
         if lowered in {"job location", "location"} and index + 1 < len(lines):
@@ -392,6 +431,8 @@ def _extract_location(lines: list[str]) -> str | None:
 
 
 def _extract_title(lines: list[str]) -> str | None:
+    """Extract the first plausible job title from the opening lines."""
+
     ignored_prefixes = (
         "share",
         "show more options",
@@ -446,6 +487,8 @@ def _looks_like_salary_line(line: str) -> bool:
 
 
 def _is_probable_company_name(line: str) -> bool:
+    """Filter out common non-company strings from header candidates."""
+
     lowered = line.strip().lower()
     if not line.strip():
         return False
@@ -484,17 +527,26 @@ def _is_probable_company_name(line: str) -> bool:
         return False
     if TITLE_PATTERN.search(line):
         return False
-    if (
-        LOCATION_PATTERN.match(line)
-        or COUNTRY_LOCATION_PATTERN.match(line)
-        or REMOTE_LOCATION_PATTERN.match(line)
-        or REMOTE_ONLY_LOCATION_PATTERN.match(line)
-        or REMOTE_POSITION_PATTERN.match(line)
-        or LONG_LOCATION_PATTERN.match(line)
-    ):
+    if _looks_like_location(line):
         return False
 
     return True
+
+
+def _looks_like_location(line: str) -> bool:
+    """Return whether a line matches one of the supported location formats."""
+
+    return any(
+        pattern.match(line)
+        for pattern in (
+            LOCATION_PATTERN,
+            COUNTRY_LOCATION_PATTERN,
+            REMOTE_LOCATION_PATTERN,
+            REMOTE_ONLY_LOCATION_PATTERN,
+            REMOTE_POSITION_PATTERN,
+            LONG_LOCATION_PATTERN,
+        )
+    )
 
 
 def _is_ignored_opening_line(line: str) -> bool:
@@ -560,9 +612,7 @@ def _extract_work_style_signals(raw_text: str) -> list[str]:
 
 def _extract_domain_signals(raw_text: str) -> list[str]:
     return [
-        signal
-        for signal, pattern in DOMAIN_SIGNAL_PATTERNS.items()
-        if pattern.search(raw_text)
+        signal for signal, pattern in DOMAIN_SIGNAL_PATTERNS.items() if pattern.search(raw_text)
     ]
 
 

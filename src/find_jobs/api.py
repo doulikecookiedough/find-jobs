@@ -13,10 +13,14 @@ app = FastAPI(title="find-jobs")
 
 
 class EvaluateJobRequest(BaseModel):
+    """JSON payload for evaluating one raw job description."""
+
     job_text: str
 
 
 class EvaluateJobResponse(BaseModel):
+    """Serialized evaluation returned by the API endpoints."""
+
     title: str | None
     company: str | None
     location: str | None

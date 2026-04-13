@@ -23,7 +23,7 @@ def main(argv: list[str] | None = None) -> int:
         print("Usage: find-jobs evaluate <job-file>")
         return 1
 
-    raw_text = Path(args.job_file).read_text()
+    raw_text = Path(args.job_file).read_text(encoding="utf-8")
     parsed_job, job_score = evaluate_job_text(raw_text, build_default_candidate_profile())
 
     print(f"Title: {parsed_job.title or 'Unknown'}")
