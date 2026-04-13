@@ -21,22 +21,29 @@ def score_competition_realism(job: ParsedJob, profile: CandidateProfile) -> floa
         return 0.0
 
     if job.years_experience_required is None:
-        if job.seniority == "senior":
-            return 0.25
-        if job.role_type == "data":
-            return 0.3
-        if job.role_type == "business-systems":
-            return 0.25
-        return 0.45
+        return _score_competition_without_years(job)
 
     years_gap = job.years_experience_required - profile.years_experience
-
+    score = 0.25
     if job.years_experience_required >= 7.0:
-        return 0.0
-    if years_gap <= 0:
-        return 1.0
-    if years_gap <= 1.0:
-        return 0.8
-    if years_gap <= 2.0:
-        return 0.55
-    return 0.25
+        score = 0.0
+    elif years_gap <= 0:
+        score = 1.0
+    elif years_gap <= 1.0:
+        score = 0.8
+    elif years_gap <= 2.0:
+        score = 0.55
+
+    return score
+
+
+def _score_competition_without_years(job: ParsedJob) -> float:
+    """Score competition realism when the posting omits explicit years."""
+
+    if job.seniority == "senior":
+        return 0.25
+    if job.role_type == "data":
+        return 0.3
+    if job.role_type == "business-systems":
+        return 0.25
+    return 0.45

@@ -19,24 +19,31 @@ def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
         return 0.0
 
     if job.years_experience_required is None:
-        if job.seniority == "senior":
-            return 0.35
-        if job.seniority == "mid":
-            return 0.85
-        if job.seniority == "junior":
-            return 1.0
-        return 0.5
+        return _score_level_without_years(job)
 
     years_gap = job.years_experience_required - profile.years_experience
-
+    score = 0.0
     if job.years_experience_required >= 7.0:
-        return 0.0
-    if years_gap <= 0:
-        return 1.0
-    if years_gap <= 1.0:
-        return 0.85
-    if years_gap <= 2.0:
-        return 0.65
-    if years_gap <= 3.0:
+        score = 0.0
+    elif years_gap <= 0:
+        score = 1.0
+    elif years_gap <= 1.0:
+        score = 0.85
+    elif years_gap <= 2.0:
+        score = 0.65
+    elif years_gap <= 3.0:
+        score = 0.35
+
+    return score
+
+
+def _score_level_without_years(job: ParsedJob) -> float:
+    """Score level fit when the posting omits explicit years."""
+
+    if job.seniority == "senior":
         return 0.35
-    return 0.0
+    if job.seniority == "mid":
+        return 0.85
+    if job.seniority == "junior":
+        return 1.0
+    return 0.5
