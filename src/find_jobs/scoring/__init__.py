@@ -15,7 +15,8 @@ from find_jobs.scoring.fit import (
     score_stack_alignment,
     score_strength_alignment,
 )
-from find_jobs.scoring.shared import candidate_known_technologies, format_years
+from find_jobs.scoring.shared import format_years
+from find_jobs.scoring.skills import score_skills_alignment, score_skills_stack_alignment
 
 
 def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
@@ -38,7 +39,7 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
 
     fit_score = round(weighted_score * 100)
-    skills_alignment = _skills_alignment_for_breakdown(job, profile, breakdown)
+    skills_alignment = score_skills_alignment(job, profile, breakdown)
     interview_probability_min, interview_probability_max = _interview_probability_for_breakdown(
         breakdown,
         fit_score,
@@ -67,21 +68,6 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         score_breakdown=breakdown,
     )
 
-
-def _skills_alignment_for_breakdown(
-    job: ParsedJob,
-    profile: CandidateProfile,
-    breakdown: ScoreBreakdown,
-) -> int:
-    """Estimate technical overlap independent of level fit."""
-    weighted_score = (
-        score_skills_stack_alignment(job, profile) * 0.60
-        + breakdown.strength_alignment * 0.25
-        + breakdown.domain_alignment * 0.15
-    )
-    return round(weighted_score * 100)
-
-
 def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[float | None, str, str]:
     if job.years_experience_required is None:
         return None, "unknown", "Experience requirement unclear"
@@ -108,21 +94,6 @@ def _years_experience_match(job: ParsedJob, profile: CandidateProfile) -> tuple[
         "stretch",
         f"Far stretch: requires about {required_years} years, profile is {candidate_years} years.",
     )
-
-
-def score_skills_stack_alignment(job: ParsedJob, profile: CandidateProfile) -> float:
-    """Score stack overlap using the candidate's broader known technologies."""
-    if not job.technologies:
-        return 0.5
-
-    known_technologies = candidate_known_technologies(profile)
-    if not known_technologies:
-        return 0.0
-
-    matched_known = len(set(job.technologies).intersection(known_technologies)) / len(set(job.technologies))
-    return min(1.0, matched_known)
-
-
 def _interview_probability_for_breakdown(
     breakdown: ScoreBreakdown,
     fit_score: int,
