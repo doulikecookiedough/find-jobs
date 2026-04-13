@@ -217,7 +217,7 @@ def test_scoring_package_exports_support_cross_module_calls() -> None:
 
     assert score_skills_stack_alignment(job, profile) == 1.0
     assert score_skills_alignment(job, profile, score.score_breakdown) >= 80
-    assert score_interview_probability(score.score_breakdown, score.fit_score, score.skills_alignment, job) == (
+    assert score_interview_probability(score.score_breakdown, score.fit_score, score.skills_alignment, job, profile) == (
         score.interview_probability_min,
         score.interview_probability_max,
     )
@@ -332,7 +332,8 @@ def test_score_job_returns_consider_for_mixed_fit() -> None:
 
     assert 60 <= score.fit_score < 80
     assert 40 <= score.skills_alignment <= 70
-    assert 20 <= score.interview_probability_min <= 30
+    assert 8 <= score.interview_probability_min <= 16
+    assert 10 <= score.interview_probability_max <= 18
     assert score.years_experience_match_status == "strong"
     assert score.recommendation == "consider"
     assert score.priority == "medium"
@@ -391,6 +392,67 @@ def test_score_job_reduces_interview_odds_for_partial_hard_backend_stack() -> No
     assert score.fit_score >= 70
     assert score.interview_probability_min <= 14
     assert score.interview_probability_max <= 20
+
+
+def test_score_job_penalizes_four_year_requirement_when_profile_is_one_year_short() -> None:
+    """Penalizes interview odds for a four-year role when the profile is still one year short."""
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text=(
+            "Backend Java Engineer building scalable APIs, distributed systems, "
+            "microservices, and event-streaming services with Kafka."
+        ),
+        years_experience_required=4.0,
+        role_type="backend",
+        technologies=["java", "kafka"],
+        domain_signals=[
+            "distributed-systems",
+            "backend",
+            "integrations",
+            "apis",
+            "microservices",
+            "event-streaming",
+            "ci-cd",
+        ],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.years_experience_gap == 1.0
+    assert score.interview_probability_min <= 10
+    assert score.interview_probability_max <= 16
+
+
+def test_score_job_does_not_penalize_years_when_profile_meets_requirement() -> None:
+    """Keeps years-based interview penalties off when the candidate already meets the requirement."""
+    profile = CandidateProfile(
+        years_experience=5.0,
+        preferred_roles=["backend", "platform"],
+        preferred_domains=["distributed-systems", "apis", "integrations", "backend"],
+        preferred_technologies=["python", "aws", "postgresql", "kubernetes", "java"],
+        strengths=[
+            "backend",
+            "distributed-systems",
+            "apis",
+            "integrations",
+            "reliability",
+            "observability",
+        ],
+        avoid_domains=["mobile", "frontend", "networking", "business-systems"],
+        avoid_roles=["mobile", "frontend", "business-systems"],
+    )
+    job = ParsedJob(
+        raw_text="Build backend APIs and distributed systems in Python and AWS.",
+        years_experience_required=5.0,
+        role_type="backend",
+        technologies=["python", "aws"],
+        domain_signals=["distributed-systems", "backend", "apis", "integrations"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.years_experience_gap == 0.0
+    assert score.interview_probability_min >= 30
 
 
 def test_score_job_marks_small_years_gap_as_close_stretch() -> None:

@@ -6,7 +6,7 @@ clear evidence over optimistic fit averages.
 
 from __future__ import annotations
 
-from find_jobs.models import ParsedJob, ScoreBreakdown
+from find_jobs.models import CandidateProfile, ParsedJob, ScoreBreakdown
 
 
 HARD_BACKEND_TECHNOLOGIES = {
@@ -24,6 +24,7 @@ def score_interview_probability(
     fit_score: int,
     skills_alignment: int,
     job: ParsedJob,
+    profile: CandidateProfile,
 ) -> tuple[int, int]:
     """Estimate an interview probability range from fit, skills, and penalties.
 
@@ -103,16 +104,20 @@ def score_interview_probability(
         upper_cap = min(upper_cap, 18)
 
     if job.years_experience_required is not None:
-        years_required = job.years_experience_required
-        if years_required >= 10:
+        years_gap = job.years_experience_required - profile.years_experience
+        if years_gap > 3.0:
             base_probability -= 24
             multiplier *= 0.70
-        elif years_required >= 7:
+        elif years_gap > 2.0:
             base_probability -= 18
             multiplier *= 0.80
-        elif years_required >= 5:
+        elif years_gap > 1.0:
             base_probability -= 10
             multiplier *= 0.90
+        elif years_gap > 0:
+            base_probability -= 10
+            multiplier *= 0.76
+            upper_cap = min(upper_cap, 14)
     else:
         base_probability -= 8
         multiplier *= 0.78
