@@ -7,7 +7,6 @@ stack or domain detail.
 from __future__ import annotations
 
 from find_jobs.models import CandidateProfile, ParsedJob
-from find_jobs.scoring.fit.years import score_years_gap
 
 
 def score_competition_realism(job: ParsedJob, profile: CandidateProfile) -> float:
@@ -22,27 +21,22 @@ def score_competition_realism(job: ParsedJob, profile: CandidateProfile) -> floa
         return 0.0
 
     if job.years_experience_required is None:
-        return _score_unknown_years_competition(job)
+        if job.seniority == "senior":
+            return 0.25
+        if job.role_type == "data":
+            return 0.3
+        if job.role_type == "business-systems":
+            return 0.25
+        return 0.45
 
-    return score_years_gap(
-        job.years_experience_required,
-        profile.years_experience,
-        (
-            (0.0, 1.0),
-            (1.0, 0.8),
-            (2.0, 0.55),
-            (float("inf"), 0.25),
-        ),
-    )
+    years_gap = job.years_experience_required - profile.years_experience
 
-
-def _score_unknown_years_competition(job: ParsedJob) -> float:
-    """Score competition realism when the job omits an explicit years requirement."""
-
-    if job.seniority == "senior":
-        return 0.25
-    if job.role_type == "data":
-        return 0.3
-    if job.role_type == "business-systems":
-        return 0.25
-    return 0.45
+    if job.years_experience_required >= 7.0:
+        return 0.0
+    if years_gap <= 0:
+        return 1.0
+    if years_gap <= 1.0:
+        return 0.8
+    if years_gap <= 2.0:
+        return 0.55
+    return 0.25
