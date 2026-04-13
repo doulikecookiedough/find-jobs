@@ -1,38 +1,53 @@
 # find-jobs
 
-`find-jobs` is an experimental Python project for evaluating job postings against a candidate profile and producing an explainable fit assessment.
+`find-jobs` is a local, rule-based tool for evaluating job postings against a candidate profile.
 
-The goal is to reduce job-search fatigue by turning raw job descriptions into something easier to review, compare, and eventually rank.
+It is being developed iteratively for real job-search use, so the priority is fast reviewer onboarding, explainable scoring, and small, testable changes.
 
-This repository is intentionally being built in small stages. The focus is a clean structure, strong tests, and a workflow that is easy to iterate on.
+## Quick start
 
-## Why this exists
+This project uses `uv`.
 
-The long-term idea is to:
+```bash
+uv sync
+uv run pytest
+uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt
+```
 
-- ingest a full job description
-- extract key signals
-- compare those signals against a candidate profile
-- produce a score, reasons, and risks
-- eventually support batch evaluation, CSV export, and browser-assisted ingestion
+Run the local API:
 
-The current MVP supports parsing and scoring from a text file, a local FastAPI endpoint, and a local Chrome extension that can evaluate visible job pages directly.
+```bash
+uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload
+```
 
-## Current approach
+Sanity-check it:
 
-This project is being developed with a simple progression:
+```bash
+curl -s http://127.0.0.1:8000/health
+```
 
-1. scaffold the package and test layout
-2. build a parser for raw job descriptions
-3. add a candidate profile model
-4. compare profile data against parsed job signals
-5. add scoring and recommendations
+Test the plain-text endpoint:
 
-The initial implementation will be rule-based and deterministic. LLM-assisted evaluation may be added later, but it is not the starting point.
+```bash
+curl -s \
+  -X POST http://127.0.0.1:8000/evaluate-text \
+  -H "Content-Type: text/plain" \
+  --data-binary @tests/fixtures/affirm_backend_engineer.txt
+```
 
-## Current state
+Use FastAPI docs for manual testing:
 
-The parser currently extracts:
+- open `http://127.0.0.1:8000/docs`
+- use `POST /evaluate-text`
+- paste a full job description
+
+## What it does
+
+Current inputs:
+
+- raw job description text from files, API requests, or the Chrome extension
+
+Current parser outputs:
 
 - title
 - company
@@ -45,7 +60,7 @@ The parser currently extracts:
 - domain signals
 - work style signals
 
-The scorer currently produces:
+Current scoring outputs:
 
 - fit score
 - skills alignment
@@ -54,128 +69,77 @@ The scorer currently produces:
 - priority
 - reasons
 - risks
-- score breakdown by factor
+- factor breakdown
 - missing-field diagnostics for incomplete parses
 
-The API currently exposes:
+Current surfaces:
 
-- `GET /health`
-- `POST /evaluate`
-- `POST /evaluate-text`
-
-The Chrome extension currently provides:
-
-- a side panel UI for evaluating the active browser tab
-- visible text extraction from LinkedIn-style job pages
-- a collapsed extracted-text preview for real-world parser debugging
-- scoring metric cards for fit, skills, and interview likelihood
-- inline help tooltips for understanding the scoring outputs
-- local API integration through `POST /evaluate-text`
-
-The parser is tested against multiple real-world fixture styles, including:
-
-- direct pasted job descriptions
-- enterprise platform/integrations postings
-- Apple-style branded listings
-- LinkedIn-wrapped postings with duplicated UI metadata
-
-Current parser fixtures:
-
-- `tests/fixtures/affirm_backend_engineer.txt`
-- `tests/fixtures/integrations_engineer.txt`
-- `tests/fixtures/apple_workflow_foundations.txt`
-- `tests/fixtures/zepp_connected_partnerships.txt`
-- `tests/fixtures/genista_backend_engineer.txt`
-- `tests/fixtures/stripe_backend_engineer.txt`
-- `tests/fixtures/berkeley_payments_senior_backend.txt`
-
-## Project goals
-
-- Parse raw job descriptions into structured data.
-- Score job postings against a candidate profile using explicit rules.
-- Produce a clear, CLI-friendly evaluation output.
-- Keep the architecture modular, testable, and easy to evolve.
-
-## Development principles
-
-- clear domain models
-- readable rule-based logic first
-- tests as a first-class part of development
-- incremental design instead of premature complexity
-- simple local execution for reviewers and contributors
+- CLI
+- local FastAPI API
+- Chrome side panel extension
 
 ## Project structure
 
-The Python package is organized by responsibility:
-
-- `src/find_jobs/cli.py`: command-line entrypoint
-- `src/find_jobs/parser.py`: job description parsing
-- `src/find_jobs/profile.py`: candidate profile handling
-- `src/find_jobs/comparison.py`: profile-to-job comparison logic
-- `src/find_jobs/scoring/engine.py`: scoring orchestration and final `JobScore` assembly
-- `src/find_jobs/scoring/fit/`: fit scoring helpers split by concern
-- `src/find_jobs/scoring/skills/`: skills scoring helpers split by concern
+- `src/find_jobs/cli.py`: CLI entrypoint
+- `src/find_jobs/api.py`: FastAPI wrapper
+- `src/find_jobs/parser.py`: job text parsing
+- `src/find_jobs/profile.py`: candidate profile defaults
+- `src/find_jobs/comparison.py`: parse + score orchestration
+- `src/find_jobs/scoring/engine.py`: final score assembly
+- `src/find_jobs/scoring/fit/`: fit scoring helpers
+- `src/find_jobs/scoring/skills/`: skills scoring helpers
 - `src/find_jobs/scoring/interview.py`: interview probability scoring
-- `src/find_jobs/scoring/shared.py`: shared scoring utilities
-- `src/find_jobs/models.py`: shared domain models
+- `src/find_jobs/scoring/shared.py`: shared scoring helpers
+- `src/find_jobs/models.py`: shared models
+- `tests/`: behavior contract
+- `tests/fixtures/`: real-world parsing fixtures
+- `extension/`: Chrome extension client
 
-Each module has a corresponding pytest file under `tests/`.
+## Scoring notes
 
-## Quick start
+The scoring system is intentionally heuristic and explainable.
 
-This project uses `uv` for environment and dependency management.
+Fit currently uses:
 
-From the repository root:
+- level match
+- stack alignment
+- domain alignment
+- strength alignment
+- role type alignment
+- competition realism
+
+Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile.
+
+## Review logs
+
+The project writes review queues under `logs/`:
+
+- `logs/incomplete_evaluations.jsonl`: evaluations with missing parsed fields or parser warnings
+- `logs/high_interview_evaluations.jsonl`: evaluations whose interview upper bound clears the configured threshold
+
+Overrides:
 
 ```bash
-uv sync
-uv run pytest
-uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt
+FIND_JOBS_INCOMPLETE_LOG_PATH=/custom/path/incomplete.jsonl
+FIND_JOBS_HIGH_INTERVIEW_LOG_PATH=/custom/path/high-interview.jsonl
+FIND_JOBS_HIGH_INTERVIEW_THRESHOLD=20
 ```
 
-To run the local API:
+## Chrome extension
 
-```bash
-uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload
-```
+To test the extension locally:
 
-Then test it:
-
-```bash
-curl -s http://127.0.0.1:8000/health
-```
-
-To test the Chrome extension locally:
-
-1. Start the local API with the `uvicorn` command above.
+1. Start the local API.
 2. Open `chrome://extensions`.
 3. Enable `Developer mode`.
 4. Click `Load unpacked`.
-5. Select the `extension/` directory in this repository.
-6. Open a job posting page.
-7. Click the `find-jobs` extension to open the side panel.
+5. Select the `extension/` directory.
+6. Open a job posting.
+7. Open the `find-jobs` side panel.
 8. Click `Evaluate Job`.
-9. Hover the info icons beside the score labels if you want help interpreting the metrics.
-10. Expand `Preview extracted text` if the score looks wrong.
+9. Expand `Preview extracted text` if the result looks wrong.
 
-For manual reviewer testing, the easiest option is FastAPI docs:
-
-- open `http://127.0.0.1:8000/docs`
-- use `POST /evaluate-text`
-- click `Try it out`
-- paste a full job description as plain text
-- click `Execute`
-
-You can also test the plain-text endpoint from the command line:
-
-```bash
-curl -s \
-  -X POST http://127.0.0.1:8000/evaluate-text \
-  -H "Content-Type: text/plain" \
-  --data-binary @tests/fixtures/affirm_backend_engineer.txt
-```
-
-Example output:
+## Example output
 
 ```text
 Title: Software Engineer II, Backend (Consumer Authentication)
@@ -192,87 +156,6 @@ Reasons:
 - Work style includes remote flexibility.
 ```
 
-## Incomplete evaluation logging
-
-When an evaluation is missing important parsed fields, the project writes a structured review record to:
-
-- `logs/incomplete_evaluations.jsonl`
-
-When an evaluation clears the configured interview threshold, the project also writes a calibration review record to:
-
-- `logs/high_interview_evaluations.jsonl`
-
-This file is intended to help improve the parser and scorer over time. Each line stores:
-
-- parsed metadata
-- missing fields
-- parser warnings
-- fit score and recommendation
-- the raw job description text
-
-The `logs/` directory is tracked so its location is obvious, but the log contents are git-ignored.
-
-You can override the default path with:
-
-```bash
-FIND_JOBS_INCOMPLETE_LOG_PATH=/custom/path/incomplete.jsonl
-```
-
-You can also override the high-interview review queue and threshold with:
-
-```bash
-FIND_JOBS_HIGH_INTERVIEW_LOG_PATH=/custom/path/high-interview.jsonl
-FIND_JOBS_HIGH_INTERVIEW_THRESHOLD=20
-```
-
-## Scoring model
-
-The current weighted score uses:
-
-- level match
-- stack alignment
-- domain alignment
-- strength alignment
-- role type alignment
-- competition realism
-
-The scoring implementation is now intentionally split into dedicated modules for:
-
-- fit scoring
-- skills scoring
-- interview probability
-- final score orchestration
-
-Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile rather than fixed job-year thresholds alone.
-
-The implementation is still heuristic and intentionally transparent. The score is meant to support triage, not replace judgment.
-
-## Reviewer notes
-
-If you want to try the project locally:
-
-- run `uv sync` to create the local environment
-- run `uv run pytest` to execute the test suite
-- run `uv run find-jobs evaluate tests/fixtures/affirm_backend_engineer.txt`
-- run `uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload`
-- call `GET /health`, `POST /evaluate`, or `POST /evaluate-text` against the local API
-- open `http://127.0.0.1:8000/docs` for interactive API testing
-- inspect `src/find_jobs/parser.py`, `src/find_jobs/scoring/engine.py`, `src/find_jobs/scoring/`, and the corresponding tests
-- inspect `src/find_jobs/api.py` and `tests/test_api.py` for the local service boundary
-- review `tests/fixtures/` to see the posting styles shaping the parser
-
-This repository is intentionally experimental. Expect small, reviewable changes rather than a large initial implementation.
-
-## Near-term scope
-
-Near-term work is likely to focus on:
-
-1. a persistent Chrome side panel for evaluating multiple LinkedIn jobs without reopening the popup
-2. pasted text / stdin support
-3. batch mode and CSV export
-4. configurable candidate profiles
-5. local API refinements for extension integration
-
 ## Status
 
-Parser, profile, scoring, end-to-end comparison, CLI MVP, local FastAPI evaluation API, and Chrome extension MVP are implemented. The project is now in the “make ingestion faster for real job-search workflows” phase rather than the “can we score jobs at all?” phase.
+This is an actively iterated local tool, not a finished platform. Expect small refactors, scoring calibration, and workflow changes as real job-review usage exposes gaps.
