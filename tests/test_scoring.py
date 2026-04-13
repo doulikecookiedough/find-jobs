@@ -225,7 +225,7 @@ def test_scoring_package_exports_support_cross_module_calls() -> None:
 
     assert score_skills_stack_alignment(job, profile) == 1.0
     assert score_skills_alignment(job, profile, score.score_breakdown) >= 80
-    assert score_interview_probability(score.score_breakdown, score.fit_score, score.skills_alignment, job, profile) == (
+    assert score_interview_probability(score.score_breakdown, score.fit_score, score.skills_alignment, job) == (
         score.interview_probability_min,
         score.interview_probability_max,
     )
@@ -269,16 +269,6 @@ def test_skills_package_exports_match_top_level_scoring_exports() -> None:
         job,
         profile,
         score.score_breakdown,
-    )
-    assert score_interview_probability(
-        score.score_breakdown,
-        score.fit_score,
-        score.skills_alignment,
-        job,
-        profile,
-    ) == (
-        score.interview_probability_min,
-        score.interview_probability_max,
     )
 
 
@@ -392,25 +382,3 @@ def test_score_job_marks_small_years_gap_as_close_stretch() -> None:
     assert score.years_experience_gap == 2.0
     assert score.years_experience_match_status == "close"
     assert score.years_experience_match_label == "Close stretch: requires about 5 years, profile is 3 years."
-
-
-def test_score_interview_probability_penalizes_unproven_specialized_domains() -> None:
-    """Suppresses interview odds for specialized AI/video roles without matching proof."""
-    profile = make_candidate_profile()
-    job = ParsedJob(
-        raw_text="job",
-        years_experience_required=3.0,
-        seniority="mid",
-        role_type="backend",
-        domain_signals=["backend", "ai-ml", "video-processing", "model-inference"],
-    )
-
-    probability = score_interview_probability(
-        breakdown=score_job(job, profile).score_breakdown,
-        fit_score=82,
-        skills_alignment=60,
-        job=job,
-        profile=profile,
-    )
-
-    assert probability[1] <= 14

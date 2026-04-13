@@ -50,7 +50,6 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         fit_score,
         skills_alignment,
         job,
-        profile,
     )
     years_experience_gap, years_experience_match_status, years_experience_match_label = _years_experience_match(job, profile)
     recommendation = _recommendation_for_score(fit_score)
