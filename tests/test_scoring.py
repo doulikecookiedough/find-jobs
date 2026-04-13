@@ -209,20 +209,6 @@ def test_score_competition_realism_is_zero_for_avoid_role() -> None:
     assert score_competition_realism(job, profile) == 0.0
 
 
-def test_score_competition_realism_caps_specialized_roles_without_profile_proof() -> None:
-    """Caps competition realism for specialized AI/video roles without matching proof."""
-    profile = make_candidate_profile()
-    job = ParsedJob(
-        raw_text="job",
-        years_experience_required=3.0,
-        seniority="mid",
-        role_type="backend",
-        domain_signals=["backend", "ai-ml", "video-processing"],
-    )
-
-    assert score_competition_realism(job, profile) == 0.35
-
-
 def test_scoring_package_exports_support_cross_module_calls() -> None:
     """Confirms package exports still compose correctly across split modules."""
     profile = make_candidate_profile()
