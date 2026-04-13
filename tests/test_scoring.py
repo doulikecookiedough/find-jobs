@@ -1,4 +1,16 @@
 from find_jobs.models import CandidateProfile, ParsedJob
+from find_jobs.scoring.fit import (
+    score_competition_realism as fit_score_competition_realism,
+    score_domain_alignment as fit_score_domain_alignment,
+    score_level_match as fit_score_level_match,
+    score_role_type_alignment as fit_score_role_type_alignment,
+    score_stack_alignment as fit_score_stack_alignment,
+    score_strength_alignment as fit_score_strength_alignment,
+)
+from find_jobs.scoring.skills import (
+    score_skills_alignment as package_score_skills_alignment,
+    score_skills_stack_alignment as package_score_skills_stack_alignment,
+)
 from find_jobs.scoring import (
     score_job,
     score_competition_realism,
@@ -208,6 +220,47 @@ def test_scoring_package_exports_support_cross_module_calls() -> None:
     assert score_interview_probability(score.score_breakdown, score.fit_score, score.skills_alignment, job) == (
         score.interview_probability_min,
         score.interview_probability_max,
+    )
+
+
+def test_fit_package_exports_match_top_level_scoring_exports() -> None:
+    """Keeps the dedicated fit package aligned with the public scoring exports."""
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text="Build backend APIs on Python and AWS with distributed systems concerns.",
+        years_experience_required=3.0,
+        seniority="mid",
+        role_type="backend",
+        technologies=["python", "aws"],
+        domain_signals=["backend", "apis"],
+    )
+
+    assert fit_score_level_match(job, profile) == score_level_match(job, profile)
+    assert fit_score_stack_alignment(job, profile) == score_stack_alignment(job, profile)
+    assert fit_score_domain_alignment(job, profile) == score_domain_alignment(job, profile)
+    assert fit_score_strength_alignment(job, profile) == score_strength_alignment(job, profile)
+    assert fit_score_role_type_alignment(job, profile) == score_role_type_alignment(job, profile)
+    assert fit_score_competition_realism(job, profile) == score_competition_realism(job, profile)
+
+
+def test_skills_package_exports_match_top_level_scoring_exports() -> None:
+    """Keeps the dedicated skills package aligned with the public scoring exports."""
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text="Build backend APIs on Python and AWS.",
+        years_experience_required=3.0,
+        seniority="mid",
+        role_type="backend",
+        technologies=["python", "aws"],
+        domain_signals=["backend", "apis"],
+    )
+    score = score_job(job, profile)
+
+    assert package_score_skills_stack_alignment(job, profile) == score_skills_stack_alignment(job, profile)
+    assert package_score_skills_alignment(job, profile, score.score_breakdown) == score_skills_alignment(
+        job,
+        profile,
+        score.score_breakdown,
     )
 
 
