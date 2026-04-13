@@ -62,39 +62,53 @@ function extractVisibleJobText() {
     return { jobText: "", source: "no document body", characterCount: 0 };
   }
 
-  if (window.location.hostname.includes("wellfound.com")) {
-    const wellfoundJobText = extractWellfoundJobText(root);
+  const extractor = selectExtractor(window.location.hostname);
+  return extractor(root);
 
+  function selectExtractor(hostname) {
+    if (hostname.includes("wellfound.com")) {
+      return extractWellfoundJobText;
+    }
+    if (hostname.includes("linkedin.com")) {
+      return extractLinkedInJobText;
+    }
+    if (hostname.includes("indeed.com")) {
+      return extractIndeedJobText;
+    }
+    if (hostname.includes("careers.microsoft.com")) {
+      return extractMicrosoftJobText;
+    }
+    return extractGenericPageText;
+  }
+
+  function buildResult(jobText, source) {
     return {
-      jobText: wellfoundJobText,
-      source: "Wellfound job detail cleanup",
-      characterCount: wellfoundJobText.length,
+      jobText,
+      source,
+      characterCount: jobText.length,
     };
   }
 
-  const title = textFromSelector("h1") || document.title || "";
-  const company = textFromSelector(".job-details-jobs-unified-top-card__company-name, .jobs-unified-top-card__company-name");
-  const location = textFromSelector(".job-details-jobs-unified-top-card__primary-description-container, .jobs-unified-top-card__bullet");
-  const description = textFromSelector(
-    ".jobs-description__content, .jobs-box__html-content, .jobs-description-content__text, .jobs-description, [class*='jobs-description']",
-  );
-  const fallbackText = root.innerText || root.textContent || "";
-  const source = description ? "LinkedIn job description selectors" : "main/body fallback text";
-  const jobText = normalizeWhitespace([title, company, location, description || fallbackText]
-    .filter(Boolean)
-    .join("\n\n")
-    .trim());
+  function extractLinkedInJobText(container) {
+    const title = textFromSelector("h1") || document.title || "";
+    const company = textFromSelector(".job-details-jobs-unified-top-card__company-name, .jobs-unified-top-card__company-name");
+    const location = textFromSelector(".job-details-jobs-unified-top-card__primary-description-container, .jobs-unified-top-card__bullet");
+    const description = textFromSelector(
+      ".jobs-description__content, .jobs-box__html-content, .jobs-description-content__text, .jobs-description, [class*='jobs-description']",
+    );
+    const fallbackText = container.innerText || container.textContent || "";
+    const source = description ? "LinkedIn job description selectors" : "main/body fallback text";
+    const jobText = normalizeWhitespace(
+      [title, company, location, description || fallbackText].filter(Boolean).join("\n\n").trim(),
+    );
 
-  return {
-    jobText,
-    source,
-    characterCount: jobText.length,
-  };
+    return buildResult(jobText, source);
+  }
 
   function extractWellfoundJobText(container) {
     const fullText = normalizeWhitespace(container.innerText || container.textContent || "");
     if (!fullText) {
-      return "";
+      return buildResult("", "Wellfound empty page text");
     }
 
     let focusedText = fullText;
@@ -112,7 +126,43 @@ function extractVisibleJobText() {
       }
     }
 
-    return normalizeWhitespace(focusedText);
+    return buildResult(normalizeWhitespace(focusedText), "Wellfound job detail cleanup");
+  }
+
+  function extractIndeedJobText(container) {
+    const title = textFromSelector("[data-testid='jobsearch-JobInfoHeader-title'], h1");
+    const company = textFromSelector("[data-testid='inlineHeader-companyName'], [data-company-name='true']");
+    const location = textFromSelector("[data-testid='job-location'], [data-testid='jobsearch-JobInfoHeader-companyLocation']");
+    const description = textFromSelector("#jobDescriptionText, [data-testid='jobsearch-JobComponent-description']");
+    const fallbackText = container.innerText || container.textContent || "";
+    const source = description ? "Indeed job detail selectors" : "main/body fallback text";
+    const jobText = normalizeWhitespace(
+      [title, company, location, description || fallbackText].filter(Boolean).join("\n\n").trim(),
+    );
+
+    return buildResult(jobText, source);
+  }
+
+  function extractMicrosoftJobText(container) {
+    const title = textFromSelector("h1");
+    const company = "Microsoft";
+    const location = textFromSelector("[data-testid='job-location'], .ms-DocumentCardLocation, [class*='location']");
+    const description = textFromSelector("[data-testid='job-description'], [class*='job-description'], [class*='description']");
+    const fallbackText = container.innerText || container.textContent || "";
+    const source = description ? "Microsoft careers selectors" : "main/body fallback text";
+    const jobText = normalizeWhitespace(
+      [title, company, location, description || fallbackText].filter(Boolean).join("\n\n").trim(),
+    );
+
+    return buildResult(jobText, source);
+  }
+
+  function extractGenericPageText(container) {
+    const title = textFromSelector("h1") || document.title || "";
+    const fallbackText = container.innerText || container.textContent || "";
+    const jobText = normalizeWhitespace([title, fallbackText].filter(Boolean).join("\n\n").trim());
+
+    return buildResult(jobText, "generic page fallback");
   }
 }
 
