@@ -118,10 +118,6 @@ WORK_STYLE_PATTERNS = {
 }
 DOMAIN_SIGNAL_PATTERNS = {
     "authentication": re.compile(r"\bauthentication\b", re.IGNORECASE),
-    "ai-ml": re.compile(
-        r"\bmachine learning\b|\bdeep learning\b|\bfoundation models?\b|\bai-driven\b|\bartificial intelligence\b",
-        re.IGNORECASE,
-    ),
     "security": re.compile(r"\bsecurity\b", re.IGNORECASE),
     "fraud": re.compile(r"\bfraud\b|\baccount takeover\b|\bATO\b", re.IGNORECASE),
     "distributed-systems": re.compile(r"\bdistributed systems\b", re.IGNORECASE),
@@ -144,9 +140,6 @@ DOMAIN_SIGNAL_PATTERNS = {
     "event-driven": re.compile(r"\bevent-driven architectures?\b|\basynchronous messaging systems?\b", re.IGNORECASE),
     "observability": re.compile(r"\bobservability\b|\blogging\b|\btracing\b", re.IGNORECASE),
     "ci-cd": re.compile(r"\bci/cd\b|\bbuild systems?\b|\bdeveloper workflows\b", re.IGNORECASE),
-    "computer-vision": re.compile(r"\bcomputer vision\b|\bvideo understanding\b", re.IGNORECASE),
-    "video-processing": re.compile(r"\bvideo processing\b|\bvideo encoding\b|\bmedia processing\b", re.IGNORECASE),
-    "model-inference": re.compile(r"\binference\b", re.IGNORECASE),
 }
 ROLE_TYPE_PATTERNS = (
     ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),
