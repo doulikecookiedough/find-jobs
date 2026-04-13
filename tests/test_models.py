@@ -13,7 +13,7 @@ def test_parsed_job_defaults() -> None:
     assert parsed_job.seniority is None
     assert parsed_job.role_type is None
     assert parsed_job.salary_min is None
-    assert parsed_job.technologies == []
+    assert not parsed_job.technologies
 
 
 def test_candidate_profile_defaults() -> None:
@@ -23,9 +23,9 @@ def test_candidate_profile_defaults() -> None:
 
     assert profile.years_experience == 3.0
     assert profile.headline is None
-    assert profile.primary_languages == []
-    assert profile.preferred_roles == []
-    assert profile.avoid_domains == []
+    assert not profile.primary_languages
+    assert not profile.preferred_roles
+    assert not profile.avoid_domains
 
 
 def test_job_score_defaults() -> None:
@@ -35,7 +35,7 @@ def test_job_score_defaults() -> None:
 
     assert score.fit_score == 72
     assert score.score_breakdown == ScoreBreakdown()
-    assert score.reasons == []
-    assert score.risks == []
-    assert score.missing_fields == []
-    assert score.parser_warnings == []
+    assert not score.reasons
+    assert not score.risks
+    assert not score.missing_fields
+    assert not score.parser_warnings

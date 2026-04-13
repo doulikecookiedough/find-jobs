@@ -81,6 +81,7 @@ def test_below_threshold_interview_evaluation_is_not_logged(
     monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
 
     profile = CandidateProfile(years_experience=3.0)
+    # pylint: disable=C0301
     evaluate_job_text(
         (
             "Sr. Software Engineer II (Distributed Systems)\n"
