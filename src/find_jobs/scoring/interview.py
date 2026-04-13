@@ -32,9 +32,6 @@ def score_interview_probability(
     performance once a candidate is already inside the interview process.
     """
 
-    def clamp(value: float, lower: float = 0.0, upper: float = 100.0) -> float:
-        return max(lower, min(upper, value))
-
     base_probability = (
         fit_score * 0.22
         + skills_alignment * 0.10
@@ -50,6 +47,75 @@ def score_interview_probability(
         "required_stack_proof",
         breakdown.stack_alignment,
     )
+    base_probability, multiplier, upper_cap = _apply_stack_penalties(
+        breakdown,
+        required_stack_proof,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
+    base_probability, multiplier, upper_cap = _apply_fit_penalties(
+        breakdown,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
+    base_probability, multiplier, upper_cap = _apply_seniority_penalties(
+        job,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
+    base_probability, multiplier, upper_cap = _apply_years_penalties(
+        job,
+        profile,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
+    base_probability, multiplier, upper_cap = _apply_role_type_penalties(
+        job,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
+    base_probability, multiplier, upper_cap = _apply_special_case_penalties(
+        job,
+        breakdown,
+        required_stack_proof,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
+    multiplier = _apply_medium_mismatch_penalty(
+        breakdown,
+        required_stack_proof,
+        multiplier,
+    )
+
+    final_probability = base_probability * multiplier * 0.85
+    center = round(_clamp(final_probability, 0, upper_cap))
+    lower_spread, upper_spread = _spread_for_center(center)
+
+    lower_bound = max(0, center - lower_spread)
+    upper_bound = min(upper_cap, center + upper_spread)
+    return lower_bound, upper_bound
+
+
+def _clamp(value: float, lower: float = 0.0, upper: float = 100.0) -> float:
+    """Clamp a probability-like value to a bounded range."""
+
+    return max(lower, min(upper, value))
+
+
+def _apply_stack_penalties(
+    breakdown: ScoreBreakdown,
+    required_stack_proof: float,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Apply stack overlap and proof penalties."""
 
     if breakdown.stack_alignment < 0.30:
         base_probability -= 28
@@ -74,6 +140,17 @@ def score_interview_probability(
         multiplier *= 0.86
         upper_cap = min(upper_cap, 28)
 
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_fit_penalties(
+    breakdown: ScoreBreakdown,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Apply fit-based role, level, and competition penalties."""
+
     if breakdown.role_type_alignment < 0.50:
         base_probability -= 16
         multiplier *= 0.68
@@ -95,6 +172,17 @@ def score_interview_probability(
     elif breakdown.competition_realism < 0.70:
         multiplier *= 0.88
 
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_seniority_penalties(
+    job: ParsedJob,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Apply seniority-specific screening penalties."""
+
     if job.seniority == "senior":
         base_probability -= 15
         multiplier *= 0.80
@@ -103,25 +191,49 @@ def score_interview_probability(
         multiplier *= 0.52
         upper_cap = min(upper_cap, 18)
 
-    if job.years_experience_required is not None:
-        years_gap = job.years_experience_required - profile.years_experience
-        if years_gap > 3.0:
-            base_probability -= 24
-            multiplier *= 0.70
-        elif years_gap > 2.0:
-            base_probability -= 18
-            multiplier *= 0.80
-        elif years_gap > 1.0:
-            base_probability -= 10
-            multiplier *= 0.90
-        elif years_gap > 0:
-            base_probability -= 10
-            multiplier *= 0.76
-            upper_cap = min(upper_cap, 14)
-    else:
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_years_penalties(
+    job: ParsedJob,
+    profile: CandidateProfile,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Apply years-of-experience penalties relative to the candidate profile."""
+
+    if job.years_experience_required is None:
         base_probability -= 8
         multiplier *= 0.78
         upper_cap = min(upper_cap, 18)
+        return base_probability, multiplier, upper_cap
+
+    years_gap = job.years_experience_required - profile.years_experience
+    if years_gap > 3.0:
+        base_probability -= 24
+        multiplier *= 0.70
+    elif years_gap > 2.0:
+        base_probability -= 18
+        multiplier *= 0.80
+    elif years_gap > 1.0:
+        base_probability -= 10
+        multiplier *= 0.90
+    elif years_gap > 0:
+        base_probability -= 10
+        multiplier *= 0.76
+        upper_cap = min(upper_cap, 14)
+
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_role_type_penalties(
+    job: ParsedJob,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Apply coarse penalties for harder role families."""
 
     if job.role_type == "data":
         base_probability -= 10
@@ -131,6 +243,19 @@ def score_interview_probability(
         base_probability -= 16
         multiplier *= 0.58
         upper_cap = min(upper_cap, 8)
+
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_special_case_penalties(
+    job: ParsedJob,
+    breakdown: ScoreBreakdown,
+    required_stack_proof: float,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Apply special-case caps and penalties for explicit mismatch signals."""
 
     if _has_partial_hard_backend_stack(job, breakdown, required_stack_proof):
         base_probability -= 10
@@ -151,6 +276,16 @@ def score_interview_probability(
         multiplier *= 0.78
         upper_cap = min(upper_cap, 18)
 
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_medium_mismatch_penalty(
+    breakdown: ScoreBreakdown,
+    required_stack_proof: float,
+    multiplier: float,
+) -> float:
+    """Apply an extra multiplier when several medium mismatches stack up."""
+
     medium_mismatches = 0
     if breakdown.stack_alignment < 0.65:
         medium_mismatches += 1
@@ -164,28 +299,22 @@ def score_interview_probability(
         medium_mismatches += 1
 
     if medium_mismatches >= 4:
-        multiplier *= 0.62
-    elif medium_mismatches == 3:
-        multiplier *= 0.76
-    elif medium_mismatches == 2:
-        multiplier *= 0.90
+        return multiplier * 0.62
+    if medium_mismatches == 3:
+        return multiplier * 0.76
+    if medium_mismatches == 2:
+        return multiplier * 0.90
+    return multiplier
 
-    final_probability = base_probability * multiplier * 0.85
-    center = round(clamp(final_probability, 0, upper_cap))
+
+def _spread_for_center(center: int) -> tuple[int, int]:
+    """Return the lower and upper spread for the final probability range."""
 
     if center >= 30:
-        lower_spread = 7
-        upper_spread = 4
-    elif center >= 15:
-        lower_spread = 6
-        upper_spread = 3
-    else:
-        lower_spread = 4
-        upper_spread = 2
-
-    lower_bound = max(0, center - lower_spread)
-    upper_bound = min(upper_cap, center + upper_spread)
-    return lower_bound, upper_bound
+        return 7, 4
+    if center >= 15:
+        return 6, 3
+    return 4, 2
 
 
 def _has_partial_hard_backend_stack(
