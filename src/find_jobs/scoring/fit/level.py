@@ -7,6 +7,7 @@ plausible relative to the candidate profile.
 from __future__ import annotations
 
 from find_jobs.models import CandidateProfile, ParsedJob
+from find_jobs.scoring.fit.years import score_years_gap
 
 
 def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
@@ -27,16 +28,14 @@ def score_level_match(job: ParsedJob, profile: CandidateProfile) -> float:
             return 1.0
         return 0.5
 
-    years_gap = job.years_experience_required - profile.years_experience
-
-    if job.years_experience_required >= 7.0:
-        return 0.0
-    if years_gap <= 0:
-        return 1.0
-    if years_gap <= 1.0:
-        return 0.85
-    if years_gap <= 2.0:
-        return 0.65
-    if years_gap <= 3.0:
-        return 0.35
-    return 0.0
+    return score_years_gap(
+        job.years_experience_required,
+        profile.years_experience,
+        (
+            (0.0, 1.0),
+            (1.0, 0.85),
+            (2.0, 0.65),
+            (3.0, 0.35),
+            (float("inf"), 0.0),
+        ),
+    )
