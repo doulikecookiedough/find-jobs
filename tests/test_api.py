@@ -41,7 +41,8 @@ def test_evaluate_returns_scored_job_summary() -> None:
         "candidate_years_experience": 3.0,
         "years_experience_gap": 0.0,
         "years_experience_match_status": "strong",
-        "years_experience_match_label": "Strong match: requires about 1.5 years, profile is 3 years.",
+        "years_experience_match_label": "Strong match: requires about 1.5 years,"
+        + " profile is 3 years.",
         "recommendation": "apply",
         "priority": "high",
         "reasons": [

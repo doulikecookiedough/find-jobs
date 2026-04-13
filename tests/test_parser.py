@@ -10,10 +10,12 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def load_fixture(name: str) -> str:
+    """Load a parser fixture file by name."""
     return (FIXTURES_DIR / name).read_text()
 
 
 def parsed_job_snapshot(parsed_job: ParsedJob) -> dict[str, object]:
+    """Normalize parsed job fields into a stable assertion snapshot."""
     return {
         "title": parsed_job.title,
         "company": parsed_job.company,

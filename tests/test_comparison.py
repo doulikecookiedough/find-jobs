@@ -10,6 +10,7 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
 def load_fixture(name: str) -> str:
+    """Load a parser fixture file by name."""
     return (FIXTURES_DIR / name).read_text()
 
 
