@@ -57,9 +57,7 @@ def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
 
     raw_text = Path("tests/fixtures/versaterm_se2_dems.txt").read_text(encoding="utf8")
-    parsed_job, job_score = evaluate_job_text(
-        raw_text, build_default_candidate_profile()
-    )
+    parsed_job, job_score = evaluate_job_text(raw_text, build_default_candidate_profile())
 
     assert parsed_job.company == "Versaterm"
     assert job_score.interview_probability_max >= 20
@@ -72,9 +70,7 @@ def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     assert payload["raw_text"].startswith("Software Engineer II - DEMS")
 
 
-def test_below_threshold_interview_evaluation_is_not_logged(
-    monkeypatch, tmp_path
-) -> None:
+def test_below_threshold_interview_evaluation_is_not_logged(monkeypatch, tmp_path) -> None:
     """Skips the review log when interview odds stay below the threshold."""
 
     log_path = tmp_path / "high_interview.jsonl"

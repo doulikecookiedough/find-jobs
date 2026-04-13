@@ -106,9 +106,7 @@ def test_score_stack_alignment_returns_neutral_when_job_stack_is_missing() -> No
 def test_score_domain_alignment_is_high_for_preferred_domains() -> None:
     """Rewards jobs whose domain signals stay inside preferred areas."""
     profile = make_candidate_profile()
-    job = ParsedJob(
-        raw_text="job", domain_signals=["backend", "apis", "distributed-systems"]
-    )
+    job = ParsedJob(raw_text="job", domain_signals=["backend", "apis", "distributed-systems"])
 
     assert score_domain_alignment(job, profile) == 1.0
 
@@ -145,9 +143,7 @@ def test_score_strength_alignment_is_high_for_multiple_matching_strengths() -> N
 def test_score_strength_alignment_returns_neutral_without_matching_strengths() -> None:
     """Falls back to a neutral strength score when no patterns match."""
     profile = make_candidate_profile()
-    job = ParsedJob(
-        raw_text="Work on wearables partnerships and customer engagement tools."
-    )
+    job = ParsedJob(raw_text="Work on wearables partnerships and customer engagement tools.")
 
     assert score_strength_alignment(job, profile) == 0.5
 
@@ -260,21 +256,11 @@ def test_fit_package_exports_match_top_level_scoring_exports() -> None:
     )
 
     assert fit_score_level_match(job, profile) == score_level_match(job, profile)
-    assert fit_score_stack_alignment(job, profile) == score_stack_alignment(
-        job, profile
-    )
-    assert fit_score_domain_alignment(job, profile) == score_domain_alignment(
-        job, profile
-    )
-    assert fit_score_strength_alignment(job, profile) == score_strength_alignment(
-        job, profile
-    )
-    assert fit_score_role_type_alignment(job, profile) == score_role_type_alignment(
-        job, profile
-    )
-    assert fit_score_competition_realism(job, profile) == score_competition_realism(
-        job, profile
-    )
+    assert fit_score_stack_alignment(job, profile) == score_stack_alignment(job, profile)
+    assert fit_score_domain_alignment(job, profile) == score_domain_alignment(job, profile)
+    assert fit_score_strength_alignment(job, profile) == score_strength_alignment(job, profile)
+    assert fit_score_role_type_alignment(job, profile) == score_role_type_alignment(job, profile)
+    assert fit_score_competition_realism(job, profile) == score_competition_realism(job, profile)
 
 
 def test_skills_package_exports_match_top_level_scoring_exports() -> None:
@@ -290,9 +276,9 @@ def test_skills_package_exports_match_top_level_scoring_exports() -> None:
     )
     score = score_job(job, profile)
 
-    assert package_score_skills_stack_alignment(
+    assert package_score_skills_stack_alignment(job, profile) == score_skills_stack_alignment(
         job, profile
-    ) == score_skills_stack_alignment(job, profile)
+    )
     assert package_score_skills_alignment(
         job, profile, score.score_breakdown
     ) == score_skills_alignment(
@@ -379,8 +365,7 @@ def test_score_job_returns_consider_for_mixed_fit() -> None:
     assert score.recommendation == "consider"
     assert score.priority == "medium"
     assert any(
-        "Experience requirement is above your current profile" in risk
-        for risk in score.risks
+        "Experience requirement is above your current profile" in risk for risk in score.risks
     )
     assert any(
         "Role type aligns well with your target focus (platform)." in reason
@@ -441,9 +426,7 @@ def test_score_job_reduces_interview_odds_for_partial_hard_backend_stack() -> No
     assert score.interview_probability_max <= 20
 
 
-def test_score_job_penalizes_four_year_requirement_when_profile_is_one_year_short() -> (
-    None
-):
+def test_score_job_penalizes_four_year_requirement_when_profile_is_one_year_short() -> None:
     """Penalizes interview odds for a four-year role when the profile is still one year short."""
     profile = make_candidate_profile()
     job = ParsedJob(

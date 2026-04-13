@@ -223,9 +223,7 @@ def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
 def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None:
     """Extracts the expected data-role fields from the Coalition fixture."""
 
-    parsed_job = parse_job_description(
-        load_fixture("coalition_data_engineer_security.txt")
-    )
+    parsed_job = parse_job_description(load_fixture("coalition_data_engineer_security.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
         "title": "Data Engineer, Security",
@@ -337,9 +335,7 @@ def test_parse_job_description_extracts_stripe_backend_fields() -> None:
 def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> None:
     """Extracts the expected senior backend fields from the Berkeley fixture."""
 
-    parsed_job = parse_job_description(
-        load_fixture("berkeley_payments_senior_backend.txt")
-    )
+    parsed_job = parse_job_description(load_fixture("berkeley_payments_senior_backend.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
         "title": "Senior Software Engineer",
