@@ -1,3 +1,5 @@
+"""Parser tests for extracting normalized job fields from fixtures."""
+
 from pathlib import Path
 
 from find_jobs.models import ParsedJob
@@ -30,6 +32,8 @@ def parsed_job_snapshot(parsed_job: ParsedJob) -> dict[str, object]:
 
 
 def test_parse_job_description_extracts_affirm_job_fields() -> None:
+    """Extracts the expected fields from the Affirm backend fixture."""
+
     parsed_job = parse_job_description(load_fixture("affirm_backend_engineer.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -57,6 +61,8 @@ def test_parse_job_description_extracts_affirm_job_fields() -> None:
 
 
 def test_parse_job_description_extracts_integrations_job_fields() -> None:
+    """Extracts platform and security signals from the integrations fixture."""
+
     parsed_job = parse_job_description(load_fixture("integrations_engineer.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -99,6 +105,8 @@ def test_parse_job_description_extracts_integrations_job_fields() -> None:
 
 
 def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
+    """Extracts the expected backend workflow fields from the Apple fixture."""
+
     parsed_job = parse_job_description(load_fixture("apple_workflow_foundations.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -130,6 +138,8 @@ def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
 
 
 def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> None:
+    """Extracts the expected full-stack fields from the Zepp fixture."""
+
     parsed_job = parse_job_description(load_fixture("zepp_connected_partnerships.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -157,6 +167,8 @@ def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> 
 
 
 def test_parse_job_description_extracts_genista_backend_fields() -> None:
+    """Extracts the expected backend fields from the Genista fixture."""
+
     parsed_job = parse_job_description(load_fixture("genista_backend_engineer.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -185,6 +197,8 @@ def test_parse_job_description_extracts_genista_backend_fields() -> None:
 
 
 def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
+    """Extracts the expected fields from the noisier Picovoice fixture."""
+
     parsed_job = parse_job_description(load_fixture("picovoice_wellfound.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -205,6 +219,8 @@ def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
 
 
 def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None:
+    """Extracts the expected data-role fields from the Coalition fixture."""
+
     parsed_job = parse_job_description(
         load_fixture("coalition_data_engineer_security.txt")
     )
@@ -227,6 +243,8 @@ def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None
 
 
 def test_parse_job_description_extracts_surveymonkey_zuora_fields() -> None:
+    """Extracts the expected business-systems fields from the Zuora fixture."""
+
     parsed_job = parse_job_description(load_fixture("surveymonkey_zuora_developer.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -254,6 +272,8 @@ def test_parse_job_description_extracts_surveymonkey_zuora_fields() -> None:
 
 
 def test_parse_job_description_extracts_versaterm_se2_dems_fields() -> None:
+    """Extracts the expected backend fields from the Versaterm fixture."""
+
     parsed_job = parse_job_description(load_fixture("versaterm_se2_dems.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -284,6 +304,8 @@ def test_parse_job_description_extracts_versaterm_se2_dems_fields() -> None:
 
 
 def test_parse_job_description_extracts_stripe_backend_fields() -> None:
+    """Extracts the expected backend platform fields from the Stripe fixture."""
+
     parsed_job = parse_job_description(load_fixture("stripe_backend_engineer.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -311,6 +333,8 @@ def test_parse_job_description_extracts_stripe_backend_fields() -> None:
 
 
 def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> None:
+    """Extracts the expected senior backend fields from the Berkeley fixture."""
+
     parsed_job = parse_job_description(
         load_fixture("berkeley_payments_senior_backend.txt")
     )
@@ -354,6 +378,8 @@ def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> No
 
 
 def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> None:
+    """Extracts the expected stretch-role fields from the Narvar fixture."""
+
     parsed_job = parse_job_description(load_fixture("narvar_distributed_systems.txt"))
 
     assert parsed_job_snapshot(parsed_job) == {
@@ -374,6 +400,8 @@ def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> N
 
 
 def test_parse_job_description_extracts_company_from_banner_header() -> None:
+    """Recovers the company name from a banner-style header layout."""
+
     parsed_job = parse_job_description(
         (
             "Microsoft\n"
@@ -398,6 +426,8 @@ def test_parse_job_description_extracts_company_from_banner_header() -> None:
 
 
 def test_parse_job_description_does_not_treat_salary_as_company() -> None:
+    """Avoids misclassifying salary lines as company names."""
+
     parsed_job = parse_job_description(
         (
             "Amazon Web Services\n"

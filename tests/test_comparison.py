@@ -1,3 +1,5 @@
+"""Comparison tests for parsed job evaluation against the default profile."""
+
 from pathlib import Path
 
 from find_jobs.comparison import evaluate_job_text
@@ -12,6 +14,8 @@ def load_fixture(name: str) -> str:
 
 
 def test_evaluate_job_text_returns_parsed_job_and_score_for_affirm() -> None:
+    """Returns a strong backend match for the Affirm fixture."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("affirm_backend_engineer.txt"),
         build_default_candidate_profile(),
@@ -27,6 +31,8 @@ def test_evaluate_job_text_returns_parsed_job_and_score_for_affirm() -> None:
 
 
 def test_evaluate_job_text_returns_mixed_fit_for_zepp() -> None:
+    """Returns a mixed result for the Zepp full-stack fixture."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("zepp_connected_partnerships.txt"),
         build_default_candidate_profile(),
@@ -39,6 +45,8 @@ def test_evaluate_job_text_returns_mixed_fit_for_zepp() -> None:
 
 
 def test_evaluate_job_text_surfaces_missing_field_diagnostics() -> None:
+    """Keeps diagnostics empty when the parser recovers all key fields."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("berkeley_payments_senior_backend.txt"),
         build_default_candidate_profile(),
@@ -50,6 +58,8 @@ def test_evaluate_job_text_surfaces_missing_field_diagnostics() -> None:
 
 
 def test_evaluate_job_text_returns_apply_for_stripe_with_strength_alignment() -> None:
+    """Returns an apply result when Stripe aligns strongly on fit signals."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("stripe_backend_engineer.txt"),
         build_default_candidate_profile(),
@@ -65,6 +75,8 @@ def test_evaluate_job_text_returns_apply_for_stripe_with_strength_alignment() ->
 
 
 def test_evaluate_job_text_returns_low_probability_stretch_for_narvar() -> None:
+    """Keeps interview odds low for a senior distributed-systems stretch role."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("narvar_distributed_systems.txt"),
         build_default_candidate_profile(),
@@ -81,6 +93,8 @@ def test_evaluate_job_text_returns_low_probability_stretch_for_narvar() -> None:
 
 
 def test_evaluate_job_text_returns_balanced_midlevel_fit_for_workleap() -> None:
+    """Returns a balanced consider result for the Workleap fixture."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("workleap_sharegate_protect.txt"),
         build_default_candidate_profile(),
@@ -97,6 +111,8 @@ def test_evaluate_job_text_returns_balanced_midlevel_fit_for_workleap() -> None:
 
 
 def test_evaluate_job_text_recovers_wellfound_picovoice_fields() -> None:
+    """Recovers key fields even from the noisier Wellfound fixture layout."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("picovoice_wellfound.txt"),
         build_default_candidate_profile(),
@@ -113,6 +129,8 @@ def test_evaluate_job_text_recovers_wellfound_picovoice_fields() -> None:
 
 
 def test_evaluate_job_text_filters_down_data_engineer_screening_odds() -> None:
+    """Filters down screening odds for a data role outside the target lane."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("coalition_data_engineer_security.txt"),
         build_default_candidate_profile(),
@@ -129,6 +147,8 @@ def test_evaluate_job_text_filters_down_data_engineer_screening_odds() -> None:
 
 
 def test_evaluate_job_text_filters_down_business_systems_roles() -> None:
+    """Filters down business-systems roles that sit in the avoid lane."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("surveymonkey_zuora_developer.txt"),
         build_default_candidate_profile(),
@@ -145,6 +165,8 @@ def test_evaluate_job_text_filters_down_business_systems_roles() -> None:
 
 
 def test_evaluate_job_text_aligns_with_real_screening_case_for_versaterm() -> None:
+    """Keeps a strong but realistic backend result for the Versaterm fixture."""
+
     parsed_job, job_score = evaluate_job_text(
         load_fixture("versaterm_se2_dems.txt"),
         build_default_candidate_profile(),

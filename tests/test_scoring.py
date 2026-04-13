@@ -1,4 +1,4 @@
-"""Test module for the scoring a role"""
+"""Scoring tests for fit, skills, and interview calculations."""
 
 from find_jobs.models import CandidateProfile, ParsedJob
 from find_jobs.scoring.fit import (
