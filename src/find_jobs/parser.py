@@ -288,87 +288,20 @@ def _extract_company_after_title(raw_text: str, title: str | None) -> str | None
         return None
 
     candidate = lines[title_index + 1]
-    lowered = candidate.lower()
-    if " · " in candidate:
-        return None
-    if _looks_like_salary_line(candidate):
-        return None
-    if lowered.startswith(
-        ("job category:", "requisition number:", "location:", "remote work policy")
-    ):
-        return None
-    if lowered in {"about the job", "apply", "save", "share", "show more options"}:
-        return None
-    if lowered in {"remote", "on-site", "onsite", "in office", "hybrid", "full-time", "full time"}:
-        return None
-    if TITLE_PATTERN.search(candidate):
-        return None
-    if _looks_like_location(candidate):
-        return None
-    return candidate
+    return candidate if _looks_like_company_after_title(candidate) else None
 
 
 def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | None, str | None]:
+    """Extract the first supported salary range from the job text."""
+
     for line in lines:
         normalized_line = line.strip()
         if not normalized_line:
             continue
 
-        salary_thousands_range_match = SALARY_THOUSANDS_RANGE_PATTERN.search(normalized_line)
-        if salary_thousands_range_match:
-            return (
-                int(salary_thousands_range_match.group(1).replace(",", "")) * 1000,
-                int(salary_thousands_range_match.group(2).replace(",", "")) * 1000,
-                _normalize_currency(salary_thousands_range_match.group(3)),
-                "yearly",
-            )
-
-        salary_bare_thousands_range_match = SALARY_BARE_THOUSANDS_RANGE_PATTERN.search(
-            normalized_line
-        )
-        if salary_bare_thousands_range_match:
-            return (
-                int(salary_bare_thousands_range_match.group(1).replace(",", "")) * 1000,
-                int(salary_bare_thousands_range_match.group(2).replace(",", "")) * 1000,
-                None,
-                "yearly",
-            )
-
-        salary_match = SALARY_PATTERN.search(normalized_line)
-        if salary_match:
-            return (
-                int(salary_match.group(2).replace(",", "")),
-                int(salary_match.group(3).replace(",", "")),
-                _normalize_currency(salary_match.group(1)),
-                "yearly",
-            )
-
-        salary_range_match = SALARY_RANGE_PATTERN.search(normalized_line)
-        if salary_range_match:
-            return (
-                int(salary_range_match.group(1).replace(",", "")),
-                int(salary_range_match.group(2).replace(",", "")),
-                "CAD",
-                "yearly",
-            )
-
-        salary_between_match = SALARY_BETWEEN_PATTERN.search(normalized_line)
-        if salary_between_match:
-            return (
-                int(salary_between_match.group(1).replace(",", "")),
-                int(salary_between_match.group(2).replace(",", "")),
-                "CAD",
-                "yearly",
-            )
-
-        salary_currency_range_match = SALARY_CURRENCY_RANGE_PATTERN.search(normalized_line)
-        if salary_currency_range_match:
-            return (
-                int(salary_currency_range_match.group(2).replace(",", "")),
-                int(salary_currency_range_match.group(3).replace(",", "")),
-                _normalize_currency(salary_currency_range_match.group(1)),
-                "yearly",
-            )
+        salary = _extract_salary_from_line(normalized_line)
+        if salary is not None:
+            return salary
 
     return None, None, None, None
 
@@ -405,28 +338,9 @@ def _extract_location(lines: list[str]) -> str | None:
     """Extract the first plausible location string from the opening lines."""
 
     for index, line in enumerate(lines[:20]):
-        lowered = line.lower()
-        if lowered in {"job location", "location"} and index + 1 < len(lines):
-            candidate = _normalize_location_candidate(lines[index + 1].lstrip("|").strip())
-            if candidate:
-                return candidate
-        if line.startswith("Job category:") or line.startswith("Requisition number:"):
-            continue
-        normalized_line = _normalize_location_candidate(line)
-        if REMOTE_POSITION_PATTERN.match(normalized_line):
-            return "Remote"
-        if REMOTE_ONLY_LOCATION_PATTERN.match(normalized_line):
-            return normalized_line
-        if REMOTE_LOCATION_PATTERN.match(normalized_line):
-            return normalized_line
-        if COUNTRY_LOCATION_PATTERN.match(normalized_line):
-            return normalized_line
-        if LONG_LOCATION_PATTERN.match(normalized_line):
-            return normalized_line
-        if LOCATION_PATTERN.match(normalized_line):
-            if ", CAN" in normalized_line:
-                return normalized_line.split(", CAN", maxsplit=1)[0]
-            return normalized_line
+        candidate = _extract_location_candidate(index, line, lines)
+        if candidate:
+            return candidate
     return None
 
 
@@ -489,48 +403,43 @@ def _looks_like_salary_line(line: str) -> bool:
 def _is_probable_company_name(line: str) -> bool:
     """Filter out common non-company strings from header candidates."""
 
-    lowered = line.strip().lower()
-    if not line.strip():
-        return False
-    if line.strip().endswith("."):
-        return False
-    if "|" in line:
-        return False
-    if _looks_like_salary_line(line):
-        return False
-    if len(line.strip().split()) > 6:
-        return False
-    if lowered in {
-        "share",
-        "save",
-        "about the job",
-        "show more options",
-        "actively hiring",
-        "job location",
-        "remote work policy",
-        "visa sponsorship",
-        "relocation",
-        "skills",
-    }:
-        return False
-    if lowered.startswith(
+    normalized_line = line.strip()
+    lowered = normalized_line.lower()
+    return not any(
         (
-            "posted:",
-            "reposted:",
-            "top job picks",
-            "avatar for ",
-            "help people and businesses",
-            "job category:",
-            "requisition number:",
-        ),
-    ):
-        return False
-    if TITLE_PATTERN.search(line):
-        return False
-    if _looks_like_location(line):
-        return False
-
-    return True
+            not normalized_line,
+            normalized_line.endswith("."),
+            "|" in normalized_line,
+            _looks_like_salary_line(normalized_line),
+            len(normalized_line.split()) > 6,
+            lowered
+            in {
+                "share",
+                "save",
+                "about the job",
+                "show more options",
+                "actively hiring",
+                "job location",
+                "remote work policy",
+                "visa sponsorship",
+                "relocation",
+                "skills",
+            },
+            lowered.startswith(
+                (
+                    "posted:",
+                    "reposted:",
+                    "top job picks",
+                    "avatar for ",
+                    "help people and businesses",
+                    "job category:",
+                    "requisition number:",
+                ),
+            ),
+            bool(TITLE_PATTERN.search(normalized_line)),
+            _looks_like_location(normalized_line),
+        )
+    )
 
 
 def _looks_like_location(line: str) -> bool:
@@ -650,23 +559,197 @@ def _extract_seniority(
     title: str | None,
     years_required: float | None,
 ) -> str | None:
+    """Infer seniority from title cues first, then fall back to years required."""
+
     title_text = title or ""
+    for seniority, pattern in (
+        ("senior", SENIOR_LEVEL_PATTERN),
+        ("mid", MID_LEVEL_PATTERN),
+        ("junior", JUNIOR_LEVEL_PATTERN),
+    ):
+        if pattern.search(title_text):
+            return seniority
 
-    if SENIOR_LEVEL_PATTERN.search(title_text):
-        return "senior"
+    return _seniority_from_years(years_required)
 
-    if MID_LEVEL_PATTERN.search(title_text):
-        return "mid"
 
-    if JUNIOR_LEVEL_PATTERN.search(title_text):
+def _looks_like_company_after_title(candidate: str) -> bool:
+    """Validate whether the line after the title still looks like a company name."""
+
+    lowered = candidate.lower()
+    return not any(
+        (
+            " · " in candidate,
+            _looks_like_salary_line(candidate),
+            lowered.startswith(
+                ("job category:", "requisition number:", "location:", "remote work policy")
+            ),
+            lowered in {"about the job", "apply", "save", "share", "show more options"},
+            lowered
+            in {"remote", "on-site", "onsite", "in office", "hybrid", "full-time", "full time"},
+            bool(TITLE_PATTERN.search(candidate)),
+            _looks_like_location(candidate),
+        )
+    )
+
+
+def _extract_salary_from_line(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Return the first supported salary tuple found in a normalized line."""
+
+    salary_extractors = (
+        _extract_thousands_salary_range,
+        _extract_bare_thousands_salary_range,
+        _extract_currency_salary_range,
+        _extract_plain_salary_range,
+        _extract_between_salary_range,
+        _extract_prefixed_currency_salary_range,
+    )
+    for extractor in salary_extractors:
+        salary = extractor(normalized_line)
+        if salary is not None:
+            return salary
+
+    return None
+
+
+def _extract_thousands_salary_range(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Extract a salary range written in thousands with an explicit currency."""
+
+    match = SALARY_THOUSANDS_RANGE_PATTERN.search(normalized_line)
+    if not match:
+        return None
+
+    return (
+        int(match.group(1).replace(",", "")) * 1000,
+        int(match.group(2).replace(",", "")) * 1000,
+        _normalize_currency(match.group(3)),
+        "yearly",
+    )
+
+
+def _extract_bare_thousands_salary_range(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Extract a salary range written in thousands without a currency code."""
+
+    match = SALARY_BARE_THOUSANDS_RANGE_PATTERN.search(normalized_line)
+    if not match:
+        return None
+
+    return (
+        int(match.group(1).replace(",", "")) * 1000,
+        int(match.group(2).replace(",", "")) * 1000,
+        None,
+        "yearly",
+    )
+
+
+def _extract_currency_salary_range(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Extract a salary range with a single leading currency label."""
+
+    match = SALARY_PATTERN.search(normalized_line)
+    if not match:
+        return None
+
+    return (
+        int(match.group(2).replace(",", "")),
+        int(match.group(3).replace(",", "")),
+        _normalize_currency(match.group(1)),
+        "yearly",
+    )
+
+
+def _extract_plain_salary_range(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Extract a plain dollar salary range with yearly wording."""
+
+    match = SALARY_RANGE_PATTERN.search(normalized_line)
+    if not match:
+        return None
+
+    return (
+        int(match.group(1).replace(",", "")),
+        int(match.group(2).replace(",", "")),
+        "CAD",
+        "yearly",
+    )
+
+
+def _extract_between_salary_range(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Extract a salary range written as 'between X and Y'."""
+
+    match = SALARY_BETWEEN_PATTERN.search(normalized_line)
+    if not match:
+        return None
+
+    return (
+        int(match.group(1).replace(",", "")),
+        int(match.group(2).replace(",", "")),
+        "CAD",
+        "yearly",
+    )
+
+
+def _extract_prefixed_currency_salary_range(
+    normalized_line: str,
+) -> tuple[int, int, str | None, str] | None:
+    """Extract a salary range where each value carries a currency prefix."""
+
+    match = SALARY_CURRENCY_RANGE_PATTERN.search(normalized_line)
+    if not match:
+        return None
+
+    return (
+        int(match.group(2).replace(",", "")),
+        int(match.group(3).replace(",", "")),
+        _normalize_currency(match.group(1)),
+        "yearly",
+    )
+
+
+def _extract_location_candidate(index: int, line: str, lines: list[str]) -> str | None:
+    """Extract one plausible location candidate from a header line."""
+
+    lowered = line.lower()
+    if lowered in {"job location", "location"} and index + 1 < len(lines):
+        candidate = _normalize_location_candidate(lines[index + 1].lstrip("|").strip())
+        if candidate:
+            return candidate
+
+    if line.startswith("Job category:") or line.startswith("Requisition number:"):
+        return None
+
+    normalized_line = _normalize_location_candidate(line)
+    if REMOTE_POSITION_PATTERN.match(normalized_line):
+        return "Remote"
+    if _looks_like_location(normalized_line):
+        return (
+            normalized_line.split(", CAN", maxsplit=1)[0]
+            if ", CAN" in normalized_line
+            else normalized_line
+        )
+
+    return None
+
+
+def _seniority_from_years(years_required: float | None) -> str | None:
+    """Infer seniority from the years requirement when title cues are absent."""
+
+    if years_required is None:
+        return None
+    if years_required < 1.0:
         return "junior"
-
-    if years_required is not None:
-        if years_required < 1.0:
-            return "junior"
-        if years_required <= 3.0:
-            return "mid"
-        if years_required >= 5.0:
-            return "senior"
-
+    if years_required <= 3.0:
+        return "mid"
+    if years_required >= 5.0:
+        return "senior"
     return None
