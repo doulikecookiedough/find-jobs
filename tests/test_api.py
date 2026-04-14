@@ -48,6 +48,7 @@ def test_evaluate_returns_scored_job_summary() -> None:
         "reasons": [
             "Role type aligns well with your target focus (backend).",
             "Job content matches several of your strongest backend and systems skills.",
+            "Role shows startup/product ownership signals that align with your profile.",
             "Relevant stack overlap found: aws, kubernetes, python.",
             "Work style includes remote flexibility.",
         ],
