@@ -284,6 +284,11 @@ def _apply_special_case_penalties(
         multiplier *= 0.78
         upper_cap = min(upper_cap, 18)
 
+    if breakdown.missing_inference_infra_proof:
+        base_probability -= 18
+        multiplier *= 0.58
+        upper_cap = min(upper_cap, 10)
+
     return base_probability, multiplier, upper_cap
 
 

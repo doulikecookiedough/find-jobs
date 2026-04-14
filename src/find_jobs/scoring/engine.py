@@ -18,6 +18,10 @@ from find_jobs.scoring.fit import (
 from find_jobs.scoring.fit.patterns import STRENGTH_PATTERNS
 from find_jobs.scoring.interview import score_interview_probability
 from find_jobs.scoring.shared import format_years
+from find_jobs.scoring.specialization import (
+    job_requires_inference_infrastructure,
+    profile_has_inference_infrastructure_proof,
+)
 from find_jobs.scoring.skills import score_skills_alignment
 
 
@@ -35,6 +39,9 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         role_type_alignment=score_role_type_alignment(job, profile),
         competition_realism=score_competition_realism(job, profile),
     )
+    breakdown.missing_inference_infra_proof = job_requires_inference_infrastructure(
+        job
+    ) and not profile_has_inference_infrastructure_proof(profile)
 
     weighted_score = (
         breakdown.level_match * 0.30
@@ -43,6 +50,8 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         + breakdown.role_type_alignment * 0.15
         + breakdown.competition_realism * 0.15
     )
+    if breakdown.missing_inference_infra_proof:
+        weighted_score -= 0.10
 
     fit_score = round(weighted_score * 100)
     skills_alignment = score_skills_alignment(job, profile, breakdown)
@@ -199,6 +208,9 @@ def _build_reasons_and_risks(
 
     if breakdown.stack_alignment < 0.4:
         risks.append("Core stack overlap is limited, so ramp-up may be required.")
+
+    if breakdown.missing_inference_infra_proof:
+        risks.append("Role expects specialized inference or GPU infrastructure experience.")
 
     if breakdown.competition_realism <= 0.55:
         risks.append("This may be a stretch role relative to your current experience level.")

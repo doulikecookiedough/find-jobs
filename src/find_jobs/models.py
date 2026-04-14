@@ -61,6 +61,7 @@ class ScoreBreakdown:
     strength_alignment: float = 0.0
     role_type_alignment: float = 0.0
     competition_realism: float = 0.0
+    missing_inference_infra_proof: bool = False
 
 
 @dataclass(slots=True)

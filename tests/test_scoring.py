@@ -561,3 +561,32 @@ def test_score_job_surfaces_product_engineering_reason_when_present() -> None:
     score = score_job(job, profile)
 
     assert "Role shows startup/product ownership signals that align with your profile." in score.reasons
+
+
+def test_score_job_penalizes_missing_inference_infrastructure_proof() -> None:
+    """Penalizes specialized inference infrastructure roles without matching profile proof."""
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text=(
+            "Build edge inference infrastructure with NVIDIA CUDA, TensorRT, and "
+            "Triton Inference Server for AI/ML serving across distributed edge nodes."
+        ),
+        years_experience_required=3.0,
+        role_type="backend",
+        technologies=["python", "aws", "kubernetes", "cuda", "tensorrt"],
+        domain_signals=[
+            "backend",
+            "distributed-systems",
+            "apis",
+            "gpu-computing",
+            "model-serving",
+            "edge-inference",
+            "ml-infrastructure",
+        ],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.fit_score < 80
+    assert score.interview_probability_max <= 10
+    assert "Role expects specialized inference or GPU infrastructure experience." in score.risks
