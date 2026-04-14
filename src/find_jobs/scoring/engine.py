@@ -215,6 +215,9 @@ def _build_reasons_and_risks(
     if breakdown.competition_realism <= 0.55:
         risks.append("This may be a stretch role relative to your current experience level.")
 
+    if job.role_type == "product-engineering" and job.role_type not in profile.preferred_roles:
+        risks.append("Role is centered on product-engineering ownership more than your target focus.")
+
     if job.role_type in profile.avoid_roles:
         risks.append(f"Role type is in your avoid list ({job.role_type}).")
 

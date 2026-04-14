@@ -247,6 +247,10 @@ def _apply_role_type_penalties(
         base_probability -= 10
         multiplier *= 0.72
         upper_cap = min(upper_cap, 12)
+    elif job.role_type == "product-engineering":
+        base_probability -= 12
+        multiplier *= 0.68
+        upper_cap = min(upper_cap, 14)
     elif job.role_type == "business-systems":
         base_probability -= 16
         multiplier *= 0.58

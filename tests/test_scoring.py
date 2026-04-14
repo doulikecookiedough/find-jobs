@@ -193,7 +193,7 @@ def test_score_role_type_alignment_is_partial_for_product_engineering() -> None:
     profile = make_candidate_profile()
     job = ParsedJob(raw_text="job", role_type="product-engineering")
 
-    assert score_role_type_alignment(job, profile) == 0.35
+    assert score_role_type_alignment(job, profile) == 0.25
 
 
 def test_score_role_type_alignment_is_zero_for_avoid_role() -> None:

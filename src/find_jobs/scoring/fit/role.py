@@ -23,7 +23,7 @@ def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> floa
     if job.role_type in profile.preferred_roles:
         return 1.0
     if job.role_type == "product-engineering":
-        return 0.35
+        return 0.25
     if job.role_type == "data":
         return 0.25
     if job.role_type == "business-systems":
