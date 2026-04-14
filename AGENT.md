@@ -42,6 +42,8 @@ Supporting surfaces:
 - Keep the system rule-based and transparent unless the user explicitly asks for LLM-assisted behavior.
 - Treat tests as the contract. Update or add the smallest test that proves the behavior change.
 - Avoid speculative abstractions. This repo is intentionally small.
+- Prefer one scoped task at a time: finish it, review it, and commit it before starting the next change.
+- Do not let unrelated uncommitted changes accumulate across parser, scoring, extension, and docs at the same time.
 - Do not move responsibilities across modules without a clear reason.
 - Preserve the current boundary: parsing, comparison, scoring, and presentation should stay separable.
 - Keep public import paths stable when refactoring internals unless the user explicitly wants a contract change.
@@ -67,7 +69,9 @@ Good default sequence:
 3. Read the implementation file.
 4. Make the smallest viable change.
 5. Run the narrowest relevant test.
-6. Broaden validation only if needed.
+6. Show or summarize the focused diff for review when requested.
+7. Commit that scoped change before starting another task.
+8. Broaden validation only if needed.
 
 ## Change Heuristics
 
