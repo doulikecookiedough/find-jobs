@@ -202,7 +202,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
     location = _extract_location(lines)
 
     company = _extract_company(raw_text, opening_text, title)
-    years_required = _extract_years_experience_required(raw_text)
+    years_required, max_years_required = _extract_years_experience_required(raw_text)
     salary_min, salary_max, salary_currency, salary_period = _extract_salary(lines)
 
     return ParsedJob(
@@ -211,6 +211,7 @@ def parse_job_description(raw_text: str) -> ParsedJob:
         company=company,
         location=location,
         years_experience_required=years_required,
+        years_experience_max_required=max_years_required,
         seniority=_extract_seniority(title, years_required),
         role_type=_extract_role_type(raw_text, title),
         salary_min=salary_min,
@@ -306,7 +307,9 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
     return None, None, None, None
 
 
-def _extract_years_experience_required(raw_text: str) -> float | None:
+def _extract_years_experience_required(raw_text: str) -> tuple[float | None, float | None]:
+    """Extract the years requirement, preserving both ends of explicit ranges."""
+
     for line in raw_text.splitlines():
         normalized_line = line.strip()
         if not normalized_line:
@@ -316,22 +319,25 @@ def _extract_years_experience_required(raw_text: str) -> float | None:
             continue
 
         years_required = _extract_years_from_line(normalized_line)
-        if years_required is not None:
+        if years_required != (None, None):
             return years_required
 
-    return None
+    return None, None
 
 
-def _extract_years_from_line(line: str) -> float | None:
+def _extract_years_from_line(line: str) -> tuple[float | None, float | None]:
+    """Extract a minimum and optional maximum years requirement from one line."""
+
     range_match = EXPERIENCE_RANGE_PATTERN.search(line)
     if range_match:
-        return float(range_match.group(1))
+        return float(range_match.group(1)), float(range_match.group(2))
 
     years_match = EXPERIENCE_PATTERN.search(line)
     if years_match:
-        return float(years_match.group(1))
+        years_required = float(years_match.group(1))
+        return years_required, years_required
 
-    return None
+    return None, None
 
 
 def _extract_location(lines: list[str]) -> str | None:

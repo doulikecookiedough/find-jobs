@@ -12,6 +12,7 @@ def test_parsed_job_defaults() -> None:
     assert parsed_job.title is None
     assert parsed_job.seniority is None
     assert parsed_job.role_type is None
+    assert parsed_job.years_experience_max_required is None
     assert parsed_job.salary_min is None
     assert not parsed_job.technologies
 

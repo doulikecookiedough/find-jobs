@@ -21,6 +21,7 @@ def parsed_job_snapshot(parsed_job: ParsedJob) -> dict[str, object]:
         "company": parsed_job.company,
         "location": parsed_job.location,
         "years_experience_required": parsed_job.years_experience_required,
+        "years_experience_max_required": parsed_job.years_experience_max_required,
         "seniority": parsed_job.seniority,
         "role_type": parsed_job.role_type,
         "salary_min": parsed_job.salary_min,
@@ -43,6 +44,7 @@ def test_parse_job_description_extracts_affirm_job_fields() -> None:
         "company": "Affirm",
         "location": "Remote Canada",
         "years_experience_required": 1.5,
+        "years_experience_max_required": 1.5,
         "seniority": "mid",
         "role_type": "backend",
         "salary_min": 125000,
@@ -72,6 +74,7 @@ def test_parse_job_description_extracts_integrations_job_fields() -> None:
         "company": None,
         "location": "Vancouver, BC",
         "years_experience_required": 3.0,
+        "years_experience_max_required": 5.0,
         "seniority": "mid",
         "role_type": "platform",
         "salary_min": 105000,
@@ -116,6 +119,7 @@ def test_parse_job_description_extracts_apple_workflow_job_fields() -> None:
         "company": "Apple",
         "location": "Vancouver, British Columbia, Canada",
         "years_experience_required": 3.0,
+        "years_experience_max_required": 3.0,
         "seniority": "mid",
         "role_type": "backend",
         "salary_min": 116800,
@@ -149,6 +153,7 @@ def test_parse_job_description_extracts_zepp_connected_partnerships_fields() -> 
         "company": "Zepp Health",
         "location": "Vancouver, BC",
         "years_experience_required": 3.0,
+        "years_experience_max_required": 3.0,
         "seniority": "mid",
         "role_type": "full-stack",
         "salary_min": None,
@@ -178,6 +183,7 @@ def test_parse_job_description_extracts_genista_backend_fields() -> None:
         "company": "Genista Biosciences",
         "location": "Canada",
         "years_experience_required": 2.0,
+        "years_experience_max_required": 7.0,
         "seniority": "mid",
         "role_type": "backend",
         "salary_min": None,
@@ -208,6 +214,7 @@ def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
         "company": "Picovoice",
         "location": "Vancouver",
         "years_experience_required": 2.0,
+        "years_experience_max_required": 2.0,
         "seniority": "mid",
         "role_type": None,
         "salary_min": 75000,
@@ -230,6 +237,7 @@ def test_parse_job_description_extracts_coalition_data_engineer_fields() -> None
         "company": "Coalition, Inc.",
         "location": "Canada",
         "years_experience_required": None,
+        "years_experience_max_required": None,
         "seniority": None,
         "role_type": "data",
         "salary_min": None,
@@ -252,6 +260,7 @@ def test_parse_job_description_extracts_surveymonkey_zuora_fields() -> None:
         "company": "SurveyMonkey",
         "location": "Canada",
         "years_experience_required": 1.0,
+        "years_experience_max_required": 1.0,
         "seniority": "mid",
         "role_type": "business-systems",
         "salary_min": None,
@@ -281,6 +290,7 @@ def test_parse_job_description_extracts_versaterm_se2_dems_fields() -> None:
         "company": "Versaterm",
         "location": "Vancouver, British Columbia, Canada",
         "years_experience_required": 2.0,
+        "years_experience_max_required": 5.0,
         "seniority": "mid",
         "role_type": "backend",
         "salary_min": None,
@@ -313,6 +323,7 @@ def test_parse_job_description_extracts_stripe_backend_fields() -> None:
         "company": "Stripe",
         "location": "Canada",
         "years_experience_required": 2.0,
+        "years_experience_max_required": 5.0,
         "seniority": "mid",
         "role_type": "backend",
         "salary_min": 135200,
@@ -342,6 +353,7 @@ def test_parse_job_description_extracts_berkeley_payments_backend_fields() -> No
         "company": "Berkeley Payments",
         "location": "Remote",
         "years_experience_required": 5.0,
+        "years_experience_max_required": 5.0,
         "seniority": "senior",
         "role_type": "backend",
         "salary_min": None,
@@ -385,6 +397,7 @@ def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> N
         "company": "Narvar",
         "location": "Canada",
         "years_experience_required": 7.0,
+        "years_experience_max_required": 7.0,
         "seniority": "senior",
         "role_type": None,
         "salary_min": None,
@@ -446,3 +459,21 @@ def test_parse_job_description_does_not_treat_salary_as_company() -> None:
     assert parsed_job.company == "Amazon Web Services"
     assert parsed_job.salary_min == 114000
     assert parsed_job.salary_max == 191000
+
+
+def test_parse_job_description_preserves_years_ranges() -> None:
+    """Captures both ends of explicit experience ranges from job text."""
+
+    parsed_job = parse_job_description(
+        (
+            "Junior ServiceNow Developer\n"
+            "CGI\n"
+            "Vancouver\n"
+            "3 - 5 years of hands-on experience as a ServiceNow Developer.\n"
+            "About the job\n"
+            "Build ServiceNow applications and integrations.\n"
+        ),
+    )
+
+    assert parsed_job.years_experience_required == 3.0
+    assert parsed_job.years_experience_max_required == 5.0

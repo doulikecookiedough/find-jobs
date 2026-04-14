@@ -17,6 +17,7 @@ class ParsedJob:
     company: str | None = None
     location: str | None = None
     years_experience_required: float | None = None
+    years_experience_max_required: float | None = None
     seniority: str | None = None
     role_type: str | None = None
     salary_min: int | None = None
