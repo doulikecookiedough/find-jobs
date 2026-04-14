@@ -15,7 +15,12 @@ STRENGTH_PATTERNS = {
         r"\bfull[ -]?stack\b|\bfront-end to back-end\b|\bacross the stack\b", re.IGNORECASE
     ),
     "product-engineering": re.compile(
-        r"\bproduct decisions?\b|\bcustomer value\b|\bproduct development\b|\bproduct-oriented\b",
+        (
+            r"\bproduct decisions?\b|\bcustomer value\b|\bproduct development\b|"
+            r"\bproduct-oriented\b|\bship(?:ping)? code(?: to production)? frequently\b|"
+            r"\bownership\b|\bown meaningful features?\b|\bfast-paced environment\b|"
+            r"\bai-augmented development\b|\bfigure things out independently\b"
+        ),
         re.IGNORECASE,
     ),
     "data-platforms": re.compile(

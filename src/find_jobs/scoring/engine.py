@@ -15,6 +15,7 @@ from find_jobs.scoring.fit import (
     score_stack_alignment,
     score_strength_alignment,
 )
+from find_jobs.scoring.fit.patterns import STRENGTH_PATTERNS
 from find_jobs.scoring.interview import score_interview_probability
 from find_jobs.scoring.shared import format_years
 from find_jobs.scoring.skills import score_skills_alignment
@@ -158,6 +159,14 @@ def _build_reasons_and_risks(
 
     if breakdown.strength_alignment >= 0.85:
         reasons.append("Job content matches several of your strongest backend and systems skills.")
+
+    product_engineering_pattern = STRENGTH_PATTERNS.get("product-engineering")
+    if (
+        "product-engineering" in profile.strengths
+        and product_engineering_pattern
+        and product_engineering_pattern.search(job.raw_text)
+    ):
+        reasons.append("Role shows startup/product ownership signals that align with your profile.")
 
     if breakdown.domain_alignment >= 0.75 and job.domain_signals:
         reasons.append(

@@ -148,6 +148,22 @@ def test_score_strength_alignment_returns_neutral_without_matching_strengths() -
     assert score_strength_alignment(job, profile) == 0.5
 
 
+def test_score_strength_alignment_counts_startup_product_signals() -> None:
+    """Matches product-engineering strength on startup ownership language."""
+    profile = CandidateProfile(
+        years_experience=3.0,
+        strengths=["product-engineering"],
+    )
+    job = ParsedJob(
+        raw_text=(
+            "Ship code frequently, own meaningful features, and figure things out "
+            "independently in a fast-paced environment with AI-augmented development."
+        )
+    )
+
+    assert score_strength_alignment(job, profile) == 0.7
+
+
 def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
     """Gives a perfect role-type score for explicitly preferred roles."""
     profile = make_candidate_profile()
@@ -520,3 +536,28 @@ def test_score_job_marks_small_years_gap_as_close_stretch() -> None:
         score.years_experience_match_label
         == "Close stretch: requires about 5 years, profile is 3 years."
     )
+
+
+def test_score_job_surfaces_product_engineering_reason_when_present() -> None:
+    """Adds a reviewer-facing reason for startup and product ownership alignment."""
+    profile = CandidateProfile(
+        years_experience=3.0,
+        strengths=["product-engineering"],
+        preferred_roles=["backend", "platform"],
+        preferred_domains=["apis", "integrations", "backend"],
+        preferred_technologies=["python", "aws"],
+    )
+    job = ParsedJob(
+        raw_text=(
+            "Own meaningful features, ship code frequently, and navigate a fast-paced "
+            "environment with AI-augmented development."
+        ),
+        years_experience_required=2.0,
+        role_type="full-stack",
+        technologies=["javascript"],
+        domain_signals=["apis", "integrations"],
+    )
+
+    score = score_job(job, profile)
+
+    assert "Role shows startup/product ownership signals that align with your profile." in score.reasons
