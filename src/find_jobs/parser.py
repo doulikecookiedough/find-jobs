@@ -93,10 +93,16 @@ TECHNOLOGY_PATTERNS = {
     "looker": re.compile(r"\blooker\b|\blookml\b", re.IGNORECASE),
     "zuora": re.compile(r"\bzuora\b", re.IGNORECASE),
     "salesforce": re.compile(r"\bsalesforce\b", re.IGNORECASE),
+    "servicenow": re.compile(r"\bservicenow\b", re.IGNORECASE),
     "cpq": re.compile(r"\bcpq\b", re.IGNORECASE),
     "netsuite": re.compile(r"\bnetsuite\b", re.IGNORECASE),
     "revpro": re.compile(r"\brevpro\b", re.IGNORECASE),
     "mulesoft": re.compile(r"\bmulesoft\b", re.IGNORECASE),
+    "itsm": re.compile(r"\bitsm\b", re.IGNORECASE),
+    "csm": re.compile(r"\bcsm\b", re.IGNORECASE),
+    "spm": re.compile(r"\bspm\b", re.IGNORECASE),
+    "itom": re.compile(r"\bitom\b", re.IGNORECASE),
+    "hrsd": re.compile(r"\bhrsd\b", re.IGNORECASE),
     "rest-apis": re.compile(r"\brest apis?\b", re.IGNORECASE),
     "aws": re.compile(r"\baws\b", re.IGNORECASE),
     "azure": re.compile(r"\bazure\b", re.IGNORECASE),
@@ -139,7 +145,8 @@ DOMAIN_SIGNAL_PATTERNS = {
     "business-systems": re.compile(
         (
             r"\bzuora\b|\bsalesforce\b|\bcpq\b|\bnetsuite\b|\brevpro\b|"
-            r"\bmulesoft\b|\bquote-to-cash\b|\border-to-revenue\b"
+            r"\bmulesoft\b|\bservicenow\b|\bitsm\b|\bcsm\b|\bspm\b|"
+            r"\bitom\b|\bhrsd\b|\bquote-to-cash\b|\border-to-revenue\b"
         ),
         re.IGNORECASE,
     ),
@@ -180,7 +187,7 @@ ROLE_TYPE_PATTERNS = (
         re.compile(
             (
                 r"\bzuora developer\b|\bzuora\b|\bsalesforce\b|\bcpq\b|"
-                r"\bnetsuite\b|\brevpro\b|\bmulesoft\b"
+                r"\bnetsuite\b|\brevpro\b|\bmulesoft\b|\bservicenow\b"
             ),
             re.IGNORECASE,
         ),

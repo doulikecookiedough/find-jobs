@@ -514,3 +514,35 @@ def test_parse_job_description_extracts_entry_level_developer_title() -> None:
     )
 
     assert parsed_job.title == "ServiceNow Developer - Entry Level"
+
+
+def test_parse_job_description_extracts_servicenow_business_systems_signals() -> None:
+    """Extracts ServiceNow-family technologies and business-systems role signals."""
+
+    parsed_job = parse_job_description(
+        (
+            "CGI\n"
+            "ServiceNow Developer - Entry Level\n"
+            "Skills\n"
+            "CRM\n"
+            "servicenow\n"
+            "CSM\n"
+            "itsm\n"
+            "SPM\n"
+            "Itom\n"
+            "HRSD\n"
+            "About the job\n"
+            "Develop and customize ServiceNow modules, including ITSM and CSM.\n"
+        ),
+    )
+
+    assert parsed_job.role_type == "business-systems"
+    assert sorted(parsed_job.technologies) == [
+        "csm",
+        "hrsd",
+        "itom",
+        "itsm",
+        "servicenow",
+        "spm",
+    ]
+    assert "business-systems" in parsed_job.domain_signals
