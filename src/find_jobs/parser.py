@@ -107,6 +107,11 @@ TECHNOLOGY_PATTERNS = {
     "aws": re.compile(r"\baws\b", re.IGNORECASE),
     "azure": re.compile(r"\bazure\b", re.IGNORECASE),
     "docker": re.compile(r"\bdocker\b", re.IGNORECASE),
+    "cuda": re.compile(r"\bcuda\b", re.IGNORECASE),
+    "tensorrt": re.compile(r"\btensorrt\b", re.IGNORECASE),
+    "triton-inference-server": re.compile(
+        r"\btriton inference server\b|\bnvidia triton\b", re.IGNORECASE
+    ),
     "spinnaker": re.compile(r"\bspinnaker\b", re.IGNORECASE),
     "jenkins": re.compile(r"\bjenkins\b", re.IGNORECASE),
     "terraform": re.compile(r"\bterraform\b", re.IGNORECASE),
@@ -171,6 +176,23 @@ DOMAIN_SIGNAL_PATTERNS = {
     ),
     "observability": re.compile(r"\bobservability\b|\blogging\b|\btracing\b", re.IGNORECASE),
     "ci-cd": re.compile(r"\bci/cd\b|\bbuild systems?\b|\bdeveloper workflows\b", re.IGNORECASE),
+    "gpu-computing": re.compile(
+        r"\bgpu computing\b|\bnvidia cuda\b|\bgpu memory\b", re.IGNORECASE
+    ),
+    "model-serving": re.compile(
+        (
+            r"\bmodel serving\b|\binference serving\b|\btriton inference server\b|"
+            r"\bai/ml serving\b|\bmodel optimization\b"
+        ),
+        re.IGNORECASE,
+    ),
+    "edge-inference": re.compile(
+        r"\bedge inference\b|\bedge inference infrastructure\b|\bedge nodes\b", re.IGNORECASE
+    ),
+    "ml-infrastructure": re.compile(
+        r"\bai inference\b|\bml infrastructure\b|\bai/ml serving\b|\btensorrt\b",
+        re.IGNORECASE,
+    ),
 }
 ROLE_TYPE_PATTERNS = (
     ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),

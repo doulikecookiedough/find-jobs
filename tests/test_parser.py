@@ -221,7 +221,7 @@ def test_parse_job_description_extracts_picovoice_wellfound_fields() -> None:
         "salary_max": 150000,
         "salary_currency": "CAD",
         "salary_period": "yearly",
-        "technologies": ["aws", "javascript", "python", "react", "typescript"],
+        "technologies": ["aws", "cuda", "javascript", "python", "react", "typescript"],
         "domain_signals": [],
         "work_style_signals": ["on-site"],
     }
@@ -546,3 +546,31 @@ def test_parse_job_description_extracts_servicenow_business_systems_signals() ->
         "spm",
     ]
     assert "business-systems" in parsed_job.domain_signals
+
+
+def test_parse_job_description_extracts_inference_gpu_specialization_signals() -> None:
+    """Extracts inference and GPU infrastructure signals from specialized backend roles."""
+
+    parsed_job = parse_job_description(
+        (
+            "Backend Engineer\n"
+            "PolarGrid\n"
+            "Canada\n"
+            "GPU Computing\n"
+            "Kubernetes\n"
+            "About the job\n"
+            "Build edge inference infrastructure with NVIDIA CUDA, TensorRT, and "
+            "Triton Inference Server for AI/ML serving across edge nodes.\n"
+        ),
+    )
+
+    assert sorted(parsed_job.technologies) == [
+        "cuda",
+        "kubernetes",
+        "tensorrt",
+        "triton-inference-server",
+    ]
+    assert "edge-inference" in parsed_job.domain_signals
+    assert "gpu-computing" in parsed_job.domain_signals
+    assert "ml-infrastructure" in parsed_job.domain_signals
+    assert "model-serving" in parsed_job.domain_signals
