@@ -11,6 +11,7 @@ from find_jobs.models import JobScore, ParsedJob
 
 
 DEFAULT_INCOMPLETE_LOG_PATH = Path("logs/incomplete_evaluations.jsonl")
+DEFAULT_COMPLETE_LOG_PATH = Path("logs/complete_evaluations.jsonl")
 DEFAULT_HIGH_INTERVIEW_LOG_PATH = Path("logs/high_interview_evaluations.jsonl")
 DEFAULT_HIGH_INTERVIEW_THRESHOLD = 20
 
@@ -49,6 +50,15 @@ def log_incomplete_evaluation(parsed_job: ParsedJob, job_score: JobScore) -> Pat
 
     log_path = Path(
         os.environ.get("FIND_JOBS_INCOMPLETE_LOG_PATH", DEFAULT_INCOMPLETE_LOG_PATH),
+    )
+    return _append_log(log_path, _build_payload(parsed_job, job_score))
+
+
+def log_complete_evaluation(parsed_job: ParsedJob, job_score: JobScore) -> Path:
+    """Persist every completed evaluation for later calibration review."""
+
+    log_path = Path(
+        os.environ.get("FIND_JOBS_COMPLETE_LOG_PATH", DEFAULT_COMPLETE_LOG_PATH),
     )
     return _append_log(log_path, _build_payload(parsed_job, job_score))
 

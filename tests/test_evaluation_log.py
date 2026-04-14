@@ -11,7 +11,9 @@ from find_jobs.profile import build_default_candidate_profile
 def test_incomplete_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     """Writes incomplete evaluations to the configured incomplete log."""
 
+    complete_log_path = tmp_path / "complete.jsonl"
     log_path = tmp_path / "incomplete.jsonl"
+    monkeypatch.setenv("FIND_JOBS_COMPLETE_LOG_PATH", str(complete_log_path))
     monkeypatch.setenv("FIND_JOBS_INCOMPLETE_LOG_PATH", str(log_path))
 
     profile = CandidateProfile(years_experience=3.0)
@@ -27,12 +29,15 @@ def test_incomplete_evaluation_is_logged(monkeypatch, tmp_path) -> None:
     assert payload["parser_warnings"]
     assert payload["raw_text"] == "Wearables role with no clear company or stack."
     assert payload["recommendation"] == job_score.recommendation
+    assert complete_log_path.exists()
 
 
 def test_complete_evaluation_is_not_logged(monkeypatch, tmp_path) -> None:
     """Skips the incomplete log when the parsed evaluation is complete."""
 
+    complete_log_path = tmp_path / "complete.jsonl"
     log_path = tmp_path / "incomplete.jsonl"
+    monkeypatch.setenv("FIND_JOBS_COMPLETE_LOG_PATH", str(complete_log_path))
     monkeypatch.setenv("FIND_JOBS_INCOMPLETE_LOG_PATH", str(log_path))
 
     profile = CandidateProfile(years_experience=3.0)
@@ -48,6 +53,34 @@ def test_complete_evaluation_is_not_logged(monkeypatch, tmp_path) -> None:
     )
 
     assert not log_path.exists()
+    assert complete_log_path.exists()
+
+
+def test_complete_evaluation_is_logged(monkeypatch, tmp_path) -> None:
+    """Writes every evaluated job to the configured complete log."""
+
+    log_path = tmp_path / "complete.jsonl"
+    monkeypatch.setenv("FIND_JOBS_COMPLETE_LOG_PATH", str(log_path))
+
+    profile = CandidateProfile(years_experience=3.0)
+    parsed_job, job_score = evaluate_job_text(
+        (
+            "Software Engineer, Backend\n"
+            "Remote Canada\n"
+            "Affirm is hiring.\n"
+            "You have 3+ years of experience.\n"
+            "Backend systems with Python, AWS, PostgreSQL, and Kubernetes."
+        ),
+        profile,
+    )
+
+    assert parsed_job.company == "Affirm"
+    assert log_path.exists()
+
+    payload = json.loads(log_path.read_text().strip())
+    assert payload["company"] == "Affirm"
+    assert payload["fit_score"] == job_score.fit_score
+    assert payload["raw_text"].startswith("Software Engineer, Backend")
 
 
 def test_high_interview_evaluation_is_logged(monkeypatch, tmp_path) -> None:
