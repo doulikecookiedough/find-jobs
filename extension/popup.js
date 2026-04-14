@@ -119,6 +119,8 @@ function extractVisibleJobText() {
       focusedText = focusedText.slice(detailMarkerIndex + detailMarker.length);
     }
 
+    focusedText = trimWellfoundDetailBlock(focusedText);
+
     for (const trailingMarker of ["\nAbout the company\n", "\nRecent Jobs\n", "\nApply to "]) {
       const markerIndex = focusedText.indexOf(trailingMarker);
       if (markerIndex !== -1) {
@@ -127,6 +129,28 @@ function extractVisibleJobText() {
     }
 
     return buildResult(normalizeWhitespace(focusedText), "Wellfound job detail cleanup");
+  }
+
+  function trimWellfoundDetailBlock(text) {
+    const lines = text.split("\n");
+    const aboutIndex = lines.lastIndexOf("About the job");
+    if (aboutIndex === -1) {
+      return text;
+    }
+
+    let shareIndex = -1;
+    for (let index = aboutIndex; index >= 1; index -= 1) {
+      if (lines[index - 1] === "Share" && lines[index] === "Save") {
+        shareIndex = index - 1;
+        break;
+      }
+    }
+
+    if (shareIndex === -1) {
+      return lines.slice(Math.max(0, aboutIndex - 12)).join("\n");
+    }
+
+    return lines.slice(Math.max(0, shareIndex - 5)).join("\n");
   }
 
   function extractIndeedJobText(container) {
