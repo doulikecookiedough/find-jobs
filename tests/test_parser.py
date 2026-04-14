@@ -497,3 +497,20 @@ def test_parse_job_description_prefers_detailed_years_range_over_header_snippet(
 
     assert parsed_job.years_experience_required == 3.0
     assert parsed_job.years_experience_max_required == 5.0
+
+
+def test_parse_job_description_extracts_entry_level_developer_title() -> None:
+    """Extracts title lines that use a role suffix like Developer - Entry Level."""
+
+    parsed_job = parse_job_description(
+        (
+            "CGI\n"
+            "Share\n"
+            "Save\n"
+            "ServiceNow Developer - Entry Level\n"
+            "Vancouver\n"
+            "About the job\n"
+        ),
+    )
+
+    assert parsed_job.title == "ServiceNow Developer - Entry Level"

@@ -58,7 +58,8 @@ TITLE_PATTERN = re.compile(
     (
         r"^(?=.*\b(?:engineer|engineering|developer)\b)"
         r"(?=.*\b(?:software|backend|frontend|full-stack|full stack|platform|data|"
-        r"zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead)\b).+$"
+        r"zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead|"
+        r"entry[ -]?level)\b).+$"
     ),
     re.IGNORECASE,
 )
@@ -66,7 +67,8 @@ TITLE_PHRASE_PATTERN = re.compile(
     (
         r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?"
         r"(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|"
-        r"Platform|Data|Zuora|Salesforce)\s+(?:Engineer|Developer)\b"
+        r"Platform|Data|Zuora|Salesforce)\s+(?:Engineer|Developer)\b|"
+        r"\b[A-Z][A-Za-z0-9+#./ -]*\b(?:Engineer|Developer)\s*[-,]\s*Entry[ -]?Level\b"
     ),
     re.IGNORECASE,
 )
