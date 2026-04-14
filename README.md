@@ -4,9 +4,21 @@
 
 It is being developed iteratively for real job-search use, so the priority is fast reviewer onboarding, explainable scoring, and small, testable changes.
 
+## Reviewer setup
+
+This project uses `uv` for dependency management and command execution.
+
+If `uv` is not installed:
+
+- macOS or Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Homebrew: `brew install uv`
+- Windows: `powershell -ExecutionPolicy Bypass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+
+After installation, restart your shell if `uv` is not yet on your `PATH`.
+
 ## Quick start
 
-This project uses `uv`.
+From the repository root:
 
 ```bash
 uv sync
@@ -114,12 +126,14 @@ Interview probability is calibrated against the active candidate profile, not ju
 
 The project writes review queues under `logs/`:
 
+- `logs/complete_evaluations.jsonl`: every completed evaluation
 - `logs/incomplete_evaluations.jsonl`: evaluations with missing parsed fields or parser warnings
 - `logs/high_interview_evaluations.jsonl`: evaluations whose interview upper bound clears the configured threshold
 
 Overrides:
 
 ```bash
+FIND_JOBS_COMPLETE_LOG_PATH=/custom/path/complete.jsonl
 FIND_JOBS_INCOMPLETE_LOG_PATH=/custom/path/incomplete.jsonl
 FIND_JOBS_HIGH_INTERVIEW_LOG_PATH=/custom/path/high-interview.jsonl
 FIND_JOBS_HIGH_INTERVIEW_THRESHOLD=20
@@ -129,15 +143,16 @@ FIND_JOBS_HIGH_INTERVIEW_THRESHOLD=20
 
 To test the extension locally:
 
-1. Start the local API.
-2. Open `chrome://extensions`.
-3. Enable `Developer mode`.
-4. Click `Load unpacked`.
-5. Select the `extension/` directory.
-6. Open a job posting.
-7. Open the `find-jobs` side panel.
-8. Click `Evaluate Job`.
-9. Expand `Preview extracted text` if the result looks wrong.
+1. Install `uv` if needed, then run `uv sync`.
+2. Start the local API.
+3. Open `chrome://extensions`.
+4. Enable `Developer mode`.
+5. Click `Load unpacked`.
+6. Select the `extension/` directory.
+7. Open a job posting.
+8. Open the `find-jobs` side panel.
+9. Click `Evaluate Job`.
+10. Expand `Preview extracted text` if the result looks wrong.
 
 ## Example output
 

@@ -4,7 +4,11 @@ This extension is the browser-facing client for the local `find-jobs` FastAPI se
 
 ## Local Setup
 
-From the project root, start the API:
+From the project root:
+
+1. Install `uv` if it is missing.
+2. Run `uv sync`.
+3. Start the API:
 
 ```bash
 uv run uvicorn find_jobs.api:app --host 127.0.0.1 --port 8000 --reload
@@ -20,6 +24,12 @@ Then load the extension:
 6. Click the `find-jobs` extension to open the side panel.
 7. Click `Evaluate Job`.
 8. Expand `Preview extracted text` if the score looks wrong or the parser misses important fields.
+
+If `uv` is not installed:
+
+- macOS or Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Homebrew: `brew install uv`
+- Windows: `powershell -ExecutionPolicy Bypass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 
 ## MVP Contract
 
