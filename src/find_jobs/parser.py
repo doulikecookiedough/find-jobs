@@ -58,7 +58,7 @@ TITLE_PATTERN = re.compile(
     (
         r"^(?=.*\b(?:engineer|engineering|developer)\b)"
         r"(?=.*\b(?:software|backend|frontend|full-stack|full stack|platform|data|"
-        r"zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead|"
+        r"product|zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead|"
         r"entry[ -]?level)\b).+$"
     ),
     re.IGNORECASE,
@@ -67,7 +67,7 @@ TITLE_PHRASE_PATTERN = re.compile(
     (
         r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?"
         r"(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|"
-        r"Platform|Data|Zuora|Salesforce)\s+(?:Engineer|Developer)\b|"
+        r"Platform|Data|Product|Zuora|Salesforce)\s+(?:Engineer|Developer)\b|"
         r"\b[A-Z][A-Za-z0-9+#./ -]*\b(?:Engineer|Developer)\s*[-,]\s*Entry[ -]?Level\b"
     ),
     re.IGNORECASE,
@@ -168,6 +168,10 @@ DOMAIN_SIGNAL_PATTERNS = {
         ),
         re.IGNORECASE,
     ),
+    "product-engineering": re.compile(
+        r"\bproduct engineers?\b|\bproduct engineer\b",
+        re.IGNORECASE,
+    ),
     "developer-productivity": re.compile(
         r"\bdeveloper productivity\b|\bworkflow engine\b|\bdevelopment workflow\b", re.IGNORECASE
     ),
@@ -195,6 +199,13 @@ DOMAIN_SIGNAL_PATTERNS = {
     ),
 }
 ROLE_TYPE_PATTERNS = (
+    (
+        "product-engineering",
+        re.compile(
+            r"\bproduct engineer(?:ing)?\b|\bproduct engineers?\b|\bproduct engineer\b",
+            re.IGNORECASE,
+        ),
+    ),
     ("backend", re.compile(r"\bbackend\b", re.IGNORECASE)),
     ("full-stack", re.compile(r"\bfull[ -]?stack\b", re.IGNORECASE)),
     ("platform", re.compile(r"\bplatform\b", re.IGNORECASE)),
@@ -611,7 +622,7 @@ def _extract_role_type(raw_text: str, title: str | None) -> str | None:
     search_text = "\n".join(filter(None, [title, _text_for_role_inference(raw_text)]))
 
     for role_type, pattern in ROLE_TYPE_PATTERNS:
-        if role_type in {"platform", "mobile"}:
+        if role_type in {"platform", "mobile", "product-engineering"}:
             continue
         if pattern.search(search_text):
             return role_type

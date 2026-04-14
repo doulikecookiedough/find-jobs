@@ -574,3 +574,22 @@ def test_parse_job_description_extracts_inference_gpu_specialization_signals() -
     assert "gpu-computing" in parsed_job.domain_signals
     assert "ml-infrastructure" in parsed_job.domain_signals
     assert "model-serving" in parsed_job.domain_signals
+
+
+def test_parse_job_description_extracts_product_engineering_role_signals() -> None:
+    """Extracts product-engineering roles when the title and body center product ownership."""
+
+    parsed_job = parse_job_description(
+        (
+            "Brim Financial\n"
+            "Product Engineer\n"
+            "Canada\n"
+            "About the job\n"
+            "At Brim, Product Engineers sit at the intersection of engineering, product, "
+            "and design, owning outcomes rather than just code.\n"
+            "You will build product features end-to-end with strong focus on product outcomes.\n"
+        ),
+    )
+
+    assert parsed_job.role_type == "product-engineering"
+    assert "product-engineering" in parsed_job.domain_signals

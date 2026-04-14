@@ -188,6 +188,14 @@ def test_score_role_type_alignment_is_zero_for_business_systems_avoid_role() -> 
     assert score_role_type_alignment(job, profile) == 0.0
 
 
+def test_score_role_type_alignment_is_partial_for_product_engineering() -> None:
+    """Keeps product-engineering roles below backend while still above a hard avoid."""
+    profile = make_candidate_profile()
+    job = ParsedJob(raw_text="job", role_type="product-engineering")
+
+    assert score_role_type_alignment(job, profile) == 0.35
+
+
 def test_score_role_type_alignment_is_zero_for_avoid_role() -> None:
     """Returns zero role alignment for other explicitly avoided roles."""
     profile = make_candidate_profile()
