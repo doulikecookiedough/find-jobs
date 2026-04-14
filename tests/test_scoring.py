@@ -488,6 +488,25 @@ def test_score_job_does_not_penalize_years_when_profile_meets_requirement() -> N
     assert score.interview_probability_min >= 30
 
 
+def test_score_job_relieves_full_stack_fundamentals_interview_penalty() -> None:
+    """Avoids near-zero odds for full-stack roles with strong fundamentals and years fit."""
+    profile = make_candidate_profile()
+    job = ParsedJob(
+        raw_text=(
+            "Ship code frequently in a startup environment while building backend APIs, "
+            "integrations, and full-stack product features across frontend and backend systems."
+        ),
+        years_experience_required=2.0,
+        role_type="full-stack",
+        technologies=["javascript", "react", "mongodb", "git"],
+        domain_signals=["backend", "integrations", "apis"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.interview_probability_max >= 6
+
+
 def test_score_job_marks_small_years_gap_as_close_stretch() -> None:
     """Labels a small experience shortfall as a close stretch."""
     profile = make_candidate_profile()

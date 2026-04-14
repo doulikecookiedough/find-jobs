@@ -87,6 +87,14 @@ def score_interview_probability(
         multiplier,
         upper_cap,
     )
+    base_probability, multiplier, upper_cap = _apply_full_stack_fundamentals_relief(
+        job,
+        breakdown,
+        required_stack_proof,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
     multiplier = _apply_medium_mismatch_penalty(
         breakdown,
         required_stack_proof,
@@ -305,6 +313,35 @@ def _apply_medium_mismatch_penalty(
     if medium_mismatches == 2:
         return multiplier * 0.90
     return multiplier
+
+
+def _apply_full_stack_fundamentals_relief(
+    job: ParsedJob,
+    breakdown: ScoreBreakdown,
+    required_stack_proof: float,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Soften stack pessimism for strong full-stack fundamentals matches.
+
+    This protects startup-style full-stack roles from collapsing to near-zero
+    screening odds when the candidate clearly matches on years, systems
+    fundamentals, and domain adjacency but not on direct preferred stack proof.
+    """
+    if job.role_type != "full-stack":
+        return base_probability, multiplier, upper_cap
+    if breakdown.level_match < 0.85 or breakdown.strength_alignment < 0.85:
+        return base_probability, multiplier, upper_cap
+    if breakdown.domain_alignment < 0.50 or breakdown.competition_realism < 0.85:
+        return base_probability, multiplier, upper_cap
+    if breakdown.stack_alignment >= 0.30 or required_stack_proof >= 0.25:
+        return base_probability, multiplier, upper_cap
+
+    base_probability += 8
+    multiplier *= 1.6
+    upper_cap = max(upper_cap, 18)
+    return base_probability, multiplier, upper_cap
 
 
 def _spread_for_center(center: int) -> tuple[int, int]:
