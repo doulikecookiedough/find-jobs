@@ -13,7 +13,8 @@
     "https://www.linkedin.com/*",
     "https://wellfound.com/*",
     "https://ca.indeed.com/*",
-    "https://apply.careers.microsoft.com/*"
+    "https://apply.careers.microsoft.com/*",
+    "https://builtin.com/*"
   ],
   "action": {
     "default_title": "Evaluate job fit"
