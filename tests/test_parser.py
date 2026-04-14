@@ -477,3 +477,23 @@ def test_parse_job_description_preserves_years_ranges() -> None:
 
     assert parsed_job.years_experience_required == 3.0
     assert parsed_job.years_experience_max_required == 5.0
+
+
+def test_parse_job_description_prefers_detailed_years_range_over_header_snippet() -> None:
+    """Prefers a later detailed years range over an earlier shorthand header snippet."""
+
+    parsed_job = parse_job_description(
+        (
+            "CGI\n"
+            "Share\n"
+            "Save\n"
+            "Junior ServiceNow Developer\n"
+            "|3 years of exp\n"
+            "About the job\n"
+            "3 - 5 years of hands-on experience as a ServiceNow Developer.\n"
+            "Build ServiceNow applications and integrations.\n"
+        ),
+    )
+
+    assert parsed_job.years_experience_required == 3.0
+    assert parsed_job.years_experience_max_required == 5.0

@@ -310,6 +310,9 @@ def _extract_salary(lines: list[str]) -> tuple[int | None, int | None, str | Non
 def _extract_years_experience_required(raw_text: str) -> tuple[float | None, float | None]:
     """Extract the years requirement, preserving both ends of explicit ranges."""
 
+    best_years_required: tuple[float | None, float | None] = (None, None)
+    best_priority = -10_000
+
     for line in raw_text.splitlines():
         normalized_line = line.strip()
         if not normalized_line:
@@ -319,10 +322,15 @@ def _extract_years_experience_required(raw_text: str) -> tuple[float | None, flo
             continue
 
         years_required = _extract_years_from_line(normalized_line)
-        if years_required != (None, None):
-            return years_required
+        if years_required == (None, None):
+            continue
 
-    return None, None
+        priority = _experience_line_priority(normalized_line, years_required)
+        if priority > best_priority:
+            best_years_required = years_required
+            best_priority = priority
+
+    return best_years_required
 
 
 def _extract_years_from_line(line: str) -> tuple[float | None, float | None]:
@@ -338,6 +346,34 @@ def _extract_years_from_line(line: str) -> tuple[float | None, float | None]:
         return years_required, years_required
 
     return None, None
+
+
+def _experience_line_priority(
+    line: str,
+    years_required: tuple[float | None, float | None],
+) -> int:
+    """Rank experience lines so richer requirement lines beat shorthand headers."""
+
+    lower_years, upper_years = years_required
+    priority = 0
+    normalized_line = line.lower()
+
+    if upper_years is not None and lower_years is not None and upper_years > lower_years:
+        priority += 100
+    if "hands-on experience" in normalized_line:
+        priority += 30
+    if "years of experience" in normalized_line:
+        priority += 20
+    if "professional experience" in normalized_line:
+        priority += 15
+    if "relevant experience" in normalized_line:
+        priority += 10
+    if "experience as" in normalized_line or "experience in" in normalized_line:
+        priority += 10
+    if "|" in line:
+        priority -= 20
+
+    return priority
 
 
 def _extract_location(lines: list[str]) -> str | None:
