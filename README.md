@@ -134,8 +134,9 @@ flowchart LR
 
     subgraph Outputs
         G["UI response"]
-        H["Incomplete evaluation log"]
-        I["High-interview log"]
+        H["Complete evaluation log"]
+        I["Incomplete evaluation log"]
+        J["High-interview log"]
     end
 
     A --> B
@@ -144,8 +145,9 @@ flowchart LR
     D --> E
     F --> E
     E --> G
-    D --> H
-    E --> I
+    E --> H
+    D --> I
+    E --> J
     G --> B
 ```
 
