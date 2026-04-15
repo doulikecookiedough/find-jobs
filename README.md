@@ -153,7 +153,7 @@ flowchart LR
 
 ## Scoring notes
 
-The scoring system is intentionally heuristic and explainable.
+The scoring system is rule-based, explainable, and calibrated with real job examples.
 
 The scorer separates three different questions instead of collapsing everything into one number:
 
