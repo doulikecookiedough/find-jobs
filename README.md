@@ -4,7 +4,7 @@
 
 It is being developed iteratively for real job-search use, so the priority is fast reviewer onboarding, explainable scoring, and small, testable changes.
 
-## Reviewer setup
+## Project setup
 
 This project uses `uv` for dependency management and command execution.
 
@@ -170,31 +170,20 @@ Interview probability is calibrated against the active candidate profile, not ju
 ### Scoring overview
 
 ```mermaid
-flowchart TD
-    A["Parsed job + candidate profile"] --> B["Fit score"]
-    A --> C["Skills alignment"]
-    B --> D["Interview probability"]
+flowchart LR
+    A["Parsed job + candidate profile"] --> B["Fit<br/>broad application-priority score"]
+    A --> C["Skills<br/>technical overlap score"]
+    B --> D["Interview<br/>conservative screening estimate"]
     C --> D
-    D --> E["Recommendation + priority"]
-    D --> F["Reasons + risks"]
-
-    B --> B1["Level match"]
-    B --> B2["Stack overlap"]
-    B --> B3["Domain + strength overlap"]
-    B --> B4["Role fit"]
-    B --> B5["Competition realism"]
-
-    C --> C1["Known technologies overlap"]
-    C --> C2["Strength overlap"]
-    C --> C3["Domain overlap"]
-
-    D --> D1["Conservative penalties"]
-    D1 --> D11["Years gap"]
-    D1 --> D12["Senior stretch"]
-    D1 --> D13["Role mismatch"]
-    D1 --> D14["Stack mismatch"]
-    D1 --> D15["Avoid-role or avoid-domain signals"]
+    D --> E["Recommendation / priority"]
+    D --> F["Reasons / risks / warnings"]
 ```
+
+Read it like this:
+
+- `Fit` is the broad triage layer: level, stack, domain, role fit, and competition realism.
+- `Skills` is the narrower capability layer: how much of the actual technical work overlaps.
+- `Interview` is the harshest layer: it starts from fit and skills, then applies screening penalties such as years gap, senior stretch, stack mismatch, and avoid-role signals.
 
 ## Review logs
 
