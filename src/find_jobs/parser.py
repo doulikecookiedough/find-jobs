@@ -21,7 +21,7 @@ EXPERIENCE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 EXPERIENCE_RANGE_PATTERN = re.compile(
-    r"(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s+years?\b",
+    r"(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\+?\s+years?\b",
     re.IGNORECASE,
 )
 SALARY_PATTERN = re.compile(

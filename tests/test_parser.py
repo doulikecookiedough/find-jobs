@@ -672,3 +672,20 @@ def test_parse_job_description_recovers_clean_indeed_title_and_company() -> None
 
     assert parsed_job.title == "Intermediate Back-End Engineer"
     assert parsed_job.company == "Kidoz Inc."
+
+
+def test_parse_job_description_preserves_plus_suffixed_years_ranges() -> None:
+    """Preserves explicit ranges like 4-6+ years instead of collapsing to the max."""
+
+    parsed_job = parse_job_description(
+        (
+            "Intermediate Back-End Engineer\n"
+            "Kidoz Inc.\n"
+            "Canada\n"
+            "WHAT YOU BRING TO THE TEAM\n"
+            "You have 4-6+ years of experience in back-end software development.\n"
+        )
+    )
+
+    assert parsed_job.years_experience_required == 4.0
+    assert parsed_job.years_experience_max_required == 6.0
