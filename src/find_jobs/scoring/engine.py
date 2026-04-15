@@ -73,6 +73,14 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     ) = _years_experience_match(job, profile)
     recommendation = _recommendation_for_score(fit_score)
     priority = _priority_for_score(fit_score)
+    recommendation, priority = _promote_matched_specializations(
+        recommendation,
+        priority,
+        fit_score,
+        job,
+        profile,
+        breakdown,
+    )
     reasons, risks = _build_reasons_and_risks(job, profile, breakdown)
 
     return JobScore(
@@ -153,6 +161,28 @@ def _priority_for_score(fit_score: int) -> str:
     if fit_score >= 55:
         return "medium"
     return "low"
+
+
+def _promote_matched_specializations(
+    recommendation: str,
+    priority: str,
+    fit_score: int,
+    job: ParsedJob,
+    profile: CandidateProfile,
+    breakdown: ScoreBreakdown,
+) -> tuple[str, str]:
+    """Promote already-credible roles when a matched specialization stands out."""
+
+    if fit_score < 75:
+        return recommendation, priority
+    if not breakdown.matched_specialized_domains:
+        return recommendation, priority
+    if breakdown.role_type_alignment < 1.0:
+        return recommendation, priority
+    if job.role_type in profile.avoid_roles:
+        return recommendation, priority
+
+    return "apply", "high"
 
 
 def _build_reasons_and_risks(

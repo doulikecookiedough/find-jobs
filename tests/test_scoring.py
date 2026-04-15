@@ -283,6 +283,41 @@ def test_score_job_rewards_high_signal_consistency_in_interview() -> None:
     assert score.interview_probability_max >= 20
 
 
+def test_score_job_promotes_matched_specializations_to_apply() -> None:
+    """Promotes credible matched-specialization roles to apply/high."""
+
+    profile = CandidateProfile(
+        years_experience=3.0,
+        preferred_roles=["backend"],
+        preferred_domains=["backend", "distributed-systems", "apis", "integrations", "adtech"],
+        preferred_technologies=["python", "aws", "postgresql"],
+        strengths=[
+            "backend",
+            "distributed-systems",
+            "apis",
+            "integrations",
+            "reliability",
+            "adtech",
+        ],
+    )
+    job = ParsedJob(
+        raw_text=(
+            "Build backend systems for contextual advertising, ad delivery, and analytics "
+            "infrastructure with strong reliability expectations."
+        ),
+        years_experience_required=4.0,
+        role_type="backend",
+        domain_signals=["backend", "apis", "integrations", "distributed-systems", "adtech"],
+        technologies=["python", "aws", "postgresql", "mongodb"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.fit_score >= 75
+    assert score.recommendation == "apply"
+    assert score.priority == "high"
+
+
 def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
     """Gives a perfect role-type score for explicitly preferred roles."""
     profile = make_candidate_profile()
