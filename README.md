@@ -220,20 +220,44 @@ To test the extension locally:
 
 ## Example output
 
+Versaterm:
+
 ```text
-Title: Software Engineer
-Company: PathPilot
+Title: Software Engineer II - DEMS
+Company: Versaterm
 Fit Score: 84
-Skills Alignment: 79
+Skills Alignment: 90
 Interview Probability: 14-20%
-Years Match: Strong match: requires about 3 years, profile is 3 years.
+Years Match: Strong match: requires about 2 years, profile is 3 years.
 Recommendation: apply
 Priority: high
 Reasons:
 - Role type aligns well with your target focus (backend).
 - Job content matches several of your strongest backend and systems skills.
 - Domain signals overlap well with your preferred backend and integration work.
-- Relevant stack overlap found: aws, python, rest-apis.
+- Relevant stack overlap found: aws, postgresql, python, react.
+```
+
+Kidoz:
+
+```text
+Title: Intermediate Back-End Engineer
+Company: Kidoz Inc.
+Fit Score: 77
+Skills Alignment: 67
+Interview Probability: 2-8%
+Years Match: Strong match: requires about 4 years, profile is 3 years.
+Recommendation: apply
+Priority: high
+Reasons:
+- Role type aligns well with your target focus (backend).
+- Domain signals overlap well with your preferred backend and integration work.
+- Matched specialization: adtech experience directly overlaps this role.
+- Relevant stack overlap found: aws, postgresql.
+- Work style includes remote flexibility.
+Risks:
+- Experience requirement is above your current profile (4+ years vs 3).
+- Core stack overlap is limited, so ramp-up may be required.
 ```
 
 ## Status
