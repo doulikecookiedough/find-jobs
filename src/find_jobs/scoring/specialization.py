@@ -21,6 +21,9 @@ INFERENCE_INFRASTRUCTURE_TECHNOLOGIES = {
     "tensorrt",
     "triton-inference-server",
 }
+SPECIALIZED_PROFILE_DOMAINS = {
+    "adtech",
+}
 
 
 def profile_has_inference_infrastructure_proof(profile: CandidateProfile) -> bool:
@@ -48,3 +51,10 @@ def job_requires_inference_infrastructure(job: ParsedJob) -> bool:
         set(job.domain_signals).intersection(INFERENCE_INFRASTRUCTURE_DOMAINS)
         or set(job.technologies).intersection(INFERENCE_INFRASTRUCTURE_TECHNOLOGIES)
     )
+
+
+def matched_specialized_domains(job: ParsedJob, profile: CandidateProfile) -> list[str]:
+    """Return specialized domains that appear in both the job and active profile."""
+
+    matched_domains = set(job.domain_signals).intersection(profile.preferred_domains)
+    return sorted(matched_domains.intersection(SPECIALIZED_PROFILE_DOMAINS))

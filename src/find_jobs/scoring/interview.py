@@ -95,6 +95,12 @@ def score_interview_probability(
         multiplier,
         upper_cap,
     )
+    base_probability, multiplier, upper_cap = _apply_specialized_domain_relief(
+        breakdown,
+        base_probability,
+        multiplier,
+        upper_cap,
+    )
     multiplier = _apply_medium_mismatch_penalty(
         breakdown,
         required_stack_proof,
@@ -350,6 +356,23 @@ def _apply_full_stack_fundamentals_relief(
     base_probability += 8
     multiplier *= 1.6
     upper_cap = max(upper_cap, 18)
+    return base_probability, multiplier, upper_cap
+
+
+def _apply_specialized_domain_relief(
+    breakdown: ScoreBreakdown,
+    base_probability: float,
+    multiplier: float,
+    upper_cap: int,
+) -> tuple[float, float, int]:
+    """Soften screening pessimism when the profile matches a niche job domain."""
+
+    if not breakdown.matched_specialized_domains:
+        return base_probability, multiplier, upper_cap
+
+    base_probability += 8
+    multiplier *= 1.18
+    upper_cap = max(upper_cap, 24)
     return base_probability, multiplier, upper_cap
 
 

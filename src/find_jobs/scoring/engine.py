@@ -20,6 +20,7 @@ from find_jobs.scoring.interview import score_interview_probability
 from find_jobs.scoring.shared import format_years
 from find_jobs.scoring.specialization import (
     job_requires_inference_infrastructure,
+    matched_specialized_domains,
     profile_has_inference_infrastructure_proof,
 )
 from find_jobs.scoring.skills import score_skills_alignment
@@ -42,6 +43,7 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     breakdown.missing_inference_infra_proof = job_requires_inference_infrastructure(
         job
     ) and not profile_has_inference_infrastructure_proof(profile)
+    breakdown.matched_specialized_domains = matched_specialized_domains(job, profile)
 
     weighted_score = (
         breakdown.level_match * 0.30
