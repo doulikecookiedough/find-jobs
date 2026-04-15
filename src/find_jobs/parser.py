@@ -89,6 +89,11 @@ IGNORED_COMPANY_LINES = {
     "earn $200",
 }
 TECHNOLOGY_PATTERNS = {
+    "c": re.compile(
+        r"\bc/c\+\+\b|\bcoding in c\b|\bproficient coding in c\b|\bsource code in c\b",
+        re.IGNORECASE,
+    ),
+    "c++": re.compile(r"\bc/c\+\+\b|\bc\+\+(?!\w)", re.IGNORECASE),
     "c#": re.compile(r"(?<!\w)c#(?!\w)", re.IGNORECASE),
     "dotnet-core": re.compile(r"\.net core\b|\bdotnet core\b", re.IGNORECASE),
     "typescript": re.compile(r"\btypescript\b", re.IGNORECASE),
@@ -204,6 +209,25 @@ DOMAIN_SIGNAL_PATTERNS = {
     ),
     "observability": re.compile(r"\bobservability\b|\blogging\b|\btracing\b", re.IGNORECASE),
     "ci-cd": re.compile(r"\bci/cd\b|\bbuild systems?\b|\bdeveloper workflows\b", re.IGNORECASE),
+    "firmware": re.compile(r"\bfirmware\b", re.IGNORECASE),
+    "embedded-systems": re.compile(
+        (
+            r"\bembedded software design\b|\bembedded architecture\b|"
+            r"\bfirmware and embedded software\b|\bembedded systems?\b"
+        ),
+        re.IGNORECASE,
+    ),
+    "storage-systems": re.compile(
+        r"\bssd\b|\bnand memory\b|\bdata storage solutions?\b|\bstorage interface\b",
+        re.IGNORECASE,
+    ),
+    "low-level-systems": re.compile(
+        (
+            r"\blow-level firmware\b|\blow-level systems?\b|\boperating systems?\b|"
+            r"\bdevice architectures?\b|\basic\b|\bhardware and asic design teams\b"
+        ),
+        re.IGNORECASE,
+    ),
     "gpu-computing": re.compile(
         r"\bgpu computing\b|\bnvidia cuda\b|\bgpu memory\b", re.IGNORECASE
     ),

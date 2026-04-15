@@ -706,3 +706,26 @@ def test_parse_job_description_extracts_adtech_domain_signals() -> None:
     )
 
     assert "adtech" in parsed_job.domain_signals
+
+
+def test_parse_job_description_extracts_firmware_embedded_signals() -> None:
+    """Extracts firmware and embedded domain signals from hardware-adjacent roles."""
+
+    parsed_job = parse_job_description(
+        (
+            "Software Engineer\n"
+            "Solidigm\n"
+            "Vancouver, BC\n"
+            "We are seeking Firmware and Embedded Software Design professionals.\n"
+            "Develop and maintain product source code in C/C++.\n"
+            "Develop low-level firmware, operating systems, device architectures, and work "
+            "with hardware and ASIC design teams on SSD solutions and NAND memory.\n"
+        )
+    )
+
+    assert "c" in parsed_job.technologies
+    assert "c++" in parsed_job.technologies
+    assert "firmware" in parsed_job.domain_signals
+    assert "embedded-systems" in parsed_job.domain_signals
+    assert "storage-systems" in parsed_job.domain_signals
+    assert "low-level-systems" in parsed_job.domain_signals
