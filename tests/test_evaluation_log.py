@@ -124,3 +124,31 @@ def test_below_threshold_interview_evaluation_is_not_logged(monkeypatch, tmp_pat
     )
 
     assert not log_path.exists()
+
+
+def test_apply_high_evaluation_is_logged_below_interview_threshold(
+    monkeypatch, tmp_path
+) -> None:
+    """Logs action-worthy apply/high roles even when the interview max is below threshold."""
+
+    log_path = tmp_path / "high_interview.jsonl"
+    monkeypatch.setenv("FIND_JOBS_HIGH_INTERVIEW_LOG_PATH", str(log_path))
+
+    raw_text = (
+        "Intermediate Back-End Engineer\n"
+        "Kidoz Inc.\n"
+        "Canada\n"
+        "At Kidoz, we build contextual advertising systems for mobile audiences.\n"
+        "You develop backend systems that support ad delivery and analytics infrastructure.\n"
+        "You have 4-6+ years of experience in back-end software development.\n"
+        "Experience in mobile advertising or AdTech environments.\n"
+        "Experience with AWS, MongoDB, MySQL, PostgreSQL, Golang, Git, and Terraform.\n"
+        "Work Location: Remote\n"
+    )
+    parsed_job, job_score = evaluate_job_text(raw_text, build_default_candidate_profile())
+
+    assert parsed_job.company == "Kidoz Inc."
+    assert job_score.interview_probability_max < 20
+    assert job_score.recommendation == "apply"
+    assert job_score.priority == "high"
+    assert log_path.exists()

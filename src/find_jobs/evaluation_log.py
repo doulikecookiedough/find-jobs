@@ -71,7 +71,11 @@ def log_high_interview_evaluation(parsed_job: ParsedJob, job_score: JobScore) ->
             DEFAULT_HIGH_INTERVIEW_THRESHOLD,
         ),
     )
-    if job_score.interview_probability_max < threshold:
+    should_highlight = (
+        job_score.interview_probability_max >= threshold
+        or (job_score.recommendation == "apply" and job_score.priority == "high")
+    )
+    if not should_highlight:
         return None
 
     log_path = Path(
