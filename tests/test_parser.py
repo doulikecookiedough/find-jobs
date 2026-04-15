@@ -689,3 +689,20 @@ def test_parse_job_description_preserves_plus_suffixed_years_ranges() -> None:
 
     assert parsed_job.years_experience_required == 4.0
     assert parsed_job.years_experience_max_required == 6.0
+
+
+def test_parse_job_description_extracts_adtech_domain_signals() -> None:
+    """Extracts adtech signals from advertising infrastructure job text."""
+
+    parsed_job = parse_job_description(
+        (
+            "Intermediate Back-End Engineer\n"
+            "Kidoz Inc.\n"
+            "Canada\n"
+            "At Kidoz, we build contextual advertising systems for mobile audiences.\n"
+            "You develop backend systems that support ad delivery and analytics infrastructure.\n"
+            "Experience in mobile advertising or AdTech environments.\n"
+        )
+    )
+
+    assert "adtech" in parsed_job.domain_signals

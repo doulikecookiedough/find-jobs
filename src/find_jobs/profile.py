@@ -34,6 +34,7 @@ def build_default_candidate_profile() -> CandidateProfile:
         infrastructure_tools=["kubernetes", "helm", "docker"],
         developer_tools=["git", "github", "github-actions", "maven", "junit", "pytest", "vitest"],
         strengths=[
+            "adtech",
             "backend",
             "full-stack",
             "product-engineering",
@@ -51,6 +52,7 @@ def build_default_candidate_profile() -> CandidateProfile:
         ],
         preferred_roles=["backend", "platform"],
         preferred_domains=[
+            "adtech",
             "backend",
             "distributed-systems",
             "event-driven",

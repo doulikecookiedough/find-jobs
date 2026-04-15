@@ -157,6 +157,14 @@ WORK_STYLE_PATTERNS = {
 }
 DOMAIN_SIGNAL_PATTERNS = {
     "authentication": re.compile(r"\bauthentication\b", re.IGNORECASE),
+    "adtech": re.compile(
+        (
+            r"\badtech\b|\bad tech\b|\badvertising technology\b|"
+            r"\bad delivery\b|\bmobile advertising\b|\badops\b|"
+            r"\bcontextual advertising\b|\badvertising infrastructure\b"
+        ),
+        re.IGNORECASE,
+    ),
     "security": re.compile(r"\bsecurity\b", re.IGNORECASE),
     "fraud": re.compile(r"\bfraud\b|\baccount takeover\b|\bATO\b", re.IGNORECASE),
     "distributed-systems": re.compile(r"\bdistributed systems\b", re.IGNORECASE),
