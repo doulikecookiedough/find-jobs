@@ -461,6 +461,24 @@ def test_parse_job_description_does_not_treat_salary_as_company() -> None:
     assert parsed_job.salary_max == 191000
 
 
+def test_parse_job_description_does_not_treat_remote_fragment_as_company() -> None:
+    """Avoids misclassifying a remote location fragment as the company name."""
+
+    parsed_job = parse_job_description(
+        (
+            "Software Engineer\n"
+            "Remote (\n"
+            "Canada)\n"
+            "About the job\n"
+            "At The Landline Company, we build modern travel infrastructure.\n"
+            "You will work on backend systems with Python and AWS.\n"
+        ),
+    )
+
+    assert parsed_job.title == "Software Engineer"
+    assert parsed_job.company == "The Landline Company"
+
+
 def test_parse_job_description_preserves_years_ranges() -> None:
     """Captures both ends of explicit experience ranges from job text."""
 

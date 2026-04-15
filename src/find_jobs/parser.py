@@ -666,7 +666,17 @@ def _looks_like_company_after_title(candidate: str) -> bool:
             " · " in candidate,
             _looks_like_salary_line(candidate),
             lowered.startswith(
-                ("job category:", "requisition number:", "location:", "remote work policy")
+                (
+                    "job category:",
+                    "requisition number:",
+                    "location:",
+                    "remote work policy",
+                    "remote",
+                    "hybrid",
+                    "on-site",
+                    "onsite",
+                    "in office",
+                )
             ),
             lowered in {"about the job", "apply", "save", "share", "show more options"},
             lowered
