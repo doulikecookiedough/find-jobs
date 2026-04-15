@@ -611,3 +611,47 @@ def test_parse_job_description_extracts_product_engineering_role_signals() -> No
 
     assert parsed_job.role_type == "product-engineering"
     assert "product-engineering" in parsed_job.domain_signals
+
+
+def test_parse_job_description_recovers_caredove_wellfound_fields() -> None:
+    """Recovers title, company, and years from a noisy Wellfound job page."""
+
+    parsed_job = parse_job_description(
+        (
+            "Ready to interview\n"
+            "Home\n"
+            "Profile\n"
+            "Jobs\n"
+            "Applied\n"
+            "Messages\n"
+            "Discover\n"
+            "On-Demand\n"
+            "Refer a friend\n"
+            "Earn $200\n"
+            "DiscoverStartupsCaredove\n"
+            "Caredove\n"
+            "Share\n"
+            "Full Stack Software Developer at Caredove\n"
+            "$80k – $150k CAD\n"
+            "About the job\n"
+            "Why work at Caredove?\n"
+            "The Product - Caredove\n"
+            "The Opportunity - Full Stack Software Developer\n"
+            "You’ll Bring\n"
+            "have at least 5 years experience in a software development role\n"
+            "Location\n"
+            "Orillia\n"
+            "Remote work policy\n"
+            "Onsite or remote\n"
+            "Hires remotely in\n"
+            "Canada\n"
+            "Juan Ospina\n"
+            "Highly analytical and solution-oriented professional with over 14 years of "
+            "experience within the areas of software development.\n"
+        )
+    )
+
+    assert parsed_job.title == "Full Stack Software Developer"
+    assert parsed_job.company == "Caredove"
+    assert parsed_job.location == "Orillia"
+    assert parsed_job.years_experience_required == 5.0

@@ -12,6 +12,10 @@ COMPANY_PATTERN = re.compile(
     re.MULTILINE,
 )
 AT_COMPANY_PATTERN = re.compile(r"\bAt\s+([A-Z][A-Za-z0-9&'. -]+),", re.MULTILINE)
+TITLE_AT_COMPANY_PATTERN = re.compile(
+    r"^(?P<title>.+?)\s+at\s+(?P<company>[A-Z][A-Za-z0-9&'. -]+)$",
+    re.IGNORECASE,
+)
 EXPERIENCE_PATTERN = re.compile(
     r"(\d+(?:\.\d+)?)\+?\s+years?\b",
     re.IGNORECASE,
@@ -72,6 +76,18 @@ TITLE_PHRASE_PATTERN = re.compile(
     ),
     re.IGNORECASE,
 )
+IGNORED_COMPANY_LINES = {
+    "ready to interview",
+    "home",
+    "profile",
+    "jobs",
+    "applied",
+    "messages",
+    "discover",
+    "on-demand",
+    "refer a friend",
+    "earn $200",
+}
 TECHNOLOGY_PATTERNS = {
     "c#": re.compile(r"(?<!\w)c#(?!\w)", re.IGNORECASE),
     "dotnet-core": re.compile(r"\.net core\b|\bdotnet core\b", re.IGNORECASE),
@@ -276,6 +292,10 @@ def _normalize_currency(raw_currency: str) -> str:
 
 
 def _extract_company(raw_text: str, opening_text: str, title: str | None = None) -> str | None:
+    title_company = _extract_company_from_title(raw_text)
+    if title_company:
+        return title_company
+
     company_match = COMPANY_PATTERN.search(opening_text)
     if company_match:
         return company_match.group(1)
@@ -292,6 +312,23 @@ def _extract_company(raw_text: str, opening_text: str, title: str | None = None)
     if at_company_match:
         return at_company_match.group(1)
 
+    return None
+
+
+def _extract_company_from_title(raw_text: str) -> str | None:
+    """Extract company from `Title at Company` lines when present."""
+
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+    for line in lines[:25]:
+        match = TITLE_AT_COMPANY_PATTERN.match(line)
+        if not match:
+            continue
+        title = match.group("title").strip()
+        if not _looks_like_title_text(title):
+            continue
+        company = match.group("company").strip()
+        if _is_probable_company_name(company):
+            return company
     return None
 
 
@@ -412,6 +449,14 @@ def _experience_line_priority(
         priority += 10
     if "experience as" in normalized_line or "experience in" in normalized_line:
         priority += 10
+    if "at least" in normalized_line:
+        priority += 25
+    if "you’ll bring" in normalized_line or "you'll bring" in normalized_line:
+        priority += 20
+    if "bonus points" in normalized_line:
+        priority -= 10
+    if _looks_like_bio_line(normalized_line):
+        priority -= 60
     if "|" in line:
         priority -= 20
 
@@ -422,6 +467,12 @@ def _extract_location(lines: list[str]) -> str | None:
     """Extract the first plausible location string from the opening lines."""
 
     for index, line in enumerate(lines[:20]):
+        candidate = _extract_location_candidate(index, line, lines)
+        if candidate:
+            return candidate
+    for index, line in enumerate(lines):
+        if line.lower() not in {"job location", "location", "hires remotely in"}:
+            continue
         candidate = _extract_location_candidate(index, line, lines)
         if candidate:
             return candidate
@@ -441,7 +492,7 @@ def _extract_title(lines: list[str]) -> str | None:
         "see application",
     )
 
-    for line in lines[:20]:
+    for line in lines[:40]:
         normalized_line = re.sub(r"\s+\|\s+LinkedIn$", "", line.strip(), flags=re.IGNORECASE)
         if not normalized_line:
             continue
@@ -455,6 +506,9 @@ def _extract_title(lines: list[str]) -> str | None:
             continue
         if _is_section_heading(normalized_line):
             continue
+        title_at_company_match = TITLE_AT_COMPANY_PATTERN.match(normalized_line)
+        if title_at_company_match and TITLE_PATTERN.search(title_at_company_match.group("title")):
+            return title_at_company_match.group("title").strip()
         phrase_match = TITLE_PHRASE_PATTERN.search(normalized_line)
         if " at " in lowered and phrase_match:
             return phrase_match.group(0)
@@ -464,6 +518,17 @@ def _extract_title(lines: list[str]) -> str | None:
             return phrase_match.group(0)
 
     return None
+
+
+def _looks_like_title_text(text: str) -> bool:
+    """Return whether a string is structured like a plausible job title."""
+
+    normalized_text = text.strip()
+    if not normalized_text:
+        return False
+    if len(normalized_text.split()) > 10:
+        return False
+    return bool(TITLE_PATTERN.search(normalized_text) or TITLE_PHRASE_PATTERN.search(normalized_text))
 
 
 def _looks_like_salary_line(line: str) -> bool:
@@ -498,6 +563,7 @@ def _is_probable_company_name(line: str) -> bool:
             len(normalized_line.split()) > 6,
             lowered
             in {
+                *IGNORED_COMPANY_LINES,
                 "share",
                 "save",
                 "about the job",
@@ -523,6 +589,18 @@ def _is_probable_company_name(line: str) -> bool:
             bool(TITLE_PATTERN.search(normalized_line)),
             _looks_like_location(normalized_line),
         )
+    )
+
+
+def _looks_like_bio_line(line: str) -> bool:
+    return bool(
+        re.search(
+            r"\b(cto|ceo|designer|manager|coordinator|analyst|employee|lead|founder)\b",
+            line,
+            re.IGNORECASE,
+        )
+        or "years of experience within" in line
+        or "years of experience as a" in line
     )
 
 
@@ -816,6 +894,10 @@ def _extract_location_candidate(index: int, line: str, lines: list[str]) -> str 
     lowered = line.lower()
     if lowered in {"job location", "location"} and index + 1 < len(lines):
         candidate = _normalize_location_candidate(lines[index + 1].lstrip("|").strip())
+        if candidate:
+            return candidate
+    if lowered == "hires remotely in" and index + 1 < len(lines):
+        candidate = _normalize_location_candidate(lines[index + 1].strip())
         if candidate:
             return candidate
 
