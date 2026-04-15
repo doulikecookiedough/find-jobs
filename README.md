@@ -107,6 +107,47 @@ Current surfaces:
 - `tests/fixtures/`: real-world parsing fixtures
 - `extension/`: Chrome extension client
 
+## System design
+
+The system is intentionally split into a thin browser client and a local scoring backend:
+
+- the Chrome extension extracts visible job text and displays the result
+- FastAPI is the scoring boundary
+- the parser turns messy job text into structured fields
+- the scoring engine compares those fields against the candidate profile
+- logs feed calibration and regression testing
+
+```mermaid
+flowchart LR
+    subgraph Browser
+        A["Job posting page"]
+        B["Chrome side panel extension"]
+    end
+
+    subgraph Backend
+        C["FastAPI /evaluate-text"]
+        D["Parser"]
+        E["Scoring Engine"]
+        F["Candidate Profile"]
+    end
+
+    subgraph Outputs
+        G["UI response"]
+        H["Incomplete evaluation log"]
+        I["High-interview log"]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    F --> E
+    E --> G
+    D --> H
+    E --> I
+    G --> B
+```
+
 ## Scoring notes
 
 The scoring system is intentionally heuristic and explainable.
@@ -121,6 +162,79 @@ Fit currently uses:
 - competition realism
 
 Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile.
+
+### Fit flow
+
+`fit_score` is the application-priority score. It answers: "is this worth spending time on?"
+
+```mermaid
+flowchart TD
+    A["Parsed job"] --> B["Level match"]
+    A --> C["Stack alignment"]
+    A --> D["Domain alignment"]
+    A --> E["Strength alignment"]
+    A --> F["Role type alignment"]
+    A --> G["Competition realism"]
+    H["Candidate profile"] --> B
+    H --> C
+    H --> D
+    H --> E
+    H --> F
+    H --> G
+
+    B --> I["Weighted fit score"]
+    C --> I
+    D --> I
+    E --> I
+    F --> I
+    G --> I
+
+    I --> J["Recommendation / priority / reasons / risks"]
+```
+
+### Skills flow
+
+`skills_alignment` is narrower than fit. It answers: "how much of the actual technical work overlaps with the profile?"
+
+```mermaid
+flowchart TD
+    A["Parsed technologies"] --> D["Stack overlap"]
+    B["Parsed domain signals"] --> E["Domain overlap"]
+    C["Parsed role content"] --> F["Strength overlap"]
+
+    G["Candidate profile"] --> D
+    G --> E
+    G --> F
+
+    D --> H["Skills alignment score"]
+    E --> H
+    F --> H
+```
+
+### Interview flow
+
+`interview_probability` is the cold-application likelihood estimate. It is deliberately more conservative than fit or skills.
+
+```mermaid
+flowchart TD
+    A["Fit score"] --> E["Base interview likelihood"]
+    B["Skills alignment"] --> E
+    C["Level / years match"] --> E
+    D["Competition realism"] --> E
+
+    E --> F["Penalty pass"]
+    F --> F1["Missing years"]
+    F --> F2["Senior stretch"]
+    F --> F3["Role mismatch"]
+    F --> F4["Stack mismatch"]
+    F --> F5["Avoid-role / avoid-domain signals"]
+
+    F1 --> G["Interview probability range"]
+    F2 --> G
+    F3 --> G
+    F4 --> G
+    F5 --> G
+```
 
 ## Review logs
 
