@@ -410,6 +410,46 @@ def test_parse_job_description_extracts_narvar_distributed_systems_fields() -> N
     }
 
 
+def test_parse_job_description_extracts_kidoz_backend_fields() -> None:
+    """Extracts the expected fields from the full Kidoz backend fixture."""
+
+    parsed_job = parse_job_description(load_fixture("kidoz_intermediate_backend_engineer.txt"))
+
+    assert parsed_job_snapshot(parsed_job) == {
+        "title": "Intermediate Back-End Engineer",
+        "company": "Kidoz Inc.",
+        "location": "Vancouver, BC",
+        "years_experience_required": 4.0,
+        "years_experience_max_required": 6.0,
+        "seniority": "mid",
+        "role_type": "backend",
+        "salary_min": None,
+        "salary_max": None,
+        "salary_currency": None,
+        "salary_period": None,
+        "technologies": [
+            "aws",
+            "git",
+            "golang",
+            "mongodb",
+            "mysql",
+            "postgresql",
+            "python",
+            "terraform",
+        ],
+        "domain_signals": [
+            "adtech",
+            "apis",
+            "backend",
+            "distributed-systems",
+            "integrations",
+            "microservices",
+            "observability",
+        ],
+        "work_style_signals": ["remote"],
+    }
+
+
 def test_parse_job_description_extracts_company_from_banner_header() -> None:
     """Recovers the company name from a banner-style header layout."""
 

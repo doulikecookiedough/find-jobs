@@ -243,17 +243,19 @@ Kidoz:
 ```text
 Title: Intermediate Back-End Engineer
 Company: Kidoz Inc.
-Fit Score: 77
-Skills Alignment: 67
-Interview Probability: 2-8%
+Fit Score: 81
+Skills Alignment: 75
+Interview Probability: 12-21%
 Years Match: Strong match: requires about 4 years, profile is 3 years.
 Recommendation: apply
 Priority: high
 Reasons:
 - Role type aligns well with your target focus (backend).
+- Job content matches several of your strongest backend and systems skills.
+- Role shows startup/product ownership signals that align with your profile.
 - Domain signals overlap well with your preferred backend and integration work.
 - Matched specialization: adtech experience directly overlaps this role.
-- Relevant stack overlap found: aws, postgresql.
+- Relevant stack overlap found: aws, postgresql, python.
 - Work style includes remote flexibility.
 Risks:
 - Experience requirement is above your current profile (4+ years vs 3).

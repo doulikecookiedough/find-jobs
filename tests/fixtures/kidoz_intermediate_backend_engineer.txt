@@ -1,0 +1,149 @@
+Intermediate Back-End Engineer
+
+Kidoz Inc.
+
+Vancouver, BC
+
+WHO WE ARE
+
+At Kidoz, we build privacy-first technology that helps brands and app developers connect with mobile audiences in a way that’s safe, thoughtful, and effective. We focus on contextual advertising - not tracking people or collecting personal data - because we believe relevance shouldn’t come at the expense of trust.
+
+We’re a growing, globally distributed team of builders and problem-solvers who care about doing things the right way. Our platform reaches hundreds of millions of users each month, and we’re proud to work with partners who value both performance and responsibility. If you’re excited about modern adtech with strong principles and real impact, you’ll feel at home here.
+
+WHAT YOU’LL BE DOING
+
+You’ll be responsible for developing and optimizing backend systems that support ad delivery, analytics, and internal tools.
+
+You design, build, and maintain scalable backend services and microservices.
+
+You develop and optimize systems supporting ad delivery networks and analytics infrastructure.
+
+You work with relational and document-based databases to improve performance, structure, and reliability.
+
+You develop and maintain APIs and backend integrations across internal and external systems.
+
+You build, monitor, and optimize cloud infrastructure within AWS environments (ELB, RDS, Redshift, etc.).
+
+You improve system observability, monitoring, and deployment processes.
+
+You troubleshoot complex production issues across distributed systems.
+
+You collaborate with AdOps, Product, and Design teams to translate requirements into scalable solutions.
+
+You contribute to architecture discussions and long-term infrastructure planning.
+
+You advocate for strong coding standards, testing practices, and maintainable design patterns.
+
+You participate in agile sprint planning, code reviews, and technical documentation.
+
+You support compliance considerations including COPPA and GDPR where applicable.
+
+You evaluate infrastructure cost efficiency and recommend optimization improvements.
+
+You explore and implement improvements to tooling, deployment workflows, and automation.
+
+You contribute ideas and technical insight that improve platform performance and scalability.
+
+WHAT SUCCESS LOOKS LIKE IN THE FIRST YEAR
+
+In your first 6–12 months, success in this role looks like….
+
+Delivering stable, scalable backend features with minimal production issues.
+
+Improving system reliability and reducing infrastructure bottlenecks.
+
+Strengthening database performance and query efficiency.
+
+Contributing meaningfully to architecture discussions and technical direction.
+
+Reducing technical debt through improved standards and documentation.
+
+Demonstrating ownership of backend systems and proactively resolving issues.
+
+WHAT YOU BRING TO THE TEAM
+
+You are analytical, curious, and solutions-oriented. You enjoy diving deep into data and systems to identify root causes and build resilient solutions. You are comfortable contributing ideas, testing new approaches, and engaging in technical discussions. You maintain strong coding standards and are motivated to continuously improve systems and processes.
+
+You have 4-6+ years of experience in back-end software development (experience level may vary depending on demonstrated skill).
+
+You have experience working with AWS and cloud-based infrastructure environments.
+
+You have experience working with document databases, ideally MongoDB (aggregation pipelines a plus).
+
+You have experience working with Golang or similar backend languages.
+
+You have strong knowledge of distributed system architecture.
+
+You have experience working with relational databases such as MySQL or PostgreSQL.
+
+You are comfortable working in Linux-based server environments.
+
+You have experience using Git in a collaborative development environment.
+
+You demonstrate an analytical mindset and strong problem-solving abilities.
+
+You are comfortable working in Agile/Scrum development environments.
+
+You communicate clearly and collaborate effectively across technical and non-technical teams.
+
+Nice to haves:
+
+You have experience with Terraform or infrastructure-as-code tools.
+
+You have experience with analytics systems such as Redshift, Kibana, or similar tools.
+
+You have exposure to PHP (Laravel), Python, or NodeJS environments.
+
+You have experience with cost management and infrastructure optimization.
+
+You are enthusiastic about automated testing, TDD, and SOLID design principles.
+
+You have experience in mobile advertising or AdTech environments.
+
+HOW WE OPERATE
+
+We work in a collaborative, fast-moving environment where priorities can shift. We value clear communication, ownership, and people who are comfortable balancing structure with flexibility.
+
+GOOD TO KNOWS
+
+Kidoz is a globally distributed team; this role works primarily on an PST-aligned schedule
+
+You’ll collaborate regularly with teammates across Europe and East Coast (EST)
+
+Experience in ad tech or familiarity with advertising technology is a plus, but not required
+
+This is a full-time role with meaningful ownership and room to shape how we work, not just follow existing playbooks
+
+COMPENSATION & TOTAL REWARDS
+
+We believe in paying people fairly, transparently, and in line with the impact they have. Compensation for this role is competitive and based on experience, location, and scope of responsibility. The salary range for this role is from $70,000 to $110,000 CAD.
+
+In addition to base salary, we offer:
+
+A comprehensive benefits package, including health coverage.
+
+Paid time off and company holidays.
+
+Flexible, remote-friendly work environment.
+
+The opportunity to work with a global team across time zones.
+
+A role with real ownership and influence on how our products are built and delivered.
+
+We review compensation regularly and aim to grow roles and rewards as the company grows.
+
+OUR HIRING PROCESS
+
+We try to keep our hiring process straightforward, thoughtful, and human. For this role, you will have…
+
+Round 1: An initial conversation with our recruiter.
+
+Round 2: An interview with our Hiring Manager and another team member.
+
+Round 3: A practical scenario-based discussion with a panel.
+
+Round 4: A final conversation with senior leadership.
+
+Round 5: References.
+
+We value clear communication and aim to move efficiently while making sure there’s mutual alignment on both sides.
