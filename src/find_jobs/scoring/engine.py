@@ -182,6 +182,9 @@ def _build_reasons_and_risks(
             "Domain signals overlap well with your preferred backend and integration work."
         )
 
+    if "adtech" in job.domain_signals and "adtech" in profile.preferred_domains:
+        reasons.append("Role domain aligns with your prior adtech experience.")
+
     matched_technologies = sorted(
         set(job.technologies).intersection(profile.preferred_technologies)
     )
