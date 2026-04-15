@@ -155,89 +155,45 @@ flowchart LR
 
 The scoring system is intentionally heuristic and explainable.
 
-Fit currently uses:
+The scorer separates three different questions instead of collapsing everything into one number:
 
-- level match
-- stack alignment
-- domain alignment
-- strength alignment
-- role type alignment
-- competition realism
-- small specialization-aware lifts when the candidate profile directly proves a niche domain match
+| Metric | What it means | Main inputs | Why it exists |
+|---|---|---|---|
+| Fit | Is this worth spending time on? | Level match, stack overlap, domain fit, role fit, competition realism | Helps decide apply / consider / skip |
+| Skills | How much technical overlap is there? | Technologies, strengths, domain signals | Separates capability overlap from hiring realism |
+| Interview | How likely is a cold application to convert? | Fit, skills, years match, role fit, penalties | Models screening odds conservatively |
+
+Fit includes a few small specialization-aware lifts when the candidate profile directly proves a niche domain match.
 
 Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile. Specialized domain proof can relieve pessimism for roles that would otherwise look too niche from generic signals alone.
 
-### Fit flow
-
-`fit_score` is the application-priority score. It answers: "is this worth spending time on?"
+### Scoring overview
 
 ```mermaid
 flowchart TD
-    A["Parsed job"] --> B["Level match"]
-    A --> C["Stack alignment"]
-    A --> D["Domain alignment"]
-    A --> E["Strength alignment"]
-    A --> F["Role type alignment"]
-    A --> G["Competition realism"]
-    H["Candidate profile"] --> B
-    H --> C
-    H --> D
-    H --> E
-    H --> F
-    H --> G
+    A["Parsed job + candidate profile"] --> B["Fit score"]
+    A --> C["Skills alignment"]
+    B --> D["Interview probability"]
+    C --> D
+    D --> E["Recommendation + priority"]
+    D --> F["Reasons + risks"]
 
-    B --> I["Weighted fit score"]
-    C --> I
-    D --> I
-    E --> I
-    F --> I
-    G --> I
+    B --> B1["Level match"]
+    B --> B2["Stack overlap"]
+    B --> B3["Domain + strength overlap"]
+    B --> B4["Role fit"]
+    B --> B5["Competition realism"]
 
-    I --> J["Recommendation / priority / reasons / risks"]
-```
+    C --> C1["Known technologies overlap"]
+    C --> C2["Strength overlap"]
+    C --> C3["Domain overlap"]
 
-### Skills flow
-
-`skills_alignment` is narrower than fit. It answers: "how much of the actual technical work overlaps with the profile?"
-
-```mermaid
-flowchart TD
-    A["Parsed technologies"] --> D["Stack overlap"]
-    B["Parsed domain signals"] --> E["Domain overlap"]
-    C["Parsed role content"] --> F["Strength overlap"]
-
-    G["Candidate profile"] --> D
-    G --> E
-    G --> F
-
-    D --> H["Skills alignment score"]
-    E --> H
-    F --> H
-```
-
-### Interview flow
-
-`interview_probability` is the cold-application likelihood estimate. It is deliberately more conservative than fit or skills.
-
-```mermaid
-flowchart TD
-    A["Fit score"] --> E["Base interview likelihood"]
-    B["Skills alignment"] --> E
-    C["Level / years match"] --> E
-    D["Competition realism"] --> E
-
-    E --> F["Penalty pass"]
-    F --> F1["Missing years"]
-    F --> F2["Senior stretch"]
-    F --> F3["Role mismatch"]
-    F --> F4["Stack mismatch"]
-    F --> F5["Avoid-role / avoid-domain signals"]
-
-    F1 --> G["Interview probability range"]
-    F2 --> G
-    F3 --> G
-    F4 --> G
-    F5 --> G
+    D --> D1["Conservative penalties"]
+    D1 --> D11["Years gap"]
+    D1 --> D12["Senior stretch"]
+    D1 --> D13["Role mismatch"]
+    D1 --> D14["Stack mismatch"]
+    D1 --> D15["Avoid-role or avoid-domain signals"]
 ```
 
 ## Review logs
