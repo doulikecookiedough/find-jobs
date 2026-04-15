@@ -77,6 +77,7 @@ Current scoring outputs:
 - fit score
 - skills alignment
 - interview probability range
+- years of experience match
 - recommendation
 - priority
 - reasons
@@ -160,8 +161,9 @@ Fit currently uses:
 - strength alignment
 - role type alignment
 - competition realism
+- small specialization-aware lifts when the candidate profile directly proves a niche domain match
 
-Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile.
+Interview probability is calibrated against the active candidate profile, not just the job posting. Years-of-experience penalties are based on the gap between the parsed job requirement and the candidate profile. Specialized domain proof can relieve pessimism for roles that would otherwise look too niche from generic signals alone.
 
 ### Fit flow
 
@@ -242,7 +244,7 @@ The project writes review queues under `logs/`:
 
 - `logs/complete_evaluations.jsonl`: every completed evaluation
 - `logs/incomplete_evaluations.jsonl`: evaluations with missing parsed fields or parser warnings
-- `logs/high_interview_evaluations.jsonl`: evaluations whose interview upper bound clears the configured threshold
+- `logs/high_interview_evaluations.jsonl`: evaluations whose interview upper bound clears the configured threshold, plus `apply/high` roles that should be reviewed even when the interview cap stays below it
 
 Overrides:
 
@@ -267,6 +269,7 @@ To test the extension locally:
 8. Open the `find-jobs` side panel.
 9. Click `Evaluate Job`.
 10. Expand `Preview extracted text` if the result looks wrong.
+11. Check `logs/high_interview_evaluations.jsonl` or `logs/incomplete_evaluations.jsonl` when you want calibration candidates.
 
 ## Example output
 
