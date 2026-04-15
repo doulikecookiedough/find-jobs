@@ -22,6 +22,11 @@ def score_role_type_alignment(job: ParsedJob, profile: CandidateProfile) -> floa
         return 0.0
     if job.role_type in profile.preferred_roles:
         return 1.0
+    if job.role_type == "full-stack" and (
+        "full-stack" in profile.strengths
+        or (profile.target_focus and "full-stack" in profile.target_focus.lower())
+    ):
+        return 0.65
     if job.role_type == "product-engineering":
         return 0.25
     if job.role_type == "data":
