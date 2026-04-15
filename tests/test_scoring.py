@@ -165,7 +165,7 @@ def test_score_strength_alignment_counts_startup_product_signals() -> None:
 
 
 def test_score_job_surfaces_adtech_reason_when_domain_matches() -> None:
-    """Adds a reviewer-facing reason when adtech domain experience overlaps."""
+    """Adds a prominent specialization reason when adtech overlaps."""
 
     profile = CandidateProfile(
         years_experience=3.0,
@@ -186,7 +186,7 @@ def test_score_job_surfaces_adtech_reason_when_domain_matches() -> None:
 
     score = score_job(job, profile)
 
-    assert "Role domain aligns with your prior adtech experience." in score.reasons
+    assert "Matched specialization: adtech experience directly overlaps this role." in score.reasons
 
 
 def test_score_job_rewards_matched_adtech_domain_proof() -> None:
