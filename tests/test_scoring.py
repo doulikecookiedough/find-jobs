@@ -189,6 +189,36 @@ def test_score_job_surfaces_adtech_reason_when_domain_matches() -> None:
     assert "Role domain aligns with your prior adtech experience." in score.reasons
 
 
+def test_score_job_rewards_matched_adtech_domain_proof() -> None:
+    """Adds a small fit lift when adtech domain proof matches the active profile."""
+
+    base_profile = CandidateProfile(
+        years_experience=3.0,
+        preferred_roles=["backend"],
+        preferred_domains=["backend"],
+        preferred_technologies=["python", "aws"],
+        strengths=["backend"],
+    )
+    adtech_profile = CandidateProfile(
+        years_experience=3.0,
+        preferred_roles=["backend"],
+        preferred_domains=["backend", "adtech"],
+        preferred_technologies=["python", "aws"],
+        strengths=["backend", "adtech"],
+    )
+    job = ParsedJob(
+        raw_text="Build backend systems for contextual advertising and ad delivery.",
+        role_type="backend",
+        domain_signals=["backend", "adtech"],
+        technologies=["python", "aws"],
+    )
+
+    base_score = score_job(job, base_profile)
+    adtech_score = score_job(job, adtech_profile)
+
+    assert adtech_score.fit_score > base_score.fit_score
+
+
 def test_score_role_type_alignment_is_high_for_preferred_role() -> None:
     """Gives a perfect role-type score for explicitly preferred roles."""
     profile = make_candidate_profile()

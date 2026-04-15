@@ -52,6 +52,8 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
     if breakdown.missing_inference_infra_proof:
         weighted_score -= 0.10
+    if "adtech" in job.domain_signals and "adtech" in profile.preferred_domains:
+        weighted_score += 0.05
 
     fit_score = round(weighted_score * 100)
     skills_alignment = score_skills_alignment(job, profile, breakdown)
