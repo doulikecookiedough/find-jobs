@@ -19,6 +19,7 @@ from find_jobs.scoring.fit.patterns import STRENGTH_PATTERNS
 from find_jobs.scoring.interview import score_interview_probability
 from find_jobs.scoring.shared import format_years
 from find_jobs.scoring.specialization import (
+    avoided_specialized_domains,
     job_requires_inference_infrastructure,
     matched_specialized_domains,
     profile_has_inference_infrastructure_proof,
@@ -44,6 +45,7 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
         job
     ) and not profile_has_inference_infrastructure_proof(profile)
     breakdown.matched_specialized_domains = matched_specialized_domains(job, profile)
+    breakdown.avoided_specialized_domains = avoided_specialized_domains(job, profile)
 
     weighted_score = (
         breakdown.level_match * 0.30
@@ -54,6 +56,8 @@ def score_job(job: ParsedJob, profile: CandidateProfile) -> JobScore:
     )
     if breakdown.missing_inference_infra_proof:
         weighted_score -= 0.10
+    if _should_penalize_avoided_specialization(breakdown):
+        weighted_score -= 0.20
     if "adtech" in job.domain_signals and "adtech" in profile.preferred_domains:
         weighted_score += 0.05
 
@@ -185,6 +189,16 @@ def _promote_matched_specializations(
     return "apply", "high"
 
 
+def _should_penalize_avoided_specialization(breakdown: ScoreBreakdown) -> bool:
+    """Apply an off-lane specialization penalty only for clear hard misses."""
+
+    return bool(
+        breakdown.avoided_specialized_domains
+        and breakdown.stack_alignment == 0.0
+        and breakdown.role_type_alignment <= 0.5
+    )
+
+
 def _build_reasons_and_risks(
     job: ParsedJob,
     profile: CandidateProfile,
@@ -249,6 +263,10 @@ def _build_reasons_and_risks(
 
     if breakdown.missing_inference_infra_proof:
         risks.append("Role expects specialized inference or GPU infrastructure experience.")
+
+    if breakdown.avoided_specialized_domains:
+        avoided_domains = ", ".join(breakdown.avoided_specialized_domains)
+        risks.append(f"Role is in a specialized lane you currently avoid: {avoided_domains}.")
 
     if breakdown.competition_realism <= 0.55:
         risks.append("This may be a stretch role relative to your current experience level.")

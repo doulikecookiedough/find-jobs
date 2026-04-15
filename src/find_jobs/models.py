@@ -65,6 +65,7 @@ class ScoreBreakdown:
     competition_realism: float = 0.0
     missing_inference_infra_proof: bool = False
     matched_specialized_domains: list[str] = field(default_factory=list)
+    avoided_specialized_domains: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)

@@ -756,3 +756,59 @@ def test_score_job_penalizes_missing_inference_infrastructure_proof() -> None:
     assert score.fit_score < 80
     assert score.interview_probability_max <= 10
     assert "Role expects specialized inference or GPU infrastructure experience." in score.risks
+
+
+def test_score_job_penalizes_avoided_specialized_domains_from_profile_policy() -> None:
+    """Uses avoid-specialization policy to suppress off-lane specialized roles."""
+
+    default_profile = CandidateProfile(
+        years_experience=3.0,
+        preferred_roles=["backend", "platform"],
+        preferred_domains=["distributed-systems", "apis", "integrations", "backend"],
+        preferred_technologies=["python", "aws", "postgresql", "kubernetes", "java"],
+        strengths=[
+            "backend",
+            "distributed-systems",
+            "apis",
+            "integrations",
+            "reliability",
+            "observability",
+        ],
+        avoid_domains=["mobile", "frontend", "networking", "business-systems"],
+        avoid_roles=["mobile", "frontend", "business-systems"],
+        avoid_specialized_domains=[
+            "firmware",
+            "embedded-systems",
+            "storage-systems",
+            "low-level-systems",
+        ],
+    )
+    allowed_profile = CandidateProfile(
+        years_experience=default_profile.years_experience,
+        preferred_roles=default_profile.preferred_roles,
+        preferred_domains=default_profile.preferred_domains,
+        preferred_technologies=default_profile.preferred_technologies,
+        strengths=default_profile.strengths,
+        avoid_domains=default_profile.avoid_domains,
+        avoid_roles=default_profile.avoid_roles,
+        avoid_specialized_domains=[],
+    )
+    job = ParsedJob(
+        raw_text=(
+            "Build low-level firmware in C/C++ for SSD controllers, NAND memory, "
+            "and embedded storage architectures."
+        ),
+        years_experience_required=2.0,
+        technologies=["c", "c++"],
+        domain_signals=["firmware", "embedded-systems", "storage-systems", "low-level-systems"],
+    )
+
+    penalized_score = score_job(job, default_profile)
+    allowed_score = score_job(job, allowed_profile)
+
+    assert penalized_score.fit_score < allowed_score.fit_score
+    assert (
+        "Role is in a specialized lane you currently avoid: "
+        "embedded-systems, firmware, low-level-systems, storage-systems."
+        in penalized_score.risks
+    )
