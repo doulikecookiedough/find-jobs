@@ -655,3 +655,20 @@ def test_parse_job_description_recovers_caredove_wellfound_fields() -> None:
     assert parsed_job.company == "Caredove"
     assert parsed_job.location == "Orillia"
     assert parsed_job.years_experience_required == 5.0
+
+
+def test_parse_job_description_recovers_clean_indeed_title_and_company() -> None:
+    """Recovers title and company from a simple Indeed-style three-line header."""
+
+    parsed_job = parse_job_description(
+        (
+            "Intermediate Back-End Engineer\n"
+            "Kidoz Inc.\n"
+            "Canada\n"
+            "WHAT YOU BRING TO THE TEAM\n"
+            "You have 4-6+ years of experience in back-end software development.\n"
+        )
+    )
+
+    assert parsed_job.title == "Intermediate Back-End Engineer"
+    assert parsed_job.company == "Kidoz Inc."

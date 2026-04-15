@@ -61,7 +61,7 @@ LONG_LOCATION_PATTERN = re.compile(
 TITLE_PATTERN = re.compile(
     (
         r"^(?=.*\b(?:engineer|engineering|developer)\b)"
-        r"(?=.*\b(?:software|backend|frontend|full-stack|full stack|platform|data|"
+        r"(?=.*\b(?:software|backend|back-end|frontend|front-end|full-stack|full stack|platform|data|"
         r"product|zuora|salesforce|netsuite|mulesoft|senior|junior|staff|principal|lead|"
         r"entry[ -]?level)\b).+$"
     ),
@@ -70,7 +70,7 @@ TITLE_PATTERN = re.compile(
 TITLE_PHRASE_PATTERN = re.compile(
     (
         r"\b(?:Senior|Junior|Staff|Principal|Lead)\s+(?:Software\s+)?"
-        r"(?:Engineer|Developer)\b|\b(?:Software|Backend|Frontend|Full-Stack|"
+        r"(?:Engineer|Developer)\b|\b(?:Software|Backend|Back-End|Frontend|Front-End|Full-Stack|"
         r"Platform|Data|Product|Zuora|Salesforce)\s+(?:Engineer|Developer)\b|"
         r"\b[A-Z][A-Za-z0-9+#./ -]*\b(?:Engineer|Developer)\s*[-,]\s*Entry[ -]?Level\b"
     ),
@@ -336,6 +336,11 @@ def _extract_company_from_header(raw_text: str) -> str | None:
     lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
     if not lines:
         return None
+
+    if len(lines) >= 2 and _looks_like_title_text(lines[0]) and _looks_like_company_after_title(
+        lines[1]
+    ):
+        return lines[1]
 
     if lines[0].lower().endswith(" logo"):
         if len(lines) < 2:
