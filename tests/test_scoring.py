@@ -171,6 +171,7 @@ def test_score_job_surfaces_adtech_reason_when_domain_matches() -> None:
         years_experience=3.0,
         preferred_roles=["backend"],
         preferred_domains=["backend", "adtech"],
+        preferred_specialized_domains=["adtech"],
         preferred_technologies=["python", "aws"],
         strengths=["backend", "adtech"],
     )
@@ -203,6 +204,7 @@ def test_score_job_rewards_matched_adtech_domain_proof() -> None:
         years_experience=3.0,
         preferred_roles=["backend"],
         preferred_domains=["backend", "adtech"],
+        preferred_specialized_domains=["adtech"],
         preferred_technologies=["python", "aws"],
         strengths=["backend", "adtech"],
     )
@@ -233,6 +235,7 @@ def test_score_job_relieves_interview_pessimism_for_matched_specialized_domains(
         years_experience=3.0,
         preferred_roles=["backend"],
         preferred_domains=["backend", "distributed-systems", "apis", "integrations", "adtech"],
+        preferred_specialized_domains=["adtech"],
         preferred_technologies=["python", "aws", "postgresql"],
         strengths=[
             "backend",
@@ -290,6 +293,7 @@ def test_score_job_promotes_matched_specializations_to_apply() -> None:
         years_experience=3.0,
         preferred_roles=["backend"],
         preferred_domains=["backend", "distributed-systems", "apis", "integrations", "adtech"],
+        preferred_specialized_domains=["adtech"],
         preferred_technologies=["python", "aws", "postgresql"],
         strengths=[
             "backend",
