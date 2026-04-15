@@ -288,11 +288,21 @@ function formatResultMeta(evaluation) {
 }
 
 function buildApplySignal(evaluation) {
-  if (
-    evaluation.fit_score < 80
-    || evaluation.skills_alignment < 80
-    || evaluation.interview_probability_max < 20
-  ) {
+  const passesLegacyThreshold = (
+    evaluation.fit_score >= 80
+    && evaluation.skills_alignment >= 80
+    && evaluation.interview_probability_max >= 20
+  );
+  const hasMatchedSpecialization = (evaluation.reasons || []).some((reason) =>
+    reason.startsWith("Matched specialization:")
+  );
+  const passesSpecializationOverride = (
+    evaluation.recommendation === "apply"
+    && evaluation.priority === "high"
+    && hasMatchedSpecialization
+  );
+
+  if (!passesLegacyThreshold && !passesSpecializationOverride) {
     return null;
   }
 
@@ -304,7 +314,9 @@ function buildApplySignal(evaluation) {
   lead.className = "apply-signal-lead";
   lead.textContent = "Apply to this job.";
   comment.className = "apply-signal-comment";
-  comment.textContent = " This clears your high-confidence threshold for fit, skills, and interview odds.";
+  comment.textContent = passesLegacyThreshold
+    ? " This clears your high-confidence threshold for fit, skills, and interview odds."
+    : " This is a strong apply based on a matched specialization and overall high-priority recommendation.";
 
   signal.append(lead, comment);
   return signal;
