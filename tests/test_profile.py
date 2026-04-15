@@ -40,6 +40,7 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
         "vitest",
     ]
     assert profile.strengths == [
+        "adtech",
         "backend",
         "full-stack",
         "product-engineering",
@@ -57,6 +58,7 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
     ]
     assert profile.preferred_roles == ["backend", "platform"]
     assert profile.preferred_domains == [
+        "adtech",
         "backend",
         "distributed-systems",
         "event-driven",
