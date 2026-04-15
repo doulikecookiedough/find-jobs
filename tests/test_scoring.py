@@ -225,32 +225,62 @@ def test_score_job_relieves_interview_pessimism_for_matched_specialized_domains(
     base_profile = CandidateProfile(
         years_experience=3.0,
         preferred_roles=["backend"],
-        preferred_domains=["backend"],
-        preferred_technologies=["python", "aws"],
-        strengths=["backend"],
+        preferred_domains=["backend", "distributed-systems", "apis", "integrations"],
+        preferred_technologies=["python", "aws", "postgresql"],
+        strengths=["backend", "distributed-systems", "apis", "integrations", "reliability"],
     )
     adtech_profile = CandidateProfile(
         years_experience=3.0,
         preferred_roles=["backend"],
-        preferred_domains=["backend", "adtech"],
-        preferred_technologies=["python", "aws"],
-        strengths=["backend", "adtech"],
+        preferred_domains=["backend", "distributed-systems", "apis", "integrations", "adtech"],
+        preferred_technologies=["python", "aws", "postgresql"],
+        strengths=[
+            "backend",
+            "distributed-systems",
+            "apis",
+            "integrations",
+            "reliability",
+            "adtech",
+        ],
     )
     job = ParsedJob(
         raw_text=(
             "Build backend systems for contextual advertising, ad delivery, and analytics "
-            "infrastructure."
+            "infrastructure with strong reliability expectations."
         ),
         years_experience_required=4.0,
         role_type="backend",
-        domain_signals=["backend", "adtech"],
-        technologies=["python", "aws", "mongodb"],
+        domain_signals=["backend", "apis", "integrations", "distributed-systems", "adtech"],
+        technologies=["python", "aws", "postgresql", "mongodb"],
     )
 
     base_score = score_job(job, base_profile)
     adtech_score = score_job(job, adtech_profile)
 
     assert adtech_score.interview_probability_max > base_score.interview_probability_max
+
+
+def test_score_job_rewards_high_signal_consistency_in_interview() -> None:
+    """Raises interview odds when role, domain, stack, and strengths all align strongly."""
+
+    profile = CandidateProfile(
+        years_experience=3.0,
+        preferred_roles=["backend"],
+        preferred_domains=["backend", "apis", "integrations"],
+        preferred_technologies=["python", "aws", "postgresql"],
+        strengths=["backend", "apis", "integrations", "reliability"],
+    )
+    job = ParsedJob(
+        raw_text="Build backend APIs and integrations with strong reliability expectations.",
+        years_experience_required=3.0,
+        role_type="backend",
+        domain_signals=["backend", "apis", "integrations"],
+        technologies=["python", "aws", "postgresql"],
+    )
+
+    score = score_job(job, profile)
+
+    assert score.interview_probability_max >= 20
 
 
 def test_score_role_type_alignment_is_high_for_preferred_role() -> None:

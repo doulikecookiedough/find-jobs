@@ -369,10 +369,16 @@ def _apply_specialized_domain_relief(
 
     if not breakdown.matched_specialized_domains:
         return base_probability, multiplier, upper_cap
+    if breakdown.role_type_alignment < 1.0:
+        return base_probability, multiplier, upper_cap
+    if breakdown.strength_alignment < 0.85 or breakdown.domain_alignment < 0.80:
+        return base_probability, multiplier, upper_cap
+    if breakdown.competition_realism < 0.75 or breakdown.stack_alignment < 0.35:
+        return base_probability, multiplier, upper_cap
 
-    base_probability += 8
-    multiplier *= 1.18
-    upper_cap = max(upper_cap, 24)
+    base_probability += 12
+    multiplier *= 1.24
+    upper_cap = max(upper_cap, 30)
     return base_probability, multiplier, upper_cap
 
 
