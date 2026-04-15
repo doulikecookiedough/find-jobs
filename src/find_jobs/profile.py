@@ -50,6 +50,13 @@ def build_default_candidate_profile() -> CandidateProfile:
             "testing",
             "documentation",
         ],
+        preferred_specialized_domains=["adtech"],
+        avoid_specialized_domains=[
+            "firmware",
+            "embedded-systems",
+            "storage-systems",
+            "low-level-systems",
+        ],
         preferred_roles=["backend", "platform"],
         preferred_domains=[
             "adtech",

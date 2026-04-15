@@ -56,6 +56,13 @@ def test_build_default_candidate_profile_returns_expected_defaults() -> None:
         "testing",
         "documentation",
     ]
+    assert profile.preferred_specialized_domains == ["adtech"]
+    assert profile.avoid_specialized_domains == [
+        "firmware",
+        "embedded-systems",
+        "storage-systems",
+        "low-level-systems",
+    ]
     assert profile.preferred_roles == ["backend", "platform"]
     assert profile.preferred_domains == [
         "adtech",

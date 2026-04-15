@@ -25,6 +25,8 @@ def test_candidate_profile_defaults() -> None:
     assert profile.years_experience == 3.0
     assert profile.headline is None
     assert not profile.primary_languages
+    assert not profile.preferred_specialized_domains
+    assert not profile.avoid_specialized_domains
     assert not profile.preferred_roles
     assert not profile.avoid_domains
 
